@@ -2,97 +2,123 @@ import streamlit as st
 import streamlit.components.v1 as components
 import json
 
-# --- INITIAL CONFIG ---
-st.set_page_config(layout="wide", page_title="Cyber-Frontline 3D")
+st.set_page_config(layout="wide", page_title="Cyber-Frontline 2026 GIS")
 
-# 1. SETUP: Put your Cesium Ion Token here
-# The first string is the LABEL (what the user sees), the second is the TYPE
+# --- 1. CONFIG & DATA ---
 CESIUM_TOKEN = st.sidebar.text_input("Enter Cesium Ion Token", type="password")
 
-# --- DATA: PROFESSIONAL GIS METRICS ---
-# STI: Strategic Topographical Index | LCP: Least Cost Path
-global_hubs = [
-    {"name": "TSMC Fab 18", "lat": 23.10, "lon": 120.28, "elev": 15, "lcp": 0.98, "sti": 99.2, "water": "High-Pure"},
-    {"name": "Intel Ocotillo", "lat": 33.27, "lon": -111.88, "elev": 370, "lcp": 0.82, "sti": 88.0, "water": "Arid-Recycled"}
+# Extended Professional Data Set for 2026
+facilities = [
+    # --- GLOBAL (Large Cap) ---
+    {"name": "TSMC Fab 18", "lat": 23.10, "lon": 120.28, "cap": "Large", "type": "Fab", "url": "https://www.tsmc.com", "lcp": 0.98, "sti": 99.2, "water": "High-Pure", "terrain": "Optimal"},
+    {"name": "Samsung Pyeongtaek", "lat": 37.01, "lon": 127.06, "cap": "Large", "type": "Fab", "url": "https://www.samsung.com", "lcp": 0.95, "sti": 94.5, "water": "High-Pure", "terrain": "Stable"},
+    {"name": "Intel Ocotillo", "lat": 33.27, "lon": -111.88, "cap": "Large", "type": "Fab", "url": "https://www.intel.com", "lcp": 0.88, "sti": 89.1, "water": "Arid-Recycled", "terrain": "Flat"},
+    {"name": "Rapidus Hokkaido", "lat": 42.80, "lon": 141.77, "cap": "Large", "type": "Fab", "url": "https://www.rapidus.inc", "lcp": 0.92, "sti": 91.0, "water": "Mountain-Source", "terrain": "Seismic-Stable"},
+    {"name": "GlobalFoundries Dresden", "lat": 51.12, "lon": 13.72, "cap": "Large", "type": "Fab", "url": "https://gf.com", "lcp": 0.94, "sti": 95.8, "water": "Elbe-Recycled", "terrain": "High-Density"},
+    
+    # --- INDIA (Large, Mid, Small Cap) ---
+    {"name": "Tata-PSMC Dholera", "lat": 22.25, "lon": 72.11, "cap": "Large", "type": "Fab", "year": 2024, "url": "https://www.tata.com", "lcp": 0.96, "sti": 97.5, "water": "Narmada/Desal", "terrain": "Custom-Levelled"},
+    {"name": "Micron Sanand", "lat": 22.98, "lon": 72.37, "cap": "Large", "type": "ATMP", "year": 2023, "url": "https://www.micron.com", "lcp": 0.89, "sti": 90.2, "water": "UPW-Municipal", "terrain": "Industrial-Park"},
+    {"name": "Tata-TSAT Assam", "lat": 26.24, "lon": 92.33, "cap": "Large", "type": "ATMP", "year": 2025, "url": "https://www.tata.com", "lcp": 0.75, "sti": 84.4, "water": "Brahmaputra", "terrain": "Riverine-Plains"},
+    {"name": "Tower-Adani Taloja", "lat": 19.06, "lon": 73.07, "cap": "Large", "type": "Fab", "year": 2026, "url": "https://www.adani.com", "lcp": 0.97, "sti": 93.8, "water": "Coastal-Piped", "terrain": "High-Moisture"},
+    {"name": "Kaynes Semicon", "lat": 22.99, "lon": 72.38, "cap": "Mid", "type": "OSAT", "year": 2024, "url": "https://www.kaynestechnology.co.in", "lcp": 0.85, "sti": 88.5, "water": "Recycled", "terrain": "Flat"},
+    {"name": "HCL-Foxconn Jewar", "lat": 28.13, "lon": 77.55, "cap": "Mid", "type": "OSAT", "year": 2025, "url": "https://www.hcltech.com", "lcp": 0.91, "sti": 92.1, "water": "Yamuna-Linked", "terrain": "Airport-Proximity"},
+    {"name": "SPEL Semiconductor", "lat": 13.00, "lon": 80.20, "cap": "Small", "type": "OSAT", "year": 1990, "url": "https://www.spel.com", "lcp": 0.70, "sti": 78.5, "water": "City-Mains", "terrain": "Coastal-Urban"},
+    {"name": "Sahasra Memory", "lat": 28.15, "lon": 76.80, "cap": "Small", "type": "ATMP", "year": 2023, "url": "http://sahasraelectronics.com", "lcp": 0.78, "sti": 81.0, "water": "Groundwater", "terrain": "Arid"},
 ]
 
-india_hubs = [
-    {"name": "SCL Mohali", "year": 1990, "lat": 30.70, "lon": 76.69, "lcp": 0.65, "water": "Sutlej", "terrain": "Flat"},
-    {"name": "Tata-PSMC Dholera", "year": 2024, "lat": 22.25, "lon": 72.11, "lcp": 0.96, "water": "Narmada/Desal", "terrain": "Optimal"}
-]
-
-# --- UI TABS ---
-tab1, tab2 = st.tabs(["🌍 Global Frontline", "🇮🇳 India Evolution"])
+# --- 2. TABS & SELECTION ---
+tab1, tab2 = st.tabs(["🌍 Global Choke-Points (Today)", "🇮🇳 India Frontiers (Timeline)"])
 
 with tab1:
-    selected_global = st.selectbox("Select Hub to 'Fly To':", ["None"] + [h['name'] for h in global_hubs])
-    active_data = global_hubs
-    target = next((h for h in global_hubs if h['name'] == selected_global), None)
+    selected_node = st.selectbox("🎯 Target Node (Fly-to 3D):", ["None"] + [f['name'] for f in facilities if 'year' not in f or f['year'] <= 2026])
+    active_data = [f for f in facilities if 'year' not in f] # Global data
 
 with tab2:
-    year = st.slider("Select Year", 1990, 2026, 2026)
-    active_data = [h for h in india_hubs if h['year'] <= year]
-    selected_india = st.selectbox("Focus on Indian Hub:", ["None"] + [h['name'] for h in active_data])
-    target = next((h for h in active_data if h['name'] == selected_india), None)
+    year = st.slider("Timeline Explorer", 1990, 2026, 2026)
+    india_data = [f for f in facilities if 'year' in f and f['year'] <= year]
+    selected_node = st.selectbox("🇮🇳 Focus Hub:", ["None"] + [f['name'] for f in india_data])
+    active_data = india_data
 
-# --- THE CESIUM COMPONENT (HTML/JS) ---
-# This is the "Engine" that creates the 3D Satellite view
-# --- THE UPDATED CESIUM COMPONENT ---
+# --- 3. THE CESIUM CORE ENGINE ---
+target = next((f for f in facilities if f['name'] == selected_node), None)
+
 cesium_html = f"""
-<div id="cesiumContainer" style="width: 100%; height: 600px; background: #000;"></div>
+<div id="cesiumContainer" style="width: 100%; height: 700px; background: #000;"></div>
 <script src="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Cesium.js"></script>
 <link href="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
 <script>
-    try {{
-        Cesium.Ion.defaultAccessToken = '{CESIUM_TOKEN}';
-        
-        // Initialize viewer with the modern 2026 terrain syntax
-        const viewer = new Cesium.Viewer('cesiumContainer', {{
-            terrain: Cesium.Terrain.fromWorldTerrain(),
-            baseLayerPicker: false,
-            geocoder: false,
-            timeline: false,
-            animation: false,
-            infoBox: true,
-            selectionIndicator: false
+    Cesium.Ion.defaultAccessToken = '{CESIUM_TOKEN}';
+    
+    // 1. Force Earth Visibility and Satellite Imagery
+    const viewer = new Cesium.Viewer('cesiumContainer', {{
+        terrain: Cesium.Terrain.fromWorldTerrain(),
+        baseLayerPicker: false, 
+        geocoder: false, 
+        timeline: false, 
+        animation: false,
+        skyAtmosphere: true
+    }});
+
+    const data = {json.dumps(active_data)};
+    const target = {json.dumps(target)};
+
+    // 2. Add Stylized Nodes based on CAP
+    data.forEach(hub => {{
+        let nodeColor = Cesium.Color.RED;
+        if(hub.cap === "Mid") nodeColor = Cesium.Color.YELLOW;
+        if(hub.cap === "Small") nodeColor = Cesium.Color.GREEN;
+
+        viewer.entities.add({{
+            position: Cesium.Cartesian3.fromDegrees(hub.lon, hub.lat),
+            point: {{ pixelSize: hub.cap === "Large" ? 15 : 10, color: nodeColor, outlineWidth: 2 }},
+            label: {{ text: hub.name, font: '12pt Helvetica', style: Cesium.LabelStyle.FILL_AND_OUTLINE, pixelOffset: new Cesium.Cartesian2(0, -20) }},
+            description: `
+                <div style="font-family: sans-serif; color: white;">
+                    <h3>${{hub.name}} (${{hub.type}})</h3>
+                    <p><b>Market Cap:</b> ${{hub.cap}}</p>
+                    <hr>
+                    <b>TECHNICAL GIS METRICS:</b><br>
+                    - Strategic Topo Index (STI): ${{hub.sti}}%<br>
+                    - Least Cost Path (LCP): ${{hub.lcp}}<br>
+                    - UPW Quality Index: ${{hub.water}}<br>
+                    - Terrain: ${{hub.terrain}}<br>
+                    <br>
+                    <a href="${{hub.url}}" target="_blank" style="color: cyan;">Visit Facility Website</a>
+                </div>
+            `
         }});
+    }});
 
-        const data = {json.dumps(active_data)};
-        const target = {json.dumps(target)};
-
-        // Add the Semiconductor Hubs
-        data.forEach(hub => {{
-            viewer.entities.add({{
-                position: Cesium.Cartesian3.fromDegrees(hub.lon, hub.lat),
-                point: {{ pixelSize: 12, color: Cesium.Color.RED, outlineWidth: 2 }},
-                label: {{ text: hub.name, font: '12pt sans-serif', style: Cesium.LabelStyle.FILL_AND_OUTLINE, pixelOffset: new Cesium.Cartesian2(0, -15) }}
-            }});
+    // 3. Google Earth Style Transitions & Rotation
+    if (target) {{
+        viewer.camera.flyTo({{
+            destination: Cesium.Cartesian3.fromDegrees(target.lon, target.lat, 5000),
+            orientation: {{ pitch: Cesium.Math.toRadians(-45), heading: 0 }},
+            duration: 3,
+            complete: () => {{
+                // REVOLVE: Continuously rotate around the hub
+                viewer.clock.onTick.addEventListener(function(clock) {{
+                    viewer.scene.camera.rotateRight(0.005);
+                }});
+            }}
         }});
-
-        // Fly-to Logic
-        if (target) {{
-            viewer.camera.flyTo({{
-                destination: Cesium.Cartesian3.fromDegrees(target.lon, target.lat, 8000),
-                orientation: {{ pitch: Cesium.Math.toRadians(-40), heading: 0 }},
-                duration: 3
-            }});
-        }}
-    }} catch (err) {{
-        console.error("Cesium Load Error:", err);
-        document.getElementById('cesiumContainer').innerHTML = "<h2 style='color:white; padding: 20px;'>Error Loading 3D Globe: " + err.message + "</h2>";
+    }} else {{
+        // Reset to global view if no hub selected
+        viewer.camera.setView({{
+            destination: Cesium.Cartesian3.fromDegrees(20, 10, 20000000)
+        }});
     }}
 </script>
 """
 
 if not CESIUM_TOKEN:
-    st.warning("Please enter your Cesium Ion Token in the sidebar to view the 3D Satellite Globe.")
+    st.error("❌ MAP DISCONNECTED: Please paste your Cesium Ion Token into the sidebar.")
 else:
-    components.html(cesium_html, height=600)
+    components.html(cesium_html, height=720)
 
-# --- PROFESSIONAL GIS DOCUMENTATION ---
-with st.expander("📊 Technical GIS Methodology"):
-    st.markdown("### Strategic Topographical Index (STI)")
-    st.write("Calculated as a weighted sum of terrain stability, power grid proximity, and seismic safety.")
-    st.latex(r"STI = \alpha(Slope^{-1}) + \beta(H_{2}O) + \gamma(Grid)")
-    st.markdown("### Least Cost Transportation (LCP)")
-    st.write("Determined by analyzing the friction surface for heavy machinery transport from the nearest mineral port.")
+# --- 4. DH THEORY SECTION ---
+with st.expander("🔬 Digital Humanities & The Cyber-Frontline Theory"):
+    st.write("**Spatial Sovereignty:** This map treats semiconductor hubs as the 'new hills' of the medieval era—the places from which control is exerted.")
+    st.latex(r"STI = \alpha(Slope^{-1}) + \beta(H_{2}O) + \gamma(Seismic\_Stability)")
+    st.write("**LCP (Least Cost Path):** A mathematical value calculating the minimum friction for transporting massive, delicate photolithography machines over uneven terrain.")
