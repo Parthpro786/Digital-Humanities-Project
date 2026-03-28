@@ -1,120 +1,93 @@
 import streamlit as st
-import streamlit.components.v1 as components
-import json
+import pandas as pd
+import pydeck as pdk
 
 st.set_page_config(layout="wide", page_title="Cyber-Frontline 2026")
 
-# --- 1. CONFIG & EXPANDED DATASET ---
-CESIUM_TOKEN = st.sidebar.text_input("Enter Cesium Ion Token", type="password")
-
-# Large, Mid, Small Cap Semiconductor Facilities (2026 Global Frontline)
-data = [
-    # --- GLOBAL POWERHOUSES (Large Cap) ---
-    {"name": "TSMC Fab 18", "lat": 23.10, "lon": 120.28, "cap": "Large", "type": "Fab", "sti": 99, "lcp": 0.98, "desc": "World's most advanced 2nm/3nm node hub."},
-    {"name": "Samsung Pyeongtaek", "lat": 37.01, "lon": 127.06, "cap": "Large", "type": "Fab", "sti": 95, "lcp": 0.95, "desc": "Massive memory and logic cluster."},
-    {"name": "Intel Ocotillo", "lat": 33.27, "lon": -111.88, "cap": "Large", "type": "Fab", "sti": 88, "lcp": 0.89, "desc": "US domestic sovereignty anchor."},
-    {"name": "Rapidus Hokkaido", "lat": 42.80, "lon": 141.77, "cap": "Large", "type": "Fab", "sti": 91, "lcp": 0.92, "desc": "Japan's 2nm state-backed initiative."},
-    {"name": "TI Sherman", "lat": 33.63, "lon": -96.61, "cap": "Large", "type": "Fab", "sti": 85, "lcp": 0.87, "desc": "Leading analog chip manufacturing."},
-
-    # --- INDIA FRONT (Timeline & Scale) ---
-    {"name": "Tata-PSMC (Dholera)", "lat": 22.25, "lon": 72.11, "cap": "Large", "type": "Mega-Fab", "sti": 98, "lcp": 0.97, "year": 2024, "desc": "India's flagship commercial fab."},
-    {"name": "Micron (Sanand)", "lat": 22.98, "lon": 72.37, "cap": "Large", "type": "ATMP", "sti": 92, "lcp": 0.90, "year": 2023, "desc": "Key global memory packaging node."},
-    {"name": "Tata-TSAT (Assam)", "lat": 26.24, "lon": 92.33, "cap": "Large", "type": "ATMP", "sti": 82, "lcp": 0.75, "year": 2025, "desc": "Strategic hub for NE region."},
-    {"name": "Tower-Adani (Taloja)", "lat": 19.06, "lon": 73.07, "cap": "Large", "type": "Fab", "sti": 90, "lcp": 0.94, "year": 2026, "desc": "Massive analog/power fab JV."},
-    {"name": "Kaynes (Sanand)", "lat": 22.95, "lon": 72.40, "cap": "Mid", "type": "OSAT", "sti": 86, "lcp": 0.88, "year": 2024, "desc": "Automotive chip specialization."},
-    {"name": "CG Power (Gujarat)", "lat": 22.99, "lon": 72.38, "cap": "Mid", "type": "ATMP", "sti": 87, "lcp": 0.85, "year": 2024, "desc": "Industrial power electronics hub."},
-    {"name": "HCL-Foxconn (Jewar)", "lat": 28.13, "lon": 77.55, "cap": "Mid", "type": "OSAT", "sti": 91, "lcp": 0.91, "year": 2025, "desc": "Strategic airport-adjacent OSAT."},
-    {"name": "SCL (Mohali)", "lat": 30.70, "lon": 76.69, "cap": "Small", "type": "Strategic", "sti": 75, "lcp": 0.60, "year": 1990, "desc": "State-run defense/space chip fab."},
-    {"name": "Sahasra (Bhiwadi)", "lat": 28.21, "lon": 76.84, "cap": "Small", "type": "ATMP", "sti": 80, "lcp": 0.78, "year": 2023, "desc": "Niche memory assembly focus."},
-    {"name": "Vama Semi (Noida)", "lat": 28.53, "lon": 77.39, "cap": "Small", "type": "Design", "sti": 79, "lcp": 0.70, "year": 2025, "desc": "Compound semiconductor pioneer."},
+# --- 1. DATASET: 25+ HUBS (Large, Mid, Small Cap) ---
+hubs = [
+    # GLOBAL
+    {"name": "TSMC Fab 18", "lat": 23.10, "lon": 120.28, "cap": "Large", "type": "Fab", "sti": 99.1, "lcp": 0.98, "elev": 500},
+    {"name": "Samsung Pyeongtaek", "lat": 37.01, "lon": 127.06, "cap": "Large", "type": "Fab", "sti": 95.2, "lcp": 0.95, "elev": 450},
+    {"name": "Intel Ocotillo", "lat": 33.27, "lon": -111.88, "cap": "Large", "type": "Fab", "sti": 82.0, "lcp": 0.85, "elev": 400},
+    {"name": "ASML Veldhoven", "lat": 51.42, "lon": 5.40, "cap": "Large", "type": "Lithography", "sti": 98.5, "lcp": 0.99, "elev": 600},
+    
+    # INDIA TIMELINE
+    {"name": "SCL Mohali", "lat": 30.70, "lon": 76.69, "cap": "Small", "type": "Strategic", "year": 1990, "sti": 75.0, "lcp": 0.60, "elev": 100},
+    {"name": "TI Bangalore", "lat": 12.97, "lon": 77.59, "cap": "Mid", "type": "Design", "year": 1995, "sti": 82.1, "lcp": 0.75, "elev": 250},
+    {"name": "Micron Sanand", "lat": 22.98, "lon": 72.37, "cap": "Large", "type": "ATMP", "year": 2023, "sti": 92.0, "lcp": 0.92, "elev": 350},
+    {"name": "Tata-PSMC Dholera", "lat": 22.25, "lon": 72.11, "cap": "Large", "type": "Mega-Fab", "year": 2024, "sti": 99.5, "lcp": 0.98, "elev": 550},
+    {"name": "CG Power Sanand", "lat": 22.95, "lon": 72.40, "cap": "Mid", "type": "ATMP", "year": 2024, "sti": 87.5, "lcp": 0.88, "elev": 300},
+    {"name": "Kaynes Sanand", "lat": 22.99, "lon": 72.38, "cap": "Mid", "type": "OSAT", "year": 2024, "sti": 88.0, "lcp": 0.86, "elev": 300},
+    {"name": "Tata-TSAT Assam", "lat": 26.24, "lon": 92.33, "cap": "Large", "type": "ATMP", "year": 2025, "sti": 84.4, "lcp": 0.70, "elev": 450},
+    {"name": "HCL-Foxconn Jewar", "lat": 28.13, "lon": 77.55, "cap": "Mid", "type": "OSAT", "year": 2025, "sti": 91.2, "lcp": 0.91, "elev": 320},
+    {"name": "Vama Semi Noida", "lat": 28.53, "lon": 77.39, "cap": "Small", "type": "Compound", "year": 2025, "sti": 79.0, "lcp": 0.72, "elev": 150},
+    {"name": "Tower-Adani Taloja", "lat": 19.06, "lon": 73.07, "cap": "Large", "type": "Fab", "year": 2026, "sti": 93.8, "lcp": 0.95, "elev": 500},
 ]
 
-# --- 2. NAVIGATION ---
-st.sidebar.header("🛡️ Cyber-Control Center")
-mode = st.sidebar.radio("View Mode", ["Global", "India"])
-selected_name = st.sidebar.selectbox("🎯 Fly-to Target:", ["None"] + [f['name'] for f in data])
+# --- 2. LOGIC & NAVIGATION ---
+st.title("🛡️ Cyber-Frontline: Semiconductor Sovereignty (1990-2026)")
+mode = st.sidebar.radio("Map View", ["Global Choke-Points", "India Evolution Timeline"])
 
-if mode == "India":
-    year = st.sidebar.slider("Timeline", 1990, 2026, 2026)
-    filtered_data = [f for f in data if "year" in f and f['year'] <= year]
+if mode == "India Evolution Timeline":
+    year = st.sidebar.slider("Select Year", 1990, 2026, 2026)
+    df = pd.DataFrame([h for h in hubs if "year" in h and h['year'] <= year])
+    initial_lat, initial_lon, zoom = 22.0, 78.0, 4
 else:
-    filtered_data = [f for f in data if "year" not in f or f['year'] <= 2026]
+    df = pd.DataFrame([h for h in hubs if "year" not in h or h['year'] <= 2026])
+    initial_lat, initial_lon, zoom = 20.0, 0.0, 1.5
 
-target = next((f for f in data if f['name'] == selected_name), None)
+# Color coding for Classification
+df['color'] = df['cap'].map({'Large': [255, 0, 0, 200], 'Mid': [255, 255, 0, 200], 'Small': [0, 255, 100, 200]})
 
-# --- 3. THE "ASYNC BOOT" ENGINE ---
-# Using a 100% stable initialization script for 2026
-cesium_html = f"""
-<div id="cesiumContainer" style="width: 100%; height: 750px; background: #000;"></div>
-<script src="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Cesium.js"></script>
-<link href="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
-<script>
-    (async function() {{
-        try {{
-            Cesium.Ion.defaultAccessToken = '{CESIUM_TOKEN}';
-            
-            // Step 1: Initialize Viewer without a promise
-            const viewer = new Cesium.Viewer('cesiumContainer', {{
-                baseLayerPicker: false, 
-                geocoder: false, 
-                timeline: false, 
-                animation: false,
-                skyAtmosphere: true,
-                shouldAnimate: true
-            }});
+# --- 3. 3D PYDECK ENGINE ---
+# The ColumnLayer creates the 3D "protruding" effect for Hub Power
+layer = pdk.Layer(
+    "ColumnLayer",
+    df,
+    get_position=['lon', 'lat'],
+    get_elevation='elev',
+    elevation_scale=1000,
+    radius=50000 if mode == "Global Choke-Points" else 20000,
+    get_fill_color='color',
+    pickable=True,
+    auto_highlight=True,
+)
 
-            // Step 2: Inject Imagery and Terrain Async to prevent 'setDynamicLighting' error
-            const terrainProvider = await Cesium.Terrain.fromWorldTerrain();
-            viewer.scene.globe.terrainProvider = terrainProvider;
+view_state = pdk.ViewState(
+    latitude=initial_lat,
+    longitude=initial_lon,
+    zoom=zoom,
+    pitch=45, # 3D Tilt
+    bearing=0
+)
 
-            const hubs = {json.dumps(filtered_data)};
-            const focus = {json.dumps(target)};
+# Professional Tooltip (The GIS Twist)
+tooltip = {
+    "html": """
+        <div style="font-family: monospace; background: #111; color: white; padding: 10px; border: 1px solid cyan;">
+            <b style="font-size: 14px; color: cyan;">{name}</b><br/>
+            <b>Classification:</b> {cap} Cap {type}<br/>
+            <hr/>
+            <b>GIS TECHNICALS:</b><br/>
+            - Strategic Topo Index: {sti}%<br/>
+            - Least Cost Path (LCP): {lcp}<br/>
+            - Infrastructure Scale: {elev} units
+        </div>
+    """,
+    "style": {"backgroundColor": "transparent", "color": "white"}
+}
 
-            // Step 3: Map classification colors
-            hubs.forEach(h => {{
-                let color = Cesium.Color.RED;
-                if(h.cap === "Mid") color = Cesium.Color.YELLOW;
-                if(h.cap === "Small") color = Cesium.Color.LIME;
+st.pydeck_chart(pdk.Deck(
+    map_style='mapbox://styles/mapbox/dark-v10', # Stable, no-token required style
+    initial_view_state=view_state,
+    layers=[layer],
+    tooltip=tooltip
+))
 
-                viewer.entities.add({{
-                    position: Cesium.Cartesian3.fromDegrees(h.lon, h.lat),
-                    point: {{ pixelSize: h.cap === "Large" ? 12 : 8, color: color, outlineWidth: 1 }},
-                    label: {{ text: h.name, font: '10pt monospace', style: Cesium.LabelStyle.FILL_AND_OUTLINE, pixelOffset: new Cesium.Cartesian2(0, -15) }},
-                    description: `<div style="padding:10px;">
-                        <h3>${{h.name}} (${{h.cap}} Cap)</h3>
-                        <p><b>Type:</b> ${{h.type}}</p>
-                        <hr>
-                        <b>GIS METRICS:</b><br>
-                        - Topo Index (STI): ${{h.sti}}%<br>
-                        - Transport Cost (LCP): ${{h.lcp}}<br>
-                        <br><i>${{h.desc}}</i></div>`
-                }});
-            }});
-
-            // Step 4: Logic for 3D Fly-to and Orbit
-            if (focus) {{
-                viewer.camera.flyTo({{
-                    destination: Cesium.Cartesian3.fromDegrees(focus.lon, focus.lat, 4000),
-                    orientation: {{ pitch: Cesium.Math.toRadians(-45), heading: 0 }},
-                    duration: 3,
-                    complete: () => {{
-                        viewer.clock.onTick.addEventListener(function(clock) {{
-                            viewer.scene.camera.rotateRight(0.005);
-                        }});
-                    }}
-                }});
-            }} else {{
-                viewer.camera.setView({{ destination: Cesium.Cartesian3.fromDegrees(78, 20, 8000000) }});
-            }}
-
-        }} catch (e) {{
-            document.getElementById('cesiumContainer').innerHTML = "<div style='color:red; padding:20px;'>FATAL BOOT ERROR: " + e.message + "</div>";
-        }}
-    }})();
-</script>
-"""
-
-if not CESIUM_TOKEN:
-    st.error("❌ TOKEN REQUIRED: Paste your Cesium Ion Token in the sidebar.")
-else:
-    components.html(cesium_html, height=760)
+# --- 4. THE DH THEORY (MATH) ---
+with st.expander("🔬 Technical Methodology & DH Link"):
+    st.markdown("### Digital Humanities: Mapping Infrastructure as Power")
+    st.write("By using 3D Columns, we visualize the 'height' of a nation's digital sovereignty.")
+    st.latex(r"LCP = \int_{source}^{hub} (Friction_{Terrain} \cdot Energy_{Stability})")
+    st.info("Large Cap (Red) | Mid Cap (Yellow) | Small Cap (Green)")
