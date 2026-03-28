@@ -4,40 +4,46 @@ import json
 
 st.set_page_config(layout="wide", page_title="Cyber-Frontline 2026")
 
-# --- 1. TOKEN & DATASET ---
+# --- 1. CONFIG & EXPANDED DATASET ---
 CESIUM_TOKEN = st.sidebar.text_input("Enter Cesium Ion Token", type="password")
 
-# Extensive 2026 Dataset (Small, Mid, Large Cap)
-facilities = [
-    # --- LARGE CAP (The Giants) ---
-    {"name": "Tata-PSMC (Dholera)", "lat": 22.25, "lon": 72.11, "cap": "Large", "type": "Mega-Fab", "lcp": 0.98, "sti": 99.1, "water": "UPW-Desal", "desc": "India's first commercial 28nm/40nm fab."},
-    {"name": "Micron (Sanand)", "lat": 22.98, "lon": 72.37, "cap": "Large", "type": "ATMP", "lcp": 0.92, "sti": 94.5, "water": "Municipal-UPW", "desc": "Global memory hub for assembly/testing."},
-    {"name": "TSMC (Hsinchu)", "lat": 24.77, "lon": 121.01, "cap": "Large", "type": "Fab", "lcp": 0.99, "sti": 99.8, "water": "Recycled-High", "desc": "Global Choke-Point for 3nm production."},
-    {"name": "Intel (Arizona)", "lat": 33.30, "lon": -111.90, "cap": "Large", "type": "Fab", "lcp": 0.85, "sti": 82.0, "water": "Arid-Optimized", "desc": "US Strategic Sovereign Hub."},
-    {"name": "Samsung (Pyeongtaek)", "lat": 37.01, "lon": 127.06, "cap": "Large", "type": "Fab", "lcp": 0.96, "sti": 95.2, "water": "High-Volume", "desc": "Largest semiconductor facility globally."},
+# Large, Mid, Small Cap Semiconductor Facilities (2026 Global Frontline)
+data = [
+    # --- GLOBAL POWERHOUSES (Large Cap) ---
+    {"name": "TSMC Fab 18", "lat": 23.10, "lon": 120.28, "cap": "Large", "type": "Fab", "sti": 99, "lcp": 0.98, "desc": "World's most advanced 2nm/3nm node hub."},
+    {"name": "Samsung Pyeongtaek", "lat": 37.01, "lon": 127.06, "cap": "Large", "type": "Fab", "sti": 95, "lcp": 0.95, "desc": "Massive memory and logic cluster."},
+    {"name": "Intel Ocotillo", "lat": 33.27, "lon": -111.88, "cap": "Large", "type": "Fab", "sti": 88, "lcp": 0.89, "desc": "US domestic sovereignty anchor."},
+    {"name": "Rapidus Hokkaido", "lat": 42.80, "lon": 141.77, "cap": "Large", "type": "Fab", "sti": 91, "lcp": 0.92, "desc": "Japan's 2nm state-backed initiative."},
+    {"name": "TI Sherman", "lat": 33.63, "lon": -96.61, "cap": "Large", "type": "Fab", "sti": 85, "lcp": 0.87, "desc": "Leading analog chip manufacturing."},
 
-    # --- MID CAP (The Growth Engines) ---
-    {"name": "Kaynes Semicon (Gujarat)", "lat": 22.99, "lon": 72.38, "cap": "Mid", "type": "OSAT", "lcp": 0.88, "sti": 89.0, "water": "Recycled", "desc": "Focused on power modules and automotive."},
-    {"name": "CG Power (Sanand)", "lat": 22.95, "lon": 72.40, "cap": "Mid", "type": "ATMP", "lcp": 0.86, "sti": 87.5, "water": "Industrial", "desc": "JV with Renesas for specialized chips."},
-    {"name": "HCL-Foxconn (Jewar)", "lat": 28.13, "lon": 77.55, "cap": "Mid", "type": "OSAT", "lcp": 0.91, "sti": 92.0, "water": "River-Linked", "desc": "Strategically placed near upcoming airport."},
-    {"name": "Suchi Semi (Gujarat)", "lat": 21.17, "lon": 72.83, "cap": "Mid", "type": "OSAT", "lcp": 0.82, "sti": 85.0, "water": "Coastal", "desc": "Expanding local supply chains."},
-    {"name": "Murugappa (Tamil Nadu)", "lat": 13.08, "lon": 80.27, "cap": "Mid", "type": "ATMP", "lcp": 0.89, "sti": 90.1, "water": "Metro-UPW", "desc": "Pivoting legacy industrial power to tech."},
-
-    # --- SMALL CAP / STRATEGIC (Critical Specialization) ---
-    {"name": "SCL (Mohali)", "lat": 30.70, "lon": 76.69, "cap": "Small", "type": "R&D Fab", "lcp": 0.65, "sti": 75.0, "water": "State-Sourced", "desc": "Strategic site for space/defense chips."},
-    {"name": "Sahasra Memory (Bhiwadi)", "lat": 28.21, "lon": 76.84, "cap": "Small", "type": "ATMP", "lcp": 0.72, "sti": 79.2, "water": "Borewell-UPW", "desc": "First private memory assembly in India."},
-    {"name": "SPEL (Chennai)", "lat": 12.98, "lon": 80.22, "cap": "Small", "type": "OSAT", "lcp": 0.78, "sti": 81.5, "water": "Urban-Linked", "desc": "Specialized in testing older nodes."},
-    {"name": "Vama Semi (Noida)", "lat": 28.53, "lon": 77.39, "cap": "Small", "type": "Design/Fab", "lcp": 0.74, "sti": 80.0, "water": "Urban", "desc": "Niche compound semiconductor focus."}
+    # --- INDIA FRONT (Timeline & Scale) ---
+    {"name": "Tata-PSMC (Dholera)", "lat": 22.25, "lon": 72.11, "cap": "Large", "type": "Mega-Fab", "sti": 98, "lcp": 0.97, "year": 2024, "desc": "India's flagship commercial fab."},
+    {"name": "Micron (Sanand)", "lat": 22.98, "lon": 72.37, "cap": "Large", "type": "ATMP", "sti": 92, "lcp": 0.90, "year": 2023, "desc": "Key global memory packaging node."},
+    {"name": "Tata-TSAT (Assam)", "lat": 26.24, "lon": 92.33, "cap": "Large", "type": "ATMP", "sti": 82, "lcp": 0.75, "year": 2025, "desc": "Strategic hub for NE region."},
+    {"name": "Tower-Adani (Taloja)", "lat": 19.06, "lon": 73.07, "cap": "Large", "type": "Fab", "sti": 90, "lcp": 0.94, "year": 2026, "desc": "Massive analog/power fab JV."},
+    {"name": "Kaynes (Sanand)", "lat": 22.95, "lon": 72.40, "cap": "Mid", "type": "OSAT", "sti": 86, "lcp": 0.88, "year": 2024, "desc": "Automotive chip specialization."},
+    {"name": "CG Power (Gujarat)", "lat": 22.99, "lon": 72.38, "cap": "Mid", "type": "ATMP", "sti": 87, "lcp": 0.85, "year": 2024, "desc": "Industrial power electronics hub."},
+    {"name": "HCL-Foxconn (Jewar)", "lat": 28.13, "lon": 77.55, "cap": "Mid", "type": "OSAT", "sti": 91, "lcp": 0.91, "year": 2025, "desc": "Strategic airport-adjacent OSAT."},
+    {"name": "SCL (Mohali)", "lat": 30.70, "lon": 76.69, "cap": "Small", "type": "Strategic", "sti": 75, "lcp": 0.60, "year": 1990, "desc": "State-run defense/space chip fab."},
+    {"name": "Sahasra (Bhiwadi)", "lat": 28.21, "lon": 76.84, "cap": "Small", "type": "ATMP", "sti": 80, "lcp": 0.78, "year": 2023, "desc": "Niche memory assembly focus."},
+    {"name": "Vama Semi (Noida)", "lat": 28.53, "lon": 77.39, "cap": "Small", "type": "Design", "sti": 79, "lcp": 0.70, "year": 2025, "desc": "Compound semiconductor pioneer."},
 ]
 
-# --- 2. LAYOUT ---
-st.title("🛡️ Cyber-Frontline: 2026 GIS Dashboard")
-st.sidebar.info("Select a Hub to trigger a 3D Google Earth 'Fly-to' and Orbit.")
+# --- 2. NAVIGATION ---
+st.sidebar.header("🛡️ Cyber-Control Center")
+mode = st.sidebar.radio("View Mode", ["Global", "India"])
+selected_name = st.sidebar.selectbox("🎯 Fly-to Target:", ["None"] + [f['name'] for f in data])
 
-selected_node = st.sidebar.selectbox("🎯 Fly-to Node:", ["None"] + [f['name'] for f in facilities])
-target = next((f for f in facilities if f['name'] == selected_node), None)
+if mode == "India":
+    year = st.sidebar.slider("Timeline", 1990, 2026, 2026)
+    filtered_data = [f for f in data if "year" in f and f['year'] <= year]
+else:
+    filtered_data = [f for f in data if "year" not in f or f['year'] <= 2026]
 
-# --- 3. THE ASYNC CESIUM ENGINE ---
+target = next((f for f in data if f['name'] == selected_name), None)
+
+# --- 3. THE "ASYNC BOOT" ENGINE ---
+# Using a 100% stable initialization script for 2026
 cesium_html = f"""
 <div id="cesiumContainer" style="width: 100%; height: 750px; background: #000;"></div>
 <script src="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Cesium.js"></script>
@@ -47,11 +53,8 @@ cesium_html = f"""
         try {{
             Cesium.Ion.defaultAccessToken = '{CESIUM_TOKEN}';
             
-            // FIX: Await the terrain provider to prevent 'setDynamicLighting' crash
-            const terrainProvider = await Cesium.Terrain.fromWorldTerrain();
-            
+            // Step 1: Initialize Viewer without a promise
             const viewer = new Cesium.Viewer('cesiumContainer', {{
-                terrain: terrainProvider,
                 baseLayerPicker: false, 
                 geocoder: false, 
                 timeline: false, 
@@ -60,39 +63,38 @@ cesium_html = f"""
                 shouldAnimate: true
             }});
 
-            const data = {json.dumps(facilities)};
-            const target = {json.dumps(target)};
+            // Step 2: Inject Imagery and Terrain Async to prevent 'setDynamicLighting' error
+            const terrainProvider = await Cesium.Terrain.fromWorldTerrain();
+            viewer.scene.globe.terrainProvider = terrainProvider;
 
-            // Add Nodes with classification logic
-            data.forEach(hub => {{
-                let nodeColor = Cesium.Color.RED; // Large
-                if(hub.cap === "Mid") nodeColor = Cesium.Color.YELLOW;
-                if(hub.cap === "Small") nodeColor = Cesium.Color.LIME;
+            const hubs = {json.dumps(filtered_data)};
+            const focus = {json.dumps(target)};
+
+            // Step 3: Map classification colors
+            hubs.forEach(h => {{
+                let color = Cesium.Color.RED;
+                if(h.cap === "Mid") color = Cesium.Color.YELLOW;
+                if(h.cap === "Small") color = Cesium.Color.LIME;
 
                 viewer.entities.add({{
-                    position: Cesium.Cartesian3.fromDegrees(hub.lon, hub.lat),
-                    point: {{ pixelSize: hub.cap === "Large" ? 14 : 10, color: nodeColor, outlineWidth: 2, outlineColor: Cesium.Color.WHITE }},
-                    label: {{ text: hub.name, font: '10pt monospace', style: Cesium.LabelStyle.FILL_AND_OUTLINE, pixelOffset: new Cesium.Cartesian2(0, -15) }},
-                    description: `
-                        <div style="background: rgba(0,0,0,0.8); padding: 10px; border-radius: 5px;">
-                            <h3 style="color:cyan;">${{hub.name}}</h3>
-                            <p><b>Cap:</b> ${{hub.cap}} | <b>Type:</b> ${{hub.type}}</p>
-                            <hr>
-                            <b>GIS METRICS:</b><br>
-                            - Strategic Index (STI): ${{hub.sti}}%<br>
-                            - Transport Cost (LCP): ${{hub.lcp}}<br>
-                            - Water: ${{hub.water}}<br>
-                            <br>
-                            <i>${{hub.desc}}</i>
-                        </div>
-                    `
+                    position: Cesium.Cartesian3.fromDegrees(h.lon, h.lat),
+                    point: {{ pixelSize: h.cap === "Large" ? 12 : 8, color: color, outlineWidth: 1 }},
+                    label: {{ text: h.name, font: '10pt monospace', style: Cesium.LabelStyle.FILL_AND_OUTLINE, pixelOffset: new Cesium.Cartesian2(0, -15) }},
+                    description: `<div style="padding:10px;">
+                        <h3>${{h.name}} (${{h.cap}} Cap)</h3>
+                        <p><b>Type:</b> ${{h.type}}</p>
+                        <hr>
+                        <b>GIS METRICS:</b><br>
+                        - Topo Index (STI): ${{h.sti}}%<br>
+                        - Transport Cost (LCP): ${{h.lcp}}<br>
+                        <br><i>${{h.desc}}</i></div>`
                 }});
             }});
 
-            // Fly-to and Continuous Orbit
-            if (target) {{
+            // Step 4: Logic for 3D Fly-to and Orbit
+            if (focus) {{
                 viewer.camera.flyTo({{
-                    destination: Cesium.Cartesian3.fromDegrees(target.lon, target.lat, 4000),
+                    destination: Cesium.Cartesian3.fromDegrees(focus.lon, focus.lat, 4000),
                     orientation: {{ pitch: Cesium.Math.toRadians(-45), heading: 0 }},
                     duration: 3,
                     complete: () => {{
@@ -102,28 +104,17 @@ cesium_html = f"""
                     }}
                 }});
             }} else {{
-                // Default View: Focus on India
-                viewer.camera.setView({{
-                    destination: Cesium.Cartesian3.fromDegrees(78.96, 20.59, 5000000)
-                }});
+                viewer.camera.setView({{ destination: Cesium.Cartesian3.fromDegrees(78, 20, 8000000) }});
             }}
+
         }} catch (e) {{
-            document.getElementById('cesiumContainer').innerHTML = "<div style='color:red; padding:20px;'>ASYNC ERROR: " + e.message + "</div>";
+            document.getElementById('cesiumContainer').innerHTML = "<div style='color:red; padding:20px;'>FATAL BOOT ERROR: " + e.message + "</div>";
         }}
     }})();
 </script>
 """
 
 if not CESIUM_TOKEN:
-    st.error("❌ TOKEN MISSING: Please enter your Cesium Ion Token in the sidebar.")
+    st.error("❌ TOKEN REQUIRED: Paste your Cesium Ion Token in the sidebar.")
 else:
     components.html(cesium_html, height=760)
-
-# --- 4. TECHNICAL DOCUMENTATION ---
-with st.expander("🔬 Mathematical & Strategic Methodology"):
-    st.write("For this 4th-semester DH project, we utilize **Spatial Justice** and **Infrastructure Power** theories.")
-    st.latex(r"LCP = \int_{source}^{hub} (Friction_{Terrain} + Distance \cdot Cost_{Energy}) dt")
-    st.markdown("""
-    - **Strategic Topographical Index (STI):** A weighted metric where $STI > 90\%$ indicates optimal flatness ($<0.1$ degree slope) and proximity to state-guaranteed power grids.
-    - **Ultra-Pure Water (UPW):** Necessary for 3nm/5nm nodes; mapped relative to the Narmada and Brahmaputra river basins.
-    """)
