@@ -37,45 +37,49 @@ with tab2:
 
 # --- THE CESIUM COMPONENT (HTML/JS) ---
 # This is the "Engine" that creates the 3D Satellite view
+# --- THE UPDATED CESIUM COMPONENT ---
 cesium_html = f"""
-<div id="cesiumContainer" style="width: 100%; height: 600px;"></div>
+<div id="cesiumContainer" style="width: 100%; height: 600px; background: #000;"></div>
 <script src="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Cesium.js"></script>
 <link href="https://cesium.com/downloads/cesiumjs/releases/1.115/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
 <script>
-    Cesium.Ion.defaultAccessToken = '{CESIUM_TOKEN}';
-    const viewer = new Cesium.Viewer('cesiumContainer', {{
-        terrainProvider: Cesium.createWorldTerrain(),
-        baseLayerPicker: false,
-        geocoder: false,
-        timeline: false,
-        animation: false
-    }});
-
-    const data = {json.dumps(active_data)};
-    const target = {json.dumps(target)};
-
-    // Add Nodes
-    data.forEach(hub => {{
-        viewer.entities.add({{
-            position: Cesium.Cartesian3.fromDegrees(hub.lon, hub.lat),
-            point: {{ pixelSize: 15, color: Cesium.Color.RED, outlineColor: Cesium.Color.WHITE, outlineWidth: 2 }},
-            label: {{ text: hub.name, font: '14pt monospace', style: Cesium.LabelStyle.FILL_AND_OUTLINE, verticalOrigin: Cesium.VerticalOrigin.BOTTOM, pixelOffset: new Cesium.Cartesian2(0, -20) }},
-            description: `<b>LCP Index:</b> ${{hub.lcp}}<br><b>Water:</b> ${{hub.water}}`
+    try {{
+        Cesium.Ion.defaultAccessToken = '{CESIUM_TOKEN}';
+        
+        // Initialize viewer with the modern 2026 terrain syntax
+        const viewer = new Cesium.Viewer('cesiumContainer', {{
+            terrain: Cesium.Terrain.fromWorldTerrain(),
+            baseLayerPicker: false,
+            geocoder: false,
+            timeline: false,
+            animation: false,
+            infoBox: true,
+            selectionIndicator: false
         }});
-    }});
 
-    // FLY-TO & REVOLVE LOGIC
-    if (target) {{
-        viewer.camera.flyTo({{
-            destination: Cesium.Cartesian3.fromDegrees(target.lon, target.lat, 5000),
-            orientation: {{ pitch: Cesium.Math.toRadians(-35), heading: 0 }},
-            complete: () => {{
-                // Start Revolving after arrival
-                viewer.clock.onTick.addEventListener(function(clock) {{
-                    viewer.scene.camera.rotateRight(0.005);
-                }});
-            }}
+        const data = {json.dumps(active_data)};
+        const target = {json.dumps(target)};
+
+        // Add the Semiconductor Hubs
+        data.forEach(hub => {{
+            viewer.entities.add({{
+                position: Cesium.Cartesian3.fromDegrees(hub.lon, hub.lat),
+                point: {{ pixelSize: 12, color: Cesium.Color.RED, outlineWidth: 2 }},
+                label: {{ text: hub.name, font: '12pt sans-serif', style: Cesium.LabelStyle.FILL_AND_OUTLINE, pixelOffset: new Cesium.Cartesian2(0, -15) }}
+            }});
         }});
+
+        // Fly-to Logic
+        if (target) {{
+            viewer.camera.flyTo({{
+                destination: Cesium.Cartesian3.fromDegrees(target.lon, target.lat, 8000),
+                orientation: {{ pitch: Cesium.Math.toRadians(-40), heading: 0 }},
+                duration: 3
+            }});
+        }}
+    }} catch (err) {{
+        console.error("Cesium Load Error:", err);
+        document.getElementById('cesiumContainer').innerHTML = "<h2 style='color:white; padding: 20px;'>Error Loading 3D Globe: " + err.message + "</h2>";
     }}
 </script>
 """
