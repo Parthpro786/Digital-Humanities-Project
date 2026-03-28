@@ -6,7 +6,7 @@ import json
 st.set_page_config(layout="wide", page_title="Cyber-Frontline 3D")
 
 # 1. SETUP: Put your Cesium Ion Token here
-CESIUM_TOKEN = st.sidebar.text_input("Enter Cesium Ion Token", type="password")
+CESIUM_TOKEN = st.sidebar.text_input("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhNWQ4NzJmNi1hZmRiLTQ0ZWYtOTMyZC1hNGNkMzg4ZDc5NTEiLCJpZCI6NDEwNTQ5LCJpYXQiOjE3NzQ3Mjk3OTF9.4mMedUCL2GR2dA08CxoaQzlbpH2sdpCgriCq6H14yvg", type="Memyself@786902"))
 
 # --- DATA: PROFESSIONAL GIS METRICS ---
 # STI: Strategic Topographical Index | LCP: Least Cost Path
