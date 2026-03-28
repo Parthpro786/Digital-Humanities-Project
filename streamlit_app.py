@@ -2,83 +2,76 @@ import streamlit as st
 import pandas as pd
 import pydeck as pdk
 
-st.set_page_config(layout="wide", page_title="Cyber-Frontline GIS")
+st.set_page_config(layout="wide", page_title="Cyber-Frontline 2026")
 
-# --- 1. THE DATASET (25+ STRATEGIC HUBS) ---
-hubs = [
-    # GLOBAL LEADERS
-    {"name": "TSMC Fab 18", "lat": 23.10, "lon": 120.28, "cap": "Large", "type": "Fab", "sti": 99.2, "lcp": 0.98, "water": "High-Pure", "vibe": "Choke-Point"},
-    {"name": "Samsung Pyeongtaek", "lat": 37.01, "lon": 127.06, "cap": "Large", "type": "Fab", "sti": 95.5, "lcp": 0.95, "water": "Industrial", "vibe": "Cluster-Lead"},
-    {"name": "Intel Ocotillo", "lat": 33.27, "lon": -111.88, "cap": "Large", "type": "Fab", "sti": 85.0, "lcp": 0.82, "water": "Recycled", "vibe": "Sovereign-Base"},
-    
-    # INDIA EVOLUTION (1990-2026)
-    {"name": "SCL Mohali", "lat": 30.70, "lon": 76.69, "cap": "Small", "type": "Strategic", "year": 1990, "sti": 72.0, "lcp": 0.61, "water": "River", "vibe": "Heritage-Node"},
-    {"name": "Tata-PSMC Dholera", "lat": 22.25, "lon": 72.11, "cap": "Large", "type": "Mega-Fab", "year": 2024, "sti": 99.5, "lcp": 0.97, "water": "Desal", "vibe": "New-Frontier"},
-    {"name": "Micron Sanand", "lat": 22.98, "lon": 72.37, "cap": "Large", "type": "ATMP", "year": 2023, "sti": 91.2, "lcp": 0.90, "water": "UPW-Mains", "vibe": "Memory-Hub"},
-    {"name": "Kaynes Sanand", "lat": 22.95, "lon": 72.40, "cap": "Mid", "type": "OSAT", "year": 2024, "sti": 86.5, "lcp": 0.85, "water": "Recycled", "vibe": "Auto-Specialist"},
-    {"name": "HCL-Foxconn Jewar", "lat": 28.13, "lon": 77.55, "cap": "Mid", "type": "OSAT", "year": 2025, "sti": 92.0, "lcp": 0.91, "water": "Yamuna", "vibe": "Logistics-Link"},
-    {"name": "Tower-Adani Taloja", "lat": 19.06, "lon": 73.07, "cap": "Large", "type": "Fab", "year": 2026, "sti": 93.1, "lcp": 0.94, "water": "Coastal", "vibe": "Analog-Core"}
+# --- 1. DATASET: 25+ HUBS ---
+hubs_data = [
+    {"name": "TSMC Fab 18", "lat": 23.10, "lon": 120.28, "cap": "Large", "type": "Fab", "sti": 99.2, "lcp": 0.98, "water": "High-Pure", "grid": "99.9%", "labor": "High", "year": 2020},
+    {"name": "Samsung Pyeongtaek", "lat": 37.01, "lon": 127.06, "cap": "Large", "type": "Fab", "sti": 95.5, "lcp": 0.95, "water": "High-Pure", "grid": "99.8%", "labor": "High", "year": 2017},
+    {"name": "Intel Arizona", "lat": 33.27, "lon": -111.88, "cap": "Large", "type": "Fab", "sti": 85.0, "lcp": 0.82, "water": "Recycled", "grid": "98.5%", "labor": "Medium", "year": 2024},
+    {"name": "Tata-PSMC Dholera", "lat": 22.25, "lon": 72.11, "cap": "Large", "type": "Mega-Fab", "sti": 99.5, "lcp": 0.97, "water": "Desal", "grid": "99.9%", "labor": "High", "year": 2024},
+    {"name": "Micron Sanand", "lat": 22.98, "lon": 72.37, "cap": "Large", "type": "ATMP", "sti": 91.2, "lcp": 0.90, "water": "UPW-Mains", "grid": "99.0%", "labor": "Medium", "year": 2023},
+    {"name": "Kaynes Sanand", "lat": 22.95, "lon": 72.40, "cap": "Mid", "type": "OSAT", "sti": 86.5, "lcp": 0.85, "water": "Recycled", "grid": "97.5%", "labor": "Medium", "year": 2024},
+    {"name": "HCL-Foxconn Jewar", "lat": 28.13, "lon": 77.55, "cap": "Mid", "type": "OSAT", "sti": 92.0, "lcp": 0.91, "water": "River", "grid": "96.5%", "labor": "High", "year": 2025},
+    {"name": "Tower-Adani Taloja", "lat": 19.06, "lon": 73.07, "cap": "Large", "type": "Fab", "sti": 93.1, "lcp": 0.94, "water": "Coastal", "grid": "98.8%", "labor": "High", "year": 2026},
+    {"name": "SCL Mohali", "lat": 30.70, "lon": 76.69, "cap": "Small", "type": "Strategic", "sti": 72.0, "lcp": 0.61, "water": "Sutlej", "grid": "95.0%", "labor": "Low", "year": 1990},
 ]
 
-df = pd.DataFrame(hubs)
+df = pd.DataFrame(hubs_data)
+df['color'] = df['cap'].map({'Large': [255, 0, 0, 200], 'Mid': [255, 255, 0, 200], 'Small': [0, 255, 0, 200]})
 
-# --- 2. SIDEBAR CONTROLS (THE "POPUP" LOGIC) ---
+# --- 2. SIDEBAR & NAVIGATION ---
 st.sidebar.title("🛡️ Cyber-Control Center")
-st.sidebar.markdown("---")
+st.sidebar.info("Select a Hub to trigger the 3D Fly-to and view GIS details.")
 
-view_mode = st.sidebar.radio("Navigation View", ["2D Global Overview", "3D India Timeline"])
-selected_hub = st.sidebar.selectbox("🎯 Target Hub (Fly-to 3D):", ["None"] + [h['name'] for h in hubs])
+view_mode = st.sidebar.radio("View Perspective", ["Global Overview", "Timeline Explorer"])
+selected_hub = st.sidebar.selectbox("🎯 Target Node (Fly-to):", ["None"] + list(df['name']))
 
-# Color Mapping
-df['color'] = df['cap'].map({'Large': [255, 30, 30, 200], 'Mid': [255, 255, 0, 200], 'Small': [0, 255, 120, 200]})
-
-# --- 3. 3D DYNAMIC VIEWSTATE ---
-# Default 2D
-initial_lat, initial_lon, initial_zoom, initial_pitch = 20.0, 70.0, 2, 0
+# --- 3. DYNAMIC CAMERA LOGIC ---
+# Default Global 2D View
+initial_view = pdk.ViewState(latitude=20, longitude=75, zoom=3, pitch=0, bearing=0)
 
 if selected_hub != "None":
-    hub_info = df[df['name'] == selected_hub].iloc[0]
-    initial_lat, initial_lon, initial_zoom, initial_pitch = hub_info['lat'], hub_info['lon'], 14, 50
+    hub = df[df['name'] == selected_hub].iloc[0]
+    # Update View to 3D Zoomed-in
+    initial_view = pdk.ViewState(
+        latitude=hub['lat'], 
+        longitude=hub['lon'], 
+        zoom=14, 
+        pitch=50, # 3D Angle
+        bearing=20
+    )
     
-    # THE SIDE POPUP (Inside the Sidebar when a hub is clicked)
-    st.sidebar.success(f"**TECHNICAL DOSSIER: {selected_hub}**")
-    st.sidebar.write(f"**Classification:** {hub_info['cap']} Cap {hub_info['type']}")
-    st.sidebar.write(f"**Strategic Topo Index (STI):** {hub_info['sti']}%")
-    st.sidebar.write(f"**Least Cost Path (LCP):** {hub_info['lcp']}")
-    st.sidebar.write(f"**UPW Water Source:** {hub_info['water']}")
-    st.sidebar.write(f"**Geopolitical Role:** {hub_info['vibe']}")
-    st.sidebar.markdown("---")
-    st.sidebar.latex(r"STI = \alpha(Slope^{-1}) + \beta(H_{2}O)")
+    # --- SIDE POPUP (Sidebar Details) ---
+    st.sidebar.markdown(f"### 📊 Technical Dossier: {selected_hub}")
+    st.sidebar.write(f"**Classification:** {hub['cap']} Cap {hub['type']}")
+    st.sidebar.write(f"**Strategic Topo Index (STI):** {hub['sti']}%")
+    st.sidebar.write(f"**Least Cost Path (LCP):** {hub['lcp']}")
+    st.sidebar.write(f"**Water Source:** {hub['water']}")
+    st.sidebar.write(f"**Grid Stability:** {hub['grid']}")
+    st.sidebar.write(f"**Labor Proximity:** {hub['labor']}")
+    st.sidebar.latex(r"Cost_{LCP} = \int f(terrain, logistics) dt")
 
-# --- 4. THE PYDECK ENGINE ---
-# ColumnLayer provides the 3D "Power Pillars"
+# --- 4. THE NO-TOKEN PYDECK MAP ---
 layer = pdk.Layer(
     "ColumnLayer",
-    df if view_mode == "2D Global Overview" else df[df['year'].notnull()],
+    df if view_mode == "Global Overview" else df[df['year'] <= st.sidebar.slider("Year", 1990, 2026, 2026)],
     get_position=['lon', 'lat'],
     get_elevation=500,
-    elevation_scale=100 if selected_hub == "None" else 5, # Flattens when zoomed in
+    elevation_scale=5,
     radius=30000 if selected_hub == "None" else 200,
     get_fill_color='color',
     pickable=True,
     auto_highlight=True,
 )
 
-view_state = pdk.ViewState(
-    latitude=initial_lat,
-    longitude=initial_lon,
-    zoom=initial_zoom,
-    pitch=initial_pitch,
-    bearing=10 if selected_hub != "None" else 0
-)
-
 st.pydeck_chart(pdk.Deck(
-    map_style='mapbox://styles/mapbox/dark-v10',
-    initial_view_state=view_state,
+    # FIX: Use CartoDB Style (Does not require Mapbox token)
+    map_style='https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+    initial_view_state=initial_view,
     layers=[layer],
     tooltip={"text": "{name}\n{type} ({cap} Cap)"}
 ))
 
-# --- 5. DH THEORY FOOTER ---
-with st.expander("🔬 DH Methodology: Infrastructure as War"):
-    st.write("This map visualizes the **Cyber Frontline**. Red pillars represent 'Large Cap' sovereign nodes—territories that are more valuable than oil fields in 2026.")
+st.markdown("---")
+st.caption("Cyber-Frontline GIS Dashboard | IIST DH Project | SC24B112")
