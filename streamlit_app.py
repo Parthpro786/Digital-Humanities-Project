@@ -78,7 +78,6 @@ data = [
         "m_name": "Gulf of Khambhat Port", "m_lat": 21.75, "m_lon": 72.25, "m_dist": 55,
         "l_name": "Ahmedabad Urban Center", "l_lat": 23.02, "l_lon": 72.57, "l_dist": 85,
         "bt": "India's First Commercial 28nm Mega-Fab. Sovereign logic node production.", 
-        # MANUAL IMAGE INSTRUCTION: Replace this URL with n['img'] = "YOUR_IMAGE.png"
         "img": "https://images.unsplash.com/photo-1508344928928-7165b67de128?auto=format&fit=crop&w=800&q=80",
         "profile": [0, 8, 3, 14, 15, 15, 15, 15, 11, 4, 5], 
         "sti": 99.5, "lcp": 0.97,
@@ -229,6 +228,17 @@ with tab1:
     selected_year = st.select_slider("Historical Timeline Integration:", options=[1980, 1990, 2000, 2010, 2020, 2026], value=2026)
     active_df = df[(df['region'] == 'India') & (df['year'] <= selected_year)].copy()
     
+    # NEW HUD LAYER
+    col_kpi1, col_kpi2, col_kpi3 = st.columns(3)
+    with col_kpi1:
+        st.metric("Active Indian Nodes", len(active_df))
+    with col_kpi2:
+        st.metric("Average STI Score", f"{active_df['sti'].mean():.1f}%" if not active_df.empty else "N/A")
+    with col_kpi3:
+        st.metric("Average LCP Efficiency", f"{active_df['lcp'].mean():.2f}" if not active_df.empty else "N/A")
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
     col_map, col_dossier = st.columns([6, 4], gap="large")
 
     with col_map:
@@ -317,12 +327,6 @@ with tab1:
                 clear_selection()
                 st.rerun()
             
-            # --- MANUAL IMAGE INSTRUCTION: ---
-            # To add an image of the actual building, replace the URL in the data block
-            # (look for n['img'] = "...") with the path to your image file,
-            # for example: n['img'] = "mohali_building.png"
-            # It will automatically render here.
-            
             st.image(n['img'], use_container_width=True)
             st.markdown(f"<h2>{n['name']}</h2>", unsafe_allow_html=True)
             st.markdown(f"<span class='tag-{n['cap'].lower()}'>{n['cap']} Cap Facility</span> | <b>Coordinates:</b> {n['lat']} N, {n['lon']} E", unsafe_allow_html=True)
@@ -367,7 +371,7 @@ with tab1:
             </div>
             """, unsafe_allow_html=True)
             
-            # VULNERABILITY RADAR CHART (Fixed Brown Labels & Margins)
+            # VULNERABILITY RADAR CHART
             st.markdown("<b>Vulnerability & Stability Radar</b>", unsafe_allow_html=True)
             categories = ['Seismic Stability', 'Water Security', 'Logistics Efficiency', 'Geopolitical Safety', 'Labor Proximity']
             fig = go.Figure()
@@ -382,11 +386,9 @@ with tab1:
             fig.update_layout(
                 polar=dict(
                     radialaxis=dict(visible=True, range=[0, 100]),
-                    # BROWN, READABLE TEXT
                     angularaxis=dict(tickfont=dict(color='#8B4513', size=13, weight='bold')) 
                 ),
                 showlegend=False,
-                # Increased margins to fix cutoff
                 margin=dict(l=40, r=40, t=20, b=20),
                 paper_bgcolor='rgba(0,0,0,0)',
                 plot_bgcolor='rgba(0,0,0,0)'
@@ -396,7 +398,7 @@ with tab1:
         else:
             st.info("👆 Click a location tag on the map to view its Technical Dossier and logistics profile.")
 
-# --- TAB 2: GLOBAL ECOSYSTEM (For Tab 3 & context) ---
+# --- TAB 2: GLOBAL ECOSYSTEM ---
 with tab2:
     global_df = df.copy()
     layers = [pdk.Layer("IconLayer", global_df, get_icon="icon_data", get_size=4, size_scale=10, get_position=["lon", "lat"], get_color="color", pickable=True)]
@@ -405,7 +407,7 @@ with tab2:
 # --- TAB 3: S.T.I. STATISTICAL DISTRIBUTION & INFERENCE ---
 with tab3:
     st.markdown("### Continuous Probability Density & Inferential Statistics")
-    st.markdown("This module applies Kernel Density Estimation (KDE) and rigorous hypothesis testing to the Strategic Topographical Index (STI). By modeling the variance ($\sigma^2$) and mean ($\mu$) across facility classifications, we can mathematically infer India's sovereign site-selection strategy.")
+    st.markdown("This module applies Kernel Density Estimation (KDE) and rigorous hypothesis testing to the Strategic Topographical Index (STI). By modeling the variance ($\\sigma^2$) and mean ($\\mu$) across facility classifications, we can mathematically infer India's sovereign site-selection strategy.")
     
     # --- PREP DATA ---
     stats_df = df[(df['region'] == 'India')].dropna(subset=['sti', 'cap']).copy()
@@ -465,7 +467,7 @@ with tab3:
             levene_stat, levene_p = stats.levene(*group_values)
             st.write(f"**Statistic:** `{levene_stat:.4f}` | **p-value:** `{levene_p:.4f}`")
             if levene_p < 0.05:
-                st.success("Reject $H_0$ → Topographical variances ($\sigma^2$) are significantly different.")
+                st.success("Reject $H_0$ → Topographical variances ($\\sigma^2$) are significantly different.")
             else:
                 st.info("Fail to reject $H_0$ → Variances are statistically similar.")
 
@@ -502,7 +504,7 @@ with tab3:
 
         overlap_results = []
         for cap1, cap2 in combinations(densities.keys(), 2):
-            overlap = np.trapzoid(np.minimum(densities[cap1], densities[cap2]), x_grid.flatten())
+            overlap = np.trapezoid(np.minimum(densities[cap1], densities[cap2]), x_grid.flatten())
             overlap_results.append({"Comparison": f"{cap1} vs {cap2}", "Overlap Coefficient": round(overlap, 4)})
         
         st.dataframe(pd.DataFrame(overlap_results), use_container_width=True, hide_index=True)
@@ -515,12 +517,12 @@ with tab3:
     Based on the inferential statistics derived from the current spatial data, we recommend the following frameworks for future Indian semiconductor expansion:
     
     1. **Strict Stratification of STI Requirements (ANOVA & Overlap Inference):** The low KDE overlap coefficient between Large and Small Cap facilities proves that India is already operating on a bifurcated strategy. **Recommendation:** Future Mega-Fabs (Large Cap) must strictly target topographies with an STI $> 92\%$ (Coastal Plateaus / Stable Plains). Attempting to build a Large Cap fab in a "Moderate" zone will result in catastrophic logistical and vibration friction.
-    2. **Leveraging Variance for Geographical Hedging (Levene's Inference):** The higher variance ($\sigma^2$) and left-skewed tails in Small/Mid Cap facilities indicate they can survive in high-friction terrain. **Recommendation:** The government should incentivize future Mid/Small Cap facilities (OSAT, discrete power, defense) to be built in Eastern and Northern river valleys or foothills. This accepts a lower STI but establishes a distributed *Defense-in-Depth* network, ensuring the entire supply chain cannot be wiped out by a single coastal weather event or naval blockade.
+    2. **Leveraging Variance for Geographical Hedging (Levene's Inference):** The higher variance ($\\sigma^2$) and left-skewed tails in Small/Mid Cap facilities indicate they can survive in high-friction terrain. **Recommendation:** The government should incentivize future Mid/Small Cap facilities (OSAT, discrete power, defense) to be built in Eastern and Northern river valleys or foothills. This accepts a lower STI but establishes a distributed *Defense-in-Depth* network, ensuring the entire supply chain cannot be wiped out by a single coastal weather event or naval blockade.
     3. **Resource Catchment Thresholds (Chi-Square Inference):** The Chi-Square contingency highlights that high-friction topographies cannot support the mass resource consumption of commercial logic nodes. **Recommendation:** Future infrastructure planning must mandate that any site with an STI $< 82\%$ be restricted to specialized, low-volume/high-margin fabrication (e.g., Silicon Carbide, Gallium Nitride) where the volume of required Ultra-Pure Water (UPW) and heavy LCP transit is statistically lower.
     """)
 
     st.markdown("---")
- # --- DIGITAL HUMANITIES NARRATIVE ---
+    # --- DIGITAL HUMANITIES NARRATIVE ---
     st.markdown("### 🌍 Digital Humanities Perspective: Infrastructure as Destiny")
     st.markdown("""
     *For policymakers, historians, and the general public, the statistical variances shown above are not just numbers—they are the physical blueprints of a new geopolitical cold war.*
