@@ -1,3 +1,6 @@
 streamlit
 pandas
-pydeck>=0.8.0
+pydeck
+numpy
+altair
+plotly
