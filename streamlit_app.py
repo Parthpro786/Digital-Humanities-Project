@@ -95,7 +95,7 @@ with col_map:
     )
 
     # Render Map and capture click events natively
-    # Using a free CartoDB basemap so it never turns black!
+    # FIXED: changed 'single_object' to 'single-object'
     map_event = st.pydeck_chart(
         pdk.Deck(
             layers=[icon_layer], 
@@ -104,18 +104,17 @@ with col_map:
             tooltip={"text": "{name}\n{cap} Cap"}
         ),
         on_select="rerun",
-        selection_mode="single_object"
+        selection_mode="single-object"
     )
 
 # --- 6. IDENTIFY CLICKED NODE & RIGHT HUD ---
 # Check if the user clicked a pin on the map
 clicked_node = None
 if map_event and map_event.selection.objects:
-    # Extract the data of the clicked pin
     if "facility_pins" in map_event.selection.objects:
         clicked_data = map_event.selection.objects["facility_pins"]
         if clicked_data:
-            clicked_node = clicked_data[0] # Get the dictionary of the selected row
+            clicked_node = clicked_data[0] 
 
 with col_panel:
     if clicked_node is None:
@@ -146,9 +145,7 @@ with col_panel:
         st.markdown(f"📦 **Raw Materials:** {clicked_node['m_name']}<br><span style='color:gray; font-size:14px'>└─ Route Distance: {clicked_node['m_dist']}</span>", unsafe_allow_html=True)
         st.markdown(f"**Strategic Topographical Index (STI):** `{clicked_node['sti']}%`")
 
-# --- 7. INJECT DYNAMIC ROUTING INTO MAP (Optional, draws lines when clicked) ---
-# If a node is clicked, we draw the Bezier curves on top of the map.
-# Streamlit will automatically update the map rendering.
+# --- 7. INJECT DYNAMIC ROUTING INTO MAP ---
 if clicked_node:
     fac_coord = [clicked_node['lon'], clicked_node['lat']]
     w_coord = [clicked_node['w_lon'], clicked_node['w_lat']]
@@ -163,14 +160,12 @@ if clicked_node:
         {"lon": clicked_node['m_lon'], "lat": clicked_node['m_lat'], "color": [255, 255, 255]}
     ]
     
-    # We update the pydeck chart in place to show the lines connecting to the clicked node
     dynamic_layers = [
         icon_layer,
         pdk.Layer("PathLayer", pd.DataFrame(route_data), get_path="path", get_color="color", width_scale=20, width_min_pixels=3, get_dash_array=[10, 15], dash_justified=True),
         pdk.Layer("ScatterplotLayer", pd.DataFrame(res_data), get_position=["lon", "lat"], get_fill_color="color", get_radius=3000, stroked=True, get_line_color=[0, 0, 0])
     ]
     
-    # Re-render the map with the new dynamic layers (preserves the zoom/pan state)
     st.pydeck_chart(
         pdk.Deck(
             layers=dynamic_layers, 
