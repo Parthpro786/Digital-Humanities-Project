@@ -502,7 +502,7 @@ with tab3:
 
         overlap_results = []
         for cap1, cap2 in combinations(densities.keys(), 2):
-            overlap = np.trapz(np.minimum(densities[cap1], densities[cap2]), x_grid.flatten())
+            overlap = np.trapzoid(np.minimum(densities[cap1], densities[cap2]), x_grid.flatten())
             overlap_results.append({"Comparison": f"{cap1} vs {cap2}", "Overlap Coefficient": round(overlap, 4)})
         
         st.dataframe(pd.DataFrame(overlap_results), use_container_width=True, hide_index=True)
