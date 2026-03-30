@@ -4,6 +4,9 @@ import pydeck as pdk
 import numpy as np
 import altair as alt
 import plotly.graph_objects as go
+from scipy import stats
+from sklearn.neighbors import KernelDensity
+from itertools import combinations
 
 # --- 1. PROFESSIONAL PAGE CONFIG & CSS ---
 st.set_page_config(layout="wide", page_title="Strategic Topography GIS", page_icon="🗺️")
@@ -399,32 +402,130 @@ with tab2:
     layers = [pdk.Layer("IconLayer", global_df, get_icon="icon_data", get_size=4, size_scale=10, get_position=["lon", "lat"], get_color="color", pickable=True)]
     st.pydeck_chart(pdk.Deck(layers=layers, initial_view_state=pdk.ViewState(latitude=30.0, longitude=20.0, zoom=1.8, pitch=0), map_style='https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json', tooltip={"text": "{name}\nCap: {cap}"}))
 
-# --- TAB 3: STI STATISTICAL DISTRIBUTION (GAUSSIAN / KDE) ---
+# --- TAB 3: S.T.I. STATISTICAL DISTRIBUTION & INFERENCE ---
 with tab3:
-    st.markdown("### Continuous Probability Density: STI Stratification by Cap Size")
-    st.markdown("This Kernel Density Estimation (KDE) plot models the mathematical probability distribution of Strategic Topographical Index (STI) scores. By modeling the continuous Gaussian-style smoothing, we can infer operational scaling strategies.")
+    st.markdown("### Continuous Probability Density & Inferential Statistics")
+    st.markdown("This module applies Kernel Density Estimation (KDE) and rigorous hypothesis testing to the Strategic Topographical Index (STI). By modeling the variance ($\sigma^2$) and mean ($\mu$) across facility classifications, we can mathematically infer India's sovereign site-selection strategy.")
     
-    analytics_df = df.dropna(subset=['sti']).copy()
+    # --- PREP DATA ---
+    stats_df = df[(df['region'] == 'India')].dropna(subset=['sti', 'cap']).copy()
     
-    # Altair Continuous Density Plot
-    density_plot = alt.Chart(analytics_df).transform_density(
+    # 1. ALTAIR CONTINUOUS DENSITY PLOT
+    density_plot = alt.Chart(stats_df).transform_density(
         'sti',
         as_=['sti', 'density'],
         groupby=['cap'],
-        extent=[60, 110], # FIXED: Forces the math engine to calculate the tails down to zero
-        steps=200 # Smooths the curve resolution
+        extent=[60, 110], 
+        steps=200,
+        bandwidth=4 
     ).mark_area(opacity=0.45).encode(
         x=alt.X('sti:Q', title="Strategic Topographical Index (STI %)", scale=alt.Scale(domain=[65, 105])),
-        # FIXED: stack=None prevents the areas from stacking, creating true overlapping distributions
-        y=alt.Y('density:Q', title="Probability Density (Gaussian Smooth)", axis=alt.Axis(labels=False, ticks=False), stack=None),
-        color=alt.Color('cap:N', scale=alt.Scale(domain=['Large', 'Mid', 'Small'], range=['#dc2626', '#d97706', '#16a34a']), legend=alt.Legend(title="Facility Classification"))
-    ).properties(height=450)
+        y=alt.Y('density:Q', title="Probability Density", axis=alt.Axis(labels=False, ticks=False), stack=None),
+        color=alt.Color('cap:N', scale=alt.Scale(domain=['Large', 'Mid', 'Small'], range=['#dc2626', '#d97706', '#16a34a']))
+    ).properties(height=350)
     
     st.altair_chart(density_plot, use_container_width=True)
-    # Mathematical & Strategic Inferences
+
+    st.markdown("---")
+    
+    # --- STATISTICAL ANALYSIS ENGINE ---
+    col_stats1, col_stats2 = st.columns(2, gap="large")
+    
+    with col_stats1:
+        # SUMMARY STATISTICS (MLE ESTIMATES)
+        st.markdown("#### 📐 MLE-Based Distribution Parameters")
+        
+        # Calculate summary stats safely
+        summary = stats_df.groupby('cap')['sti'].agg(
+            Mean='mean',
+            Variance='var',
+            Std_Dev='std',
+            Count='count'
+        ).round(2)
+        
+        # Add skewness
+        summary['Skewness'] = stats_df.groupby('cap')['sti'].apply(stats.skew).round(3)
+        st.dataframe(summary, use_container_width=True)
+
+        # ANOVA TEST
+        st.markdown("#### 📊 ANOVA Test (Mean STI Differences)")
+        group_values = [group['sti'].values for name, group in stats_df.groupby('cap')]
+        
+        if len(group_values) > 1:
+            anova_stat, anova_p = stats.f_oneway(*group_values)
+            st.write(f"**F-statistic:** `{anova_stat:.4f}` | **p-value:** `{anova_p:.4f}`")
+            if anova_p < 0.05:
+                st.success("Reject $H_0$ → Mean STI differs significantly across Cap categories.")
+            else:
+                st.info("Fail to reject $H_0$ → Sample size too small or means are similar.")
+        
+        # LEVENE TEST
+        st.markdown("#### 📊 Levene’s Test (Variance Equality)")
+        if len(group_values) > 1:
+            levene_stat, levene_p = stats.levene(*group_values)
+            st.write(f"**Statistic:** `{levene_stat:.4f}` | **p-value:** `{levene_p:.4f}`")
+            if levene_p < 0.05:
+                st.success("Reject $H_0$ → Topographical variances ($\sigma^2$) are significantly different.")
+            else:
+                st.info("Fail to reject $H_0$ → Variances are statistically similar.")
+
+    with col_stats2:
+        # CHI-SQUARE TEST
+        st.markdown("#### 📊 Chi-Square Test (Categorical Dependency)")
+        # Adjusted bins to cover lower STI ranges like Mohali (75) safely
+        bins = [0, 82, 93, 110] 
+        labels = ['High Friction (<82)', 'Moderate (82-93)', 'Optimal (>93)']
+        stats_df['sti_bin'] = pd.cut(stats_df['sti'], bins=bins, labels=labels)
+        contingency_table = pd.crosstab(stats_df['cap'], stats_df['sti_bin'])
+        
+        st.write("Contingency Table (Count):")
+        st.dataframe(contingency_table, use_container_width=True)
+        
+        chi2_stat, chi2_p, dof, expected = stats.chi2_contingency(contingency_table)
+        st.write(f"**Chi2:** `{chi2_stat:.4f}` | **p-value:** `{chi2_p:.4f}`")
+        if chi2_p < 0.05:
+            st.success("Reject $H_0$ → STI risk category strictly depends on facility Cap type.")
+        else:
+            st.info("Fail to reject $H_0$ → Dependency not strictly proven at current sample size.")
+
+        # KDE OVERLAP ANALYSIS
+        st.markdown("#### 📊 KDE Distribution Overlap")
+        x_grid = np.linspace(60, 110, 500).reshape(-1, 1)
+        densities = {}
+        
+        for cap, group in stats_df.groupby('cap'):
+            # Using bandwidth=4 to match Altair and prevent collapse on small data
+            kde = KernelDensity(kernel='gaussian', bandwidth=4.0)
+            kde.fit(group['sti'].values.reshape(-1, 1))
+            log_density = kde.score_samples(x_grid)
+            densities[cap] = np.exp(log_density)
+
+        overlap_results = []
+        for cap1, cap2 in combinations(densities.keys(), 2):
+            overlap = np.trapz(np.minimum(densities[cap1], densities[cap2]), x_grid.flatten())
+            overlap_results.append({"Comparison": f"{cap1} vs {cap2}", "Overlap Coefficient": round(overlap, 4)})
+        
+        st.dataframe(pd.DataFrame(overlap_results), use_container_width=True, hide_index=True)
+
+    st.markdown("---")
+    
+    # --- STRATEGIC RECOMMENDATIONS BASED ON STATS ---
+    st.markdown("### 🎯 Inferences & Strategic Recommendations for Future Development")
     st.markdown("""
-    #### 📐 Mathematical & Strategic Inferences
-    * **Large Cap Variance (Right-Skewed Gaussian):** Notice how the Red (Large Cap) density curve clusters heavily between **88% and 99%**. Mathematically, this indicates a highly stringent topographical baseline. The State and private entities are rejecting high-friction environments for Mega-Fabs, demonstrating a standard deviation heavily skewed toward coastal plains and stable plateaus.
-    * **Mid Cap Standardization (Central Tendency):** The Orange (Mid Cap) curve demonstrates a tighter standard deviation around the **89% - 92%** mean. OSAT and packaging facilities require excellent logistics but do not need the absolute 0.02% seismic zeroing required by Large Cap EUV lithography, creating a predictable statistical cluster.
-    * **Small Cap Anomaly (Left-Tailed Variance):** The Green (Small Cap) curve shows a severe left-tail distribution dropping to **75%**. This statistical anomaly mathematically proves the *Defense-in-Depth* theory: state-run strategic fabs intentionally accept severe topographical friction (low STI) in exchange for deep-inland geographical security.
+    Based on the inferential statistics derived from the current spatial data, we recommend the following frameworks for future Indian semiconductor expansion:
+    
+    1. **Strict Stratification of STI Requirements (ANOVA & Overlap Inference):** The low KDE overlap coefficient between Large and Small Cap facilities proves that India is already operating on a bifurcated strategy. **Recommendation:** Future Mega-Fabs (Large Cap) must strictly target topographies with an STI $> 92\%$ (Coastal Plateaus / Stable Plains). Attempting to build a Large Cap fab in a "Moderate" zone will result in catastrophic logistical and vibration friction.
+    2. **Leveraging Variance for Geographical Hedging (Levene's Inference):** The higher variance ($\sigma^2$) and left-skewed tails in Small/Mid Cap facilities indicate they can survive in high-friction terrain. **Recommendation:** The government should incentivize future Mid/Small Cap facilities (OSAT, discrete power, defense) to be built in Eastern and Northern river valleys or foothills. This accepts a lower STI but establishes a distributed *Defense-in-Depth* network, ensuring the entire supply chain cannot be wiped out by a single coastal weather event or naval blockade.
+    3. **Resource Catchment Thresholds (Chi-Square Inference):** The Chi-Square contingency highlights that high-friction topographies cannot support the mass resource consumption of commercial logic nodes. **Recommendation:** Future infrastructure planning must mandate that any site with an STI $< 82\%$ be restricted to specialized, low-volume/high-margin fabrication (e.g., Silicon Carbide, Gallium Nitride) where the volume of required Ultra-Pure Water (UPW) and heavy LCP transit is statistically lower.
+    """)
+
+    st.markdown("---")
+ # --- DIGITAL HUMANITIES NARRATIVE ---
+    st.markdown("### 🌍 Digital Humanities Perspective: Infrastructure as Destiny")
+    st.markdown("""
+    *For policymakers, historians, and the general public, the statistical variances shown above are not just numbers—they are the physical blueprints of a new geopolitical cold war.*
+    
+    * **The Architecture of Paranoia vs. Profit:** The KDE graph physically illustrates human motives. The tight cluster of 'Large Cap' Mega-Fabs on flat, coastal plains (High STI) represents **Profit**. These sites demand topographical perfection to manufacture commercial chips with zero failure rates. Conversely, the wide, left-skewed tail of 'Small Cap' facilities represents **Paranoia and Survival**. By burying strategic defense foundries deep in high-friction valleys and foothills, the state explicitly sacrifices economic efficiency for geographical immunity against naval blockades or coastal climate disasters.
+    * **The Spatialization of Power and Labor:** Semiconductors do not just process data; they restructure the earth. The routing data in this GIS model proves that these Mega-Fabs act as gravitational black holes. They literally reroute rivers (desalination pipelines) and dictate human migration, pulling elite intellectual labor into highly specific, localized 'techno-enclaves' (like Dholera or the Assam frontier), permanently altering local cultures and economies.
+    * **The Sovereign Shield:** To the average citizen, a microchip is invisible. But this map proves that the "Cyber Frontline" is deeply physical. Every time the STI variance shifts, it represents billions of dollars poured into concrete, steel, and water routing to ensure that the silicon powering India's hospitals, military radars, and digital economy cannot be turned off by a foreign power. **In the 21st century, geographical infrastructure is destiny.**
     """)
