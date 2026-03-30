@@ -400,11 +400,14 @@ with tab2:
     st.pydeck_chart(pdk.Deck(layers=layers, initial_view_state=pdk.ViewState(latitude=30.0, longitude=20.0, zoom=1.8, pitch=0), map_style='https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json', tooltip={"text": "{name}\nCap: {cap}"}))
 
 # --- TAB 3: STI STATISTICAL DISTRIBUTION (GAUSSIAN / KDE) ---
+# --- TAB 3: STI STATISTICAL DISTRIBUTION (GAUSSIAN / KDE) ---
 with tab3:
     st.markdown("### Continuous Probability Density: STI Stratification by Cap Size")
-    st.markdown("This Kernel Density Estimation (KDE) plot models the mathematical probability distribution of Strategic Topographical Index (STI) scores across the complete dataset (Indian + Global nodes). By modeling the continuous Gaussian-style smoothing, we can infer operational scaling strategies.")
+    st.markdown("This Kernel Density Estimation (KDE) plot models the mathematical probability distribution of Strategic Topographical Index (STI) scores. By modeling the continuous Gaussian-style smoothing, we can infer operational scaling strategies.")
     
-    analytics_df = df.copy() # All nodes, including Global
+    # CRITICAL FIX: Drop rows without an STI score (the Global nodes) before running KDE math.
+    # Altair's transform_density will fail if it encounters NaN values in the target column.
+    analytics_df = df.dropna(subset=['sti']).copy()
     
     # Altair Continuous Density Plot
     density_plot = alt.Chart(analytics_df).transform_density(
@@ -413,7 +416,7 @@ with tab3:
         groupby=['cap']
     ).mark_area(opacity=0.6).encode(
         x=alt.X('sti:Q', title="Strategic Topographical Index (STI %)", scale=alt.Scale(domain=[60, 105])),
-        y=alt.Y('density:Q', title="Probability Density (Gaussian Smooth)"),
+        y=alt.Y('density:Q', title="Probability Density (Gaussian Smooth)", axis=alt.Axis(labels=False, ticks=False)),
         color=alt.Color('cap:N', scale=alt.Scale(domain=['Large', 'Mid', 'Small'], range=['#dc2626', '#d97706', '#16a34a']), legend=alt.Legend(title="Facility Classification"))
     ).properties(height=450)
     
@@ -421,8 +424,8 @@ with tab3:
 
     # Mathematical & Strategic Inferences
     st.markdown("""
-    #### 📐 Mathematical & Strategic Inferences (Exhaustive Dataset)
-    * **Large Cap Variance (Clustered Gaussian):** Notice how the Red (Large Cap) density curve clusters heavily between **88% and 99%** (including TSMC/Intel/Samsung global nodes). Mathematically, this indicates a highly stringent topographical baseline for Mega-Fabs. TheState and private entities are rejecting high-friction environments, showing a standard deviation heavily skewed toward coastal plains and stable plateaus.
-    * **Mid Cap standardization (Central Tendency):** The Orange (Mid Cap) curve demonstrates a tighter standard deviation around the **89% - 92%** mean. OSAT and packaging facilities require excellent logistics but do not need the absolute 0.02% seismic zeroing required by Large Cap EUV lithography, creating a predictable statistical cluster.
-    * **Small Cap Anomaly (Defense-in-Depth):** The Green (Small Cap) curve shows a severe left-tail distribution dropping to **75%**. This statistical anomaly mathematically proves the *Defense-in-Depth* theory: state-run strategic fabs (like CDIL or SCL Mohali) intentionally accept severe topographical friction (low STI) in exchange for deep-inland geographical security.
+    #### 📐 Mathematical & Strategic Inferences
+    * **Large Cap Variance (Right-Skewed Gaussian):** Notice how the Red (Large Cap) density curve clusters heavily between **88% and 99%**. Mathematically, this indicates a highly stringent topographical baseline. The State and private entities are rejecting high-friction environments for Mega-Fabs, demonstrating a standard deviation heavily skewed toward coastal plains and stable plateaus.
+    * **Mid Cap Standardization (Central Tendency):** The Orange (Mid Cap) curve demonstrates a tighter standard deviation around the **89% - 92%** mean. OSAT and packaging facilities require excellent logistics but do not need the absolute 0.02% seismic zeroing required by Large Cap EUV lithography, creating a predictable statistical cluster.
+    * **Small Cap Anomaly (Left-Tailed Variance):** The Green (Small Cap) curve shows a severe left-tail distribution dropping to **75%**. This statistical anomaly mathematically proves the *Defense-in-Depth* theory: state-run strategic fabs intentionally accept severe topographical friction (low STI) in exchange for deep-inland geographical security.
     """)
