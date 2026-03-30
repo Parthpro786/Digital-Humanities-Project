@@ -400,28 +400,27 @@ with tab2:
     st.pydeck_chart(pdk.Deck(layers=layers, initial_view_state=pdk.ViewState(latitude=30.0, longitude=20.0, zoom=1.8, pitch=0), map_style='https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json', tooltip={"text": "{name}\nCap: {cap}"}))
 
 # --- TAB 3: STI STATISTICAL DISTRIBUTION (GAUSSIAN / KDE) ---
-# --- TAB 3: STI STATISTICAL DISTRIBUTION (GAUSSIAN / KDE) ---
 with tab3:
     st.markdown("### Continuous Probability Density: STI Stratification by Cap Size")
     st.markdown("This Kernel Density Estimation (KDE) plot models the mathematical probability distribution of Strategic Topographical Index (STI) scores. By modeling the continuous Gaussian-style smoothing, we can infer operational scaling strategies.")
     
-    # CRITICAL FIX: Drop rows without an STI score (the Global nodes) before running KDE math.
-    # Altair's transform_density will fail if it encounters NaN values in the target column.
     analytics_df = df.dropna(subset=['sti']).copy()
     
     # Altair Continuous Density Plot
     density_plot = alt.Chart(analytics_df).transform_density(
         'sti',
         as_=['sti', 'density'],
-        groupby=['cap']
-    ).mark_area(opacity=0.6).encode(
-        x=alt.X('sti:Q', title="Strategic Topographical Index (STI %)", scale=alt.Scale(domain=[60, 105])),
-        y=alt.Y('density:Q', title="Probability Density (Gaussian Smooth)", axis=alt.Axis(labels=False, ticks=False)),
+        groupby=['cap'],
+        extent=[60, 110], # FIXED: Forces the math engine to calculate the tails down to zero
+        steps=200 # Smooths the curve resolution
+    ).mark_area(opacity=0.45).encode(
+        x=alt.X('sti:Q', title="Strategic Topographical Index (STI %)", scale=alt.Scale(domain=[65, 105])),
+        # FIXED: stack=None prevents the areas from stacking, creating true overlapping distributions
+        y=alt.Y('density:Q', title="Probability Density (Gaussian Smooth)", axis=alt.Axis(labels=False, ticks=False), stack=None),
         color=alt.Color('cap:N', scale=alt.Scale(domain=['Large', 'Mid', 'Small'], range=['#dc2626', '#d97706', '#16a34a']), legend=alt.Legend(title="Facility Classification"))
     ).properties(height=450)
     
     st.altair_chart(density_plot, use_container_width=True)
-
     # Mathematical & Strategic Inferences
     st.markdown("""
     #### 📐 Mathematical & Strategic Inferences
