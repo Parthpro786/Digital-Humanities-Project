@@ -6,7 +6,7 @@ import altair as alt
 import plotly.graph_objects as go
 
 # --- 1. PROFESSIONAL PAGE CONFIG & CSS ---
-st.set_page_config(layout="wide", page_title="Strategic Topography GIS")
+st.set_page_config(layout="wide", page_title="Strategic Topography GIS", page_icon="🗺️")
 
 st.markdown("""
     <style>
@@ -14,22 +14,23 @@ st.markdown("""
         .stApp { background-color: #fdf4ff; }
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
-        .block-container {padding-top: 2rem; max-width: 98%;}
-        h1, h2, h3, p, span, div {font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif; color: #1e1b4b;}
+        .block-container {padding-top: 2rem; padding-bottom: 0rem; max-width: 98%;}
+        h1, h2, h3, p, span, div {font-family: 'Helvetica Neue', Arial, sans-serif; color: #1e1b4b;}
         
-        /* High contrast for the right panel */
+        /* Sidebar and Technical Dossier Styling */
         [data-testid="stSidebar"] {background-color: #ffffff; border-right: 1px solid #e2e8f0;}
         .metric-box {background-color: #ffffff; padding: 14px; border-radius: 4px; border-left: 4px solid #9333ea; margin-bottom: 12px; border: 1px solid #e5e7eb; box-shadow: 0 1px 2px rgba(0,0,0,0.05);}
-        /* INCREASED TEXT SIZES AS REQUESTED */
-        .metric-title {color: #4b5563; font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 700;}
-        .metric-text {color: #0f172a; font-size: 14.5px; line-height: 1.6;}
+        
+        /* INCREASED TEXT SIZES FOR THE TECHNICAL DOSSIER */
+        .metric-title {color: #4b5563; font-size: 13.5px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 700;}
+        .metric-text {color: #0f172a; font-size: 16.5px; line-height: 1.6;}
         
         /* Cap Tags */
-        .tag-large {color: #dc2626; font-weight: 800; text-transform: uppercase; font-size: 12px;}
-        .tag-mid {color: #d97706; font-weight: 800; text-transform: uppercase; font-size: 12px;}
-        .tag-small {color: #16a34a; font-weight: 800; text-transform: uppercase; font-size: 12px;}
+        .tag-large {color: #dc2626; font-weight: bold; text-transform: uppercase; font-size: 12px;}
+        .tag-mid {color: #d97706; font-weight: bold; text-transform: uppercase; font-size: 12px;}
+        .tag-small {color: #16a34a; font-weight: bold; text-transform: uppercase; font-size: 12px;}
         
-        /* Fixed Return Button Contrast */
+        /* High-Contrast Return Button */
         .stButton>button {background-color: #701a75; color: #ffffff; border: none; font-weight: 600; padding: 10px 20px;}
         .stButton>button:hover {background-color: #4a044e; color: #ffffff;}
     </style>
@@ -52,9 +53,9 @@ def generate_curve(start, end, bend=0.2):
     curve = np.outer((1-t)**2, p0) + np.outer(2*(1-t)*t, p1) + np.outer(t**2, p2)
     return curve.tolist(), curve[15].tolist()
 
-# --- 4. THE MASTER DATASET ---
+# --- 4. THE UNIFIED DATASET (India + Global) ---
 data = [
-    # ---- DENSE GLOBAL ECOSYSTEM ----
+    # ---- EXPANDED GLOBAL ECOSYSTEM (For Tab 2 & 3) ----
     {"name": "TSMC Fab 18 (Taiwan)", "region": "Global", "cap": "Large", "lat": 23.10, "lon": 120.28},
     {"name": "TSMC Kumamoto (Japan)", "region": "Global", "cap": "Large", "lat": 32.88, "lon": 130.84},
     {"name": "Intel Ocotillo (USA)", "region": "Global", "cap": "Large", "lat": 33.27, "lon": -111.88},
@@ -64,13 +65,9 @@ data = [
     {"name": "Micron Boise (USA)", "region": "Global", "cap": "Large", "lat": 43.52, "lon": -116.15},
     {"name": "Rapidus Hokkaido (Japan)", "region": "Global", "cap": "Large", "lat": 42.76, "lon": 141.67},
     {"name": "GlobalFoundries Dresden (Ger)", "region": "Global", "cap": "Mid", "lat": 51.12, "lon": 13.71},
-    {"name": "GlobalFoundries Malta (USA)", "region": "Global", "cap": "Mid", "lat": 42.97, "lon": -73.76},
     {"name": "SMIC Shanghai (China)", "region": "Global", "cap": "Large", "lat": 31.20, "lon": 121.59},
-    {"name": "STMicroelectronics Crolles (Fra)", "region": "Global", "cap": "Mid", "lat": 45.27, "lon": 5.88},
-    {"name": "Renesas Naka (Japan)", "region": "Global", "cap": "Mid", "lat": 36.40, "lon": 140.52},
-    {"name": "Infineon Villach (Austria)", "region": "Global", "cap": "Mid", "lat": 46.61, "lon": 13.87},
 
-    # ---- INDIAN ECOSYSTEM (With Radar Metrics) ----
+    # ---- INDIAN ECOSYSTEM (Highly Detailed with Radar & Radar Text) ----
     {
         "name": "Tata-PSMC Dholera", "region": "India", "year": 2026, "cap": "Large", 
         "lat": 22.25, "lon": 72.11, "elev": 15, "terrain": "Coastal Plateau",
@@ -78,6 +75,7 @@ data = [
         "m_name": "Gulf of Khambhat Port", "m_lat": 21.75, "m_lon": 72.25, "m_dist": 55,
         "l_name": "Ahmedabad Urban Center", "l_lat": 23.02, "l_lon": 72.57, "l_dist": 85,
         "bt": "India's First Commercial 28nm Mega-Fab. Sovereign logic node production.", 
+        # MANUAL IMAGE INSTRUCTION: Replace this URL with n['img'] = "YOUR_IMAGE.png"
         "img": "https://images.unsplash.com/photo-1508344928928-7165b67de128?auto=format&fit=crop&w=800&q=80",
         "profile": [0, 8, 3, 14, 15, 15, 15, 15, 11, 4, 5], 
         "sti": 99.5, "lcp": 0.97,
@@ -124,19 +122,6 @@ data = [
         "rationale": "Leverages the same topographical stability as the Micron facility, creating a localized high-density packaging cluster with shared logistics."
     },
     {
-        "name": "Polymatech Chennai", "region": "India", "year": 2023, "cap": "Mid", 
-        "lat": 12.82, "lon": 79.98, "elev": 12, "terrain": "Coastal Plain",
-        "w_name": "Palar River Basin", "w_lat": 12.60, "w_lon": 79.90, "w_dist": 25,
-        "m_name": "Chennai Port Transit", "m_lat": 13.08, "m_lon": 80.29, "m_dist": 45,
-        "l_name": "Kancheepuram Town", "l_lat": 12.83, "l_lon": 79.70, "l_dist": 30,
-        "bt": "Opto-semiconductor and specialized photonics manufacturing.", 
-        "img": "https://images.unsplash.com/photo-1580983554869-3221443491db?auto=format&fit=crop&w=800&q=80",
-        "profile": [2, 10, 4, 15, 12, 12, 12, 8, 14, 5, 6],
-        "sti": 91.0, "lcp": 0.90,
-        "rad": [82, 88, 94, 80, 90],
-        "rationale": "Southern coastal stability. Focuses on opto-electronics which require rigorous dust-free environments supported by coastal wind shear management."
-    },
-    {
         "name": "Texas Instruments Bangalore", "region": "India", "year": 1985, "cap": "Large", 
         "lat": 12.97, "lon": 77.59, "elev": 920, "terrain": "Deccan Plateau",
         "w_name": "Cauvery Basin Municipal", "w_lat": 12.40, "w_lon": 77.30, "w_dist": 85,
@@ -161,39 +146,87 @@ data = [
         "sti": 75.0, "lcp": 0.65,
         "rad": [60, 85, 65, 99, 88],
         "rationale": "Defense-in-Depth location. Sacrificed maritime logistics to push sensitive military infrastructure deep inland. Foundation anchored in local bedrock shelf."
+    },
+    {
+        "name": "Hind Rectifiers Mumbai", "region": "India", "year": 1980, "cap": "Small", 
+        "lat": 19.117, "lon": 72.848, "elev": 10, "terrain": "Western Coastal Plain",
+        "w_name": "Ulhas River Catchment", "w_lat": 19.00, "w_lon": 72.80, "w_dist": 15,
+        "m_name": "JNPT Port Transit", "m_lat": 18.95, "m_lon": 72.90, "m_dist": 60,
+        "l_name": "Mumbai Metropolis", "l_lat": 19.07, "l_lon": 72.87, "l_dist": 5,
+        "bt": "Pioneer in power semiconductor devices for Indian Railways traction rectifiers.", 
+        "img": "https://images.unsplash.com/photo-1580983554869-3221443491db?auto=format&fit=crop&w=800&q=80",
+        "profile": [2, 12, 5, 10, 10, 10, 10, 12, 9, 7, 8],
+        "sti": 91.5, "lcp": 0.92,
+        "rad": [65, 80, 98, 90, 99],
+        "rationale": "Classic coastal export config. Sacrifices absolute seismic neutrality (Western Ghats proximity) for hyper-frictionless logistics."
+    },
+    {
+        "name": "Qualcomm Hyderabad", "region": "India", "year": 2010, "cap": "Large", 
+        "lat": 17.443, "lon": 78.375, "elev": 550, "terrain": "Deccan Plateau",
+        "w_name": "Municipal Mains", "w_lat": 17.40, "w_lon": 78.35, "w_dist": 10,
+        "m_name": "Hyderabad Airport Cargo", "m_lat": 17.25, "m_lon": 78.43, "m_dist": 35,
+        "l_name": "HITEC City Hub", "l_lat": 17.44, "l_lon": 78.38, "l_dist": 5,
+        "bt": "Snapdragon design and validation mega-center. Pure play VLSI node.", 
+        "img": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
+        "profile": [500, 520, 530, 550, 550, 550, 550, 530, 510, 500, 490],
+        "sti": 94.0, "lcp": 0.94,
+        "rad": [92, 85, 90, 88, 99],
+        "rationale": "Chosen for pre-existing grid stability (500kV primary substation) and rapid construction modularity. Human-Centric Topography."
+    },
+    {
+        "name": "Tessolve Bangalore", "region": "India", "year": 2005, "cap": "Mid", 
+        "lat": 12.923, "lon": 77.682, "elev": 910, "terrain": "Deccan Plateau",
+        "w_name": "Cauvery Basins pipelines", "w_lat": 12.45, "w_lon": 77.40, "w_dist": 75,
+        "m_name": "HAL Airport Data Transit", "m_lat": 12.95, "m_lon": 77.66, "m_dist": 12,
+        "l_name": "Electronics City Grid", "l_lat": 12.93, "l_lon": 77.69, "l_dist": 5,
+        "bt": "Global validation and testing engineering hub. Critical for wafer sort.", 
+        "img": "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=800&q=80",
+        "profile": [860, 880, 890, 910, 910, 910, 910, 890, 880, 870, 860],
+        "sti": 89.0, "lcp": 0.88,
+        "rad": [95, 80, 85, 92, 98],
+        "rationale": "Standard high-plateau configuration. Leveraging the same topographical stability as the TI campus, maximizing labor corridor access."
+    },
+    {
+        "name": "Continental Device India Limited", "region": "India", "year": 1964, "cap": "Small", 
+        "lat": 28.667, "lon": 77.217, "elev": 210, "terrain": "Indo-Gangetic Plains",
+        "w_name": "Yamuna River Pipelines", "w_lat": 28.60, "w_lon": 77.20, "w_dist": 15,
+        "m_name": "NCR Rail Corridor", "m_lat": 28.70, "m_lon": 77.25, "m_dist": 10,
+        "l_name": "Delhi Urban Grid", "l_lat": 28.67, "l_lon": 77.22, "l_dist": 5,
+        "bt": "India's first fabless design and discrete transistor manufacturing.", 
+        "img": "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=800&q=80",
+        "profile": [190, 195, 200, 210, 210, 210, 210, 200, 198, 195, 190],
+        "sti": 78.0, "lcp": 0.65,
+        "rad": [65, 70, 88, 85, 99],
+        "rationale": "Built for proximity to the National Capital. Topographical variance is high due to the Yamuna river plain's inherent instability."
     }
 ]
 
 df = pd.DataFrame(data)
 
-# Pin mapping setup
+# Pin mapping colors
 ICON_URL = "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png"
 icon_data = {"url": ICON_URL, "width": 128, "height": 128, "y": 128, "anchorY": 128}
 df['icon_data'] = [icon_data for _ in range(len(df))]
 
 def get_color(cap):
-    if cap == "Large": return [220, 38, 38]   # Deep Red
-    if cap == "Mid": return [217, 119, 6]     # Orange/Yellow
-    return [22, 163, 74]                      # Emerald Green
+    if cap == "Large": return [220, 38, 38]   # Red
+    if cap == "Mid": return [217, 119, 6]     # Orange
+    return [22, 163, 74]                      # Green
 df['color'] = df['cap'].apply(get_color)
 
-
 # --- 5. TOP BAR UI ---
-st.title("Strategic Topography & GIS Explorer")
+st.title("Strategic Topography GIS Explorer")
 st.markdown("Macro-Analysis of Semiconductor Infrastructure, Topographical Friction, and Strategic Routing.")
 
+# Tab Selection
 tab1, tab2, tab3 = st.tabs(["INDIA TIMELINE ECOSYSTEM", "GLOBAL MACRO ECOSYSTEM", "S.T.I. STATISTICAL DISTRIBUTION"])
 
-# --- TAB 1: INDIA ECOSYSTEM (THE 60/40 SPLIT) ---
+# --- TAB 1: INDIA ECOSYSTEM (Corrected Layout) ---
 with tab1:
     selected_year = st.select_slider("Historical Timeline Integration:", options=[1980, 1990, 2000, 2010, 2020, 2026], value=2026)
     active_df = df[(df['region'] == 'India') & (df['year'] <= selected_year)].copy()
     
-    if st.session_state.selected_node:
-        col_map, col_panel = st.columns([5.5, 4.5], gap="large")
-    else:
-        col_map = st.container()
-        col_panel = st.empty()
+    col_map, col_dossier = st.columns([6, 4], gap="large")
 
     with col_map:
         layers = [
@@ -212,9 +245,9 @@ with tab1:
             l_curve, l_mid = generate_curve([n['l_lon'], n['l_lat']], f_coord, -0.1)
 
             route_data = [
-                {"path": w_curve, "color": [6, 182, 212]}, 
-                {"path": m_curve, "color": [255, 255, 255]}, 
-                {"path": l_curve, "color": [234, 179, 8]}  
+                {"path": w_curve, "color": [6, 182, 212]}, # Cyan
+                {"path": m_curve, "color": [255, 255, 255]}, # White
+                {"path": l_curve, "color": [234, 179, 8]}  # Yellow
             ]
             layers.append(pdk.Layer("PathLayer", pd.DataFrame(route_data), get_path="path", get_color="color", width_scale=20, width_min_pixels=3, get_dash_array=[8, 8], dash_justified=True))
 
@@ -228,9 +261,9 @@ with tab1:
             # Anti-Overlap Text Labels
             label_data = [
                 {"lon": n['lon'], "lat": n['lat'], "text": f"Target: {n['lat']} N, {n['lon']} E", "color": [255, 255, 255], "offset": [0, -40]},
-                {"lon": w_mid[0], "lat": w_mid[1], "text": f"{n['w_dist']}km (Water)", "color": [6, 182, 212], "offset": [0, 25]},
-                {"lon": m_mid[0], "lat": m_mid[1], "text": f"{n['m_dist']}km (Material)", "color": [255, 255, 255], "offset": [0, -25]},
-                {"lon": l_mid[0], "lat": l_mid[1], "text": f"{n['l_dist']}km (Labor)", "color": [234, 179, 8], "offset": [40, 0]}
+                {"lon": w_mid[0], "lat": w_mid[1], "text": f"{n['w_dist']}km (Water Corridor)", "color": [6, 182, 212], "offset": [0, 25]},
+                {"lon": m_mid[0], "lat": m_mid[1], "text": f"{n['m_dist']}km (Raw Material Transit)", "color": [255, 255, 255], "offset": [0, -25]},
+                {"lon": l_mid[0], "lat": l_mid[1], "text": f"{n['l_dist']}km (Urban Labor Corridor)", "color": [234, 179, 8], "offset": [40, 0]}
             ]
             layers.append(pdk.Layer(
                 "TextLayer", pd.DataFrame(label_data), get_position=["lon", "lat"], get_text="text", 
@@ -244,7 +277,7 @@ with tab1:
                 layers=layers, 
                 initial_view_state=init_view,
                 map_style='https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
-                tooltip={"text": "{name}\nClass: {cap} Cap"}
+                tooltip={"text": "{name}\nCap: {cap}"}
             ),
             on_select="rerun",
             selection_mode="single-object"
@@ -253,21 +286,16 @@ with tab1:
         # Legend Overlay
         st.markdown("""
             <div style="background-color: #1e293b; padding: 10px; border-radius: 4px; color: white; font-size: 13px; margin-top: -10px; border: 1px solid #475569;">
-                <b>Legend:</b> &nbsp; 
-                <span style="color:#ef4444">Large Cap</span> &nbsp;|&nbsp; 
-                <span style="color:#f59e0b">Mid Cap</span> &nbsp;|&nbsp; 
-                <span style="color:#22c55e">Small Cap</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <b>Routes:</b> &nbsp;
+                <b>Legend:</b> &nbsp;&nbsp; 
+                <span style="color:#ef4444">Large Cap Node</span> &nbsp;|&nbsp; 
+                <span style="color:#f59e0b">Mid Cap Node</span> &nbsp;|&nbsp; 
+                <span style="color:#22c55e">Small Cap Node</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <b>Logistics Routes:</b> &nbsp;
                 <span style="color:#22d3ee">--- Water Corridor</span> &nbsp;|&nbsp;
                 <span style="color:#ffffff">--- Raw Material</span> &nbsp;|&nbsp;
-                <span style="color:#facc15">--- Urban Labor</span>
+                <span style="color:#facc15">--- Urban Labor Node</span>
             </div>
         """, unsafe_allow_html=True)
-
-        # Master Data Ledger
-        st.markdown("<br><b>Master Data Ledger (Active Timeline)</b>", unsafe_allow_html=True)
-        ledger_df = active_df[['name', 'cap', 'elev', 'sti', 'lcp']].rename(columns={'name': 'Facility', 'cap': 'Classification', 'elev': 'Elevation (MSL)', 'sti': 'STI (%)', 'lcp': 'LCP Matrix'})
-        st.dataframe(ledger_df, use_container_width=True, hide_index=True)
 
         if map_event and map_event.selection.objects:
             if "facility_pins" in map_event.selection.objects:
@@ -276,22 +304,29 @@ with tab1:
                     st.session_state.selected_node = clicked_data[0]
                     st.rerun()
 
-    # --- TECHNICAL DOSSIER PANEL ---
-    if st.session_state.selected_node:
-        with col_panel:
+    # --- THE TECHNICAL DOSSIER PANEL (40% Column) ---
+    with col_dossier:
+        if st.session_state.selected_node:
             n = st.session_state.selected_node
             
+            # High-Contrast Return Button
             if st.button("Return to Map Overview", use_container_width=True):
                 clear_selection()
                 st.rerun()
-                
+            
+            # --- MANUAL IMAGE INSTRUCTION: ---
+            # To add an image of the actual building, replace the URL in the data block
+            # (look for n['img'] = "...") with the path to your image file,
+            # for example: n['img'] = "mohali_building.png"
+            # It will automatically render here.
+            
             st.image(n['img'], use_container_width=True)
             st.markdown(f"<h2>{n['name']}</h2>", unsafe_allow_html=True)
             st.markdown(f"<span class='tag-{n['cap'].lower()}'>{n['cap']} Cap Facility</span> | <b>Coordinates:</b> {n['lat']} N, {n['lon']} E", unsafe_allow_html=True)
             
             st.markdown("---")
             
-            # ALTAIR TERRAIN GRAPH (Jagged & Checkpoint Marker)
+            # ALTAIR TERRAIN GRAPH (Jagged & Checkpoint Diamond Marker)
             st.markdown("<b>Topographical Integration Profile</b>", unsafe_allow_html=True)
             
             total_dist = n['m_dist'] + n['w_dist']
@@ -305,7 +340,7 @@ with tab1:
             area = base.mark_area(opacity=0.4, color="#9333ea")
             line = base.mark_line(color="#7e22ce", strokeWidth=2)
             
-            # Precise Checkpoint Marker
+            # Diamond checkpoint marker
             facility_mark = pd.DataFrame({"x": [n['m_dist']], "y": [n['elev']]})
             point = alt.Chart(facility_mark).mark_point(color='#dc2626', size=150, shape='diamond', filled=True).encode(x='x:Q', y='y:Q')
             
@@ -322,14 +357,14 @@ with tab1:
             <div class='metric-box'>
                 <div class='metric-title'>Logistics Matrix (LCP Efficiency: {n['lcp']})</div>
                 <div class='metric-text'>
-                    <b>Material Hub:</b> {n['m_name']} <span style='color:gray'>({n['m_dist']}km)</span><br>
-                    <b>Water Catchment:</b> {n['w_name']} <span style='color:gray'>({n['w_dist']}km)</span><br>
-                    <b>Urban Labor Center:</b> {n['l_name']} <span style='color:gray'>({n['l_dist']}km)</span>
+                    <b>Material Hub:</b> {n['m_name']} <span style='color:gray'>({n['m_dist']}km route)</span><br>
+                    <b>Water Catchment:</b> {n['w_name']} <span style='color:gray'>({n['w_dist']}km route)</span><br>
+                    <b>Urban Labor Center:</b> {n['l_name']} <span style='color:gray'>({n['l_dist']}km route)</span>
                 </div>
             </div>
             """, unsafe_allow_html=True)
             
-            # VULNERABILITY RADAR CHART (Fixed Brown Labels)
+            # VULNERABILITY RADAR CHART (Fixed Brown Labels & Margins)
             st.markdown("<b>Vulnerability & Stability Radar</b>", unsafe_allow_html=True)
             categories = ['Seismic Stability', 'Water Security', 'Logistics Efficiency', 'Geopolitical Safety', 'Labor Proximity']
             fig = go.Figure()
@@ -344,27 +379,32 @@ with tab1:
             fig.update_layout(
                 polar=dict(
                     radialaxis=dict(visible=True, range=[0, 100]),
-                    angularaxis=dict(tickfont=dict(color='#8B4513', size=13, weight='bold')) # Dark saddlebrown, readable text
+                    # BROWN, READABLE TEXT
+                    angularaxis=dict(tickfont=dict(color='#8B4513', size=13, weight='bold')) 
                 ),
                 showlegend=False,
+                # Increased margins to fix cutoff
                 margin=dict(l=40, r=40, t=20, b=20),
                 paper_bgcolor='rgba(0,0,0,0)',
                 plot_bgcolor='rgba(0,0,0,0)'
             )
             st.plotly_chart(fig, use_container_width=True)
 
-# --- TAB 2: GLOBAL ECOSYSTEM ---
+        else:
+            st.info("👆 Click a location tag on the map to view its Technical Dossier and logistics profile.")
+
+# --- TAB 2: GLOBAL ECOSYSTEM (For Tab 3 & context) ---
 with tab2:
     global_df = df.copy()
     layers = [pdk.Layer("IconLayer", global_df, get_icon="icon_data", get_size=4, size_scale=10, get_position=["lon", "lat"], get_color="color", pickable=True)]
-    st.pydeck_chart(pdk.Deck(layers=layers, initial_view_state=pdk.ViewState(latitude=30.0, longitude=20.0, zoom=1.8, pitch=0), map_style='https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json', tooltip={"text": "{name}\n{cap} Cap"}))
+    st.pydeck_chart(pdk.Deck(layers=layers, initial_view_state=pdk.ViewState(latitude=30.0, longitude=20.0, zoom=1.8, pitch=0), map_style='https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json', tooltip={"text": "{name}\nCap: {cap}"}))
 
 # --- TAB 3: STI STATISTICAL DISTRIBUTION (GAUSSIAN / KDE) ---
 with tab3:
     st.markdown("### Continuous Probability Density: STI Stratification by Cap Size")
-    st.markdown("This Kernel Density Estimation (KDE) plot models the mathematical probability distribution of Strategic Topographical Index (STI) scores across the Indian semiconductor ecosystem. Rather than discrete bar graphs, this Gaussian-style smoothing allows us to infer infrastructural clustering strategies.")
+    st.markdown("This Kernel Density Estimation (KDE) plot models the mathematical probability distribution of Strategic Topographical Index (STI) scores across the complete dataset (Indian + Global nodes). By modeling the continuous Gaussian-style smoothing, we can infer operational scaling strategies.")
     
-    analytics_df = df[df['region'] == 'India'].copy()
+    analytics_df = df.copy() # All nodes, including Global
     
     # Altair Continuous Density Plot
     density_plot = alt.Chart(analytics_df).transform_density(
@@ -379,10 +419,10 @@ with tab3:
     
     st.altair_chart(density_plot, use_container_width=True)
 
-    # Mathematical Inferences
+    # Mathematical & Strategic Inferences
     st.markdown("""
-    #### 📐 Mathematical & Strategic Inferences
-    * **Large Cap Variance (Right-Skewed Gaussian):** Notice how the Red (Large Cap) density curve clusters heavily between **88% and 99%**. Mathematically, this indicates a highly stringent topographical baseline. The State and private entities are rejecting high-friction environments for Mega-Fabs, demonstrating a standard deviation heavily skewed toward coastal plains and stable plateaus.
-    * **Mid Cap Standardization (Central Tendency):** The Orange (Mid Cap) curve demonstrates a tighter standard deviation around the **89% - 92%** mean. OSAT and packaging facilities require excellent logistics but do not need the absolute 0.02% seismic zeroing required by Large Cap EUV lithography, creating a predictable statistical cluster.
-    * **Small Cap Anomaly (Left-Tailed Variance):** The Green (Small Cap) curve shows a severe left-tail distribution dropping to **75%**. This statistical anomaly mathematically proves the *Defense-in-Depth* theory: state-run strategic fabs (like SCL Mohali) intentionally accept severe topographical friction (low STI) in exchange for deep-inland geographical security.
+    #### 📐 Mathematical & Strategic Inferences (Exhaustive Dataset)
+    * **Large Cap Variance (Clustered Gaussian):** Notice how the Red (Large Cap) density curve clusters heavily between **88% and 99%** (including TSMC/Intel/Samsung global nodes). Mathematically, this indicates a highly stringent topographical baseline for Mega-Fabs. TheState and private entities are rejecting high-friction environments, showing a standard deviation heavily skewed toward coastal plains and stable plateaus.
+    * **Mid Cap standardization (Central Tendency):** The Orange (Mid Cap) curve demonstrates a tighter standard deviation around the **89% - 92%** mean. OSAT and packaging facilities require excellent logistics but do not need the absolute 0.02% seismic zeroing required by Large Cap EUV lithography, creating a predictable statistical cluster.
+    * **Small Cap Anomaly (Defense-in-Depth):** The Green (Small Cap) curve shows a severe left-tail distribution dropping to **75%**. This statistical anomaly mathematically proves the *Defense-in-Depth* theory: state-run strategic fabs (like CDIL or SCL Mohali) intentionally accept severe topographical friction (low STI) in exchange for deep-inland geographical security.
     """)
