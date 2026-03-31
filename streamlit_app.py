@@ -7,6 +7,7 @@ import plotly.graph_objects as go
 from scipy import stats
 from sklearn.neighbors import KernelDensity
 from itertools import combinations
+import feedparser
 
 # --- 1. PROFESSIONAL PAGE CONFIG & CSS ---
 st.set_page_config(layout="wide", page_title="Strategic Topography GIS", page_icon="🗺️")
@@ -55,6 +56,13 @@ def generate_curve(start, end, bend=0.2):
     t = np.linspace(0, 1, 30)
     curve = np.outer((1-t)**2, p0) + np.outer(2*(1-t)*t, p1) + np.outer(t**2, p2)
     return curve.tolist(), curve[15].tolist()
+
+@st.cache_data(ttl=3600)
+def fetch_live_intelligence():
+    # Pulls the live RSS feed from Google News specifically for Indian Semiconductors
+    url = "https://news.google.com/rss/search?q=India+semiconductor+manufacturing&hl=en-IN&gl=IN&ceid=IN:en"
+    feed = feedparser.parse(url)
+    return feed.entries[:3] # Returns the top 3 most recent articles
 
 # --- 4. THE UNIFIED DATASET (India + Global) ---
 data = [
@@ -309,6 +317,34 @@ with tab1:
                 <span style="color:#facc15">--- Urban Labor Node</span>
             </div>
         """, unsafe_allow_html=True)
+
+        # --- LIVE STRATEGIC INTELLIGENCE FEED ---
+        st.markdown("<br>### 📡 Live Strategic Intelligence", unsafe_allow_html=True)
+        
+        try:
+            live_news = fetch_live_intelligence()
+            colors = ["#dc2626", "#d97706", "#16a34a"] # Red, Orange, Green for styling
+            labels = ["🔴 LATEST DISPATCH", "🟡 INDUSTRY UPDATE", "🌐 MACRO TREND"]
+            
+            for i, article in enumerate(live_news):
+                # Clean up the Google News title formatting
+                clean_title = article.title.rsplit(" - ", 1)[0] 
+                
+                st.markdown(f"""
+                    <div class='metric-box' style='margin-bottom: 8px;'>
+                        <div style='color: {colors[i]}; font-size: 11px; font-weight: 800; letter-spacing: 1px;'>
+                            {labels[i]} | {article.published[5:16]}
+                        </div>
+                        <div class='metric-text' style='margin-top: 4px;'>
+                            <a href='{article.link}' target='_blank' style='color: #1e1b4b; text-decoration: none;'>
+                                <b>{clean_title}</b>
+                            </a>
+                        </div>
+                    </div>
+                """, unsafe_allow_html=True)
+                
+        except Exception as e:
+            st.warning("Intelligence feed temporarily offline. Unable to establish uplink.")
 
         if map_event and map_event.selection.objects:
             if "facility_pins" in map_event.selection.objects:
