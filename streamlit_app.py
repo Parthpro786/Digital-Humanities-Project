@@ -435,7 +435,7 @@ with tab3:
     
     with col_stats1:
         # SUMMARY STATISTICS (MLE ESTIMATES)
-        st.markdown("#### 📐 MLE-Based Distribution Parameters")
+        st.markdown("#### || MLE-Based Distribution Parameters")
         
         # Calculate summary stats safely
         summary = stats_df.groupby('cap')['sti'].agg(
@@ -450,7 +450,7 @@ with tab3:
         st.dataframe(summary, use_container_width=True)
 
         # ANOVA TEST
-        st.markdown("#### 📊 ANOVA Test (Mean STI Differences)")
+        st.markdown("#### || ANOVA Test (Mean STI Differences)")
         group_values = [group['sti'].values for name, group in stats_df.groupby('cap')]
         
         if len(group_values) > 1:
@@ -462,7 +462,7 @@ with tab3:
                 st.info("Fail to reject $H_0$ → Sample size too small or means are similar.")
         
         # LEVENE TEST
-        st.markdown("#### 📊 Levene’s Test (Variance Equality)")
+        st.markdown("#### || Levene’s Test (Variance Equality)")
         if len(group_values) > 1:
             levene_stat, levene_p = stats.levene(*group_values)
             st.write(f"**Statistic:** `{levene_stat:.4f}` | **p-value:** `{levene_p:.4f}`")
@@ -473,7 +473,7 @@ with tab3:
 
     with col_stats2:
         # CHI-SQUARE TEST
-        st.markdown("#### 📊 Chi-Square Test (Categorical Dependency)")
+        st.markdown("#### || Chi-Square Test (Categorical Dependency)")
         # Adjusted bins to cover lower STI ranges like Mohali (75) safely
         bins = [0, 82, 93, 110] 
         labels = ['High Friction (<82)', 'Moderate (82-93)', 'Optimal (>93)']
@@ -512,7 +512,7 @@ with tab3:
     st.markdown("---")
     
     # --- STRATEGIC RECOMMENDATIONS BASED ON STATS ---
-    st.markdown("### 🎯 Inferences & Strategic Recommendations for Future Development")
+    st.markdown("### || Inferences & Strategic Recommendations for Future Development")
     st.markdown("""
     Based on the inferential statistics derived from the current spatial data, we recommend the following frameworks for future Indian semiconductor expansion:
     
@@ -526,7 +526,7 @@ with tab3:
 
     st.markdown("---")
     # --- DIGITAL HUMANITIES NARRATIVE ---
-    st.markdown("### 🌍 Digital Humanities Perspective: Infrastructure as Destiny")
+    st.markdown("### || Digital Humanities Perspective: Infrastructure as Destiny")
     st.markdown("""
     *For policymakers, historians, and the general public, the statistical variances shown above are not just numbers—they are the physical blueprints of a new geopolitical cold war.*
     
