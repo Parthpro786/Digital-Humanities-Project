@@ -91,7 +91,7 @@ data = [
         "m_name": "Haldia Port Transit", "m_lat": 25.50, "m_lon": 91.00, "m_dist": 180,
         "l_name": "Guwahati Metropolis", "l_lat": 26.14, "l_lon": 91.73, "l_dist": 65,
         "bt": "Sovereign Advanced Packaging Hub. Eastern frontier geopolitical hedge.", 
-        "img": "https://scontent.ftrv2-1.fna.fbcdn.net/v/t39.30808-6/500025487_1133246762171974_4815619907349557729_n.jpg?stp=dst-jpg_s640x640_tt6&_nc_cat=105&ccb=1-7&_nc_sid=13d280&_nc_ohc=nqL43VlB7dUQ7kNvwFT5eUs&_nc_oc=AdrSFW_Ikoj_vZxERtfMTgmcxhm5sLIAHChcrgnW-JEH_CGX9lRKpncw4jHIwh0dP-Q&_nc_zt=23&_nc_ht=scontent.ftrv2-1.fna&_nc_gid=iGmR4qsGKKgax09ehbTe3A&_nc_ss=7a389&oh=00_AfwPYrcPi1gSsfXlYKoDlkOWe9HD1Bvjo_wQt48woo9ngA&oe=69D118D3",
+        "img": "https://scontent.ftrv2-1.fna.fbcdn.net/v/t39.30808-6/535992862_1186350260197029_12401593196388291_n.jpg?stp=dst-jpg_s640x640_tt6&_nc_cat=104&ccb=1-7&_nc_sid=13d280&_nc_ohc=uCGe0x5dj7IQ7kNvwHTQgRh&_nc_oc=Adq6zKwzlR2PEBXHhilqH0ybFDm2k1OPVn86DKpb-J71nSTjjZg6rRqRNBjtcoly4QU&_nc_zt=23&_nc_ht=scontent.ftrv2-1.fna&_nc_gid=8jhxxgLQ08IWL_0Y-iLOqw&_nc_ss=7a389&oh=00_AfwQOBe7hb8uQei8t2dpJOMUz9Oz_MkAaaYJQhb18tjNUg&oe=69D1291B",
         "profile": [120, 140, 85, 40, 55, 55, 55, 80, 130, 95, 110],
         "sti": 84.4, "lcp": 0.70,
         "rad": [75, 99, 65, 95, 80],
