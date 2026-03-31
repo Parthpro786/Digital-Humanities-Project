@@ -319,7 +319,7 @@ with tab1:
         """, unsafe_allow_html=True)
 
         # --- LIVE STRATEGIC INTELLIGENCE FEED ---
-        st.markdown("<br>### 📡 Live Strategic Intelligence", unsafe_allow_html=True)
+        st.markdown("<br> 📡 **Live Strategic Intelligence**", unsafe_allow_html=True)
         
         try:
             live_news = fetch_live_intelligence()
