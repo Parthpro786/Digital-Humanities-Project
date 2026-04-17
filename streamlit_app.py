@@ -324,38 +324,39 @@ with tab1:
         try:
             live_news = fetch_live_intelligence()
             
-            # UPDATED: Expanded to 7 distinct colors and intelligence labels
             colors = ["#dc2626", "#d97706", "#16a34a", "#2563eb", "#9333ea", "#0d9488", "#475569"] 
-            labels = [
-                "🔴 LATEST DISPATCH", 
-                "🟡 INDUSTRY UPDATE", 
-                "🌐 MACRO TREND", 
-                "🔵 POLICY SHIFT", 
-                "🟣 TECH BREAKTHROUGH", 
-                "🟢 MARKET DYNAMICS", 
-                "⚪ STRATEGIC MOVE"
-            ]
+            labels = ["🔴 LATEST DISPATCH", "🟡 INDUSTRY UPDATE", "🌐 MACRO TREND", "🔵 POLICY SHIFT", "🟣 TECH BREAKTHROUGH", "🟢 MARKET DYNAMICS", "⚪ STRATEGIC MOVE"]
+            
+            # CSS for the green hover state, white text transition, and physical slide effect
+            hover_css = """<style>
+.live-hover-card { background-color: #ffffff; padding: 14px; border-radius: 4px; margin-bottom: 8px; border: 1px solid #e5e7eb; border-left: 4px solid #9333ea; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.3s ease; cursor: pointer; }
+.live-hover-card:hover { background-color: #16a34a !important; border-left-color: #15803d !important; transform: translateX(6px); box-shadow: 0 6px 12px -2px rgba(0,0,0,0.15); }
+.live-hover-card:hover .hover-tag { color: #f8fafc !important; }
+.live-hover-card:hover .hover-title { color: #ffffff !important; }
+a.card-link { text-decoration: none; display: block; }
+</style>"""
+            st.markdown(hover_css, unsafe_allow_html=True)
             
             for i, article in enumerate(live_news):
-                # We use modulo (%) as a failsafe just in case Google returns fewer or more articles
                 color = colors[i % len(colors)]
                 label = labels[i % len(labels)]
-                
-                # Clean up the Google News title formatting
                 clean_title = article.title.rsplit(" - ", 1)[0] 
                 
+                # HTML FLUSH LEFT TO PREVENT MARKDOWN CODE BLOCKS
                 st.markdown(f"""
-                    <div class='metric-box' style='margin-bottom: 8px;'>
-                        <div style='color: {color}; font-size: 11px; font-weight: 800; letter-spacing: 1px;'>
-                            {label} | {article.published[5:16]}
-                        </div>
-                        <div class='metric-text' style='margin-top: 4px;'>
-                            <a href='{article.link}' target='_blank' style='color: #1e1b4b; text-decoration: none;'>
-                                <b>{clean_title}</b>
-                            </a>
-                        </div>
-                    </div>
-                """, unsafe_allow_html=True)
+<a href='{article.link}' target='_blank' class='card-link'>
+<div class='live-hover-card'>
+<div class='hover-tag' style='color: {color}; font-size: 11px; font-weight: 800; letter-spacing: 1px; transition: color 0.3s;'>
+{label} | {article.published[5:16]}
+</div>
+<div style='margin-top: 4px;'>
+<span class='hover-title' style='color: #1e1b4b; font-weight: 700; font-size: 14px; transition: color 0.3s;'>
+{clean_title}
+</span>
+</div>
+</div>
+</a>
+""", unsafe_allow_html=True)
                 
         except Exception as e:
             st.warning("Intelligence feed temporarily offline. Unable to establish uplink.")
