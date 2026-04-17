@@ -372,66 +372,20 @@ with tab1:
             "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=600&q=80"
         ]
 
-        grid_css = """
-        <style>
-        /* Modern 2-column grid */
-        .news-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 16px;
-          padding-bottom: 15px;
-        }
-        .news-card-grid {
-          width: 100%;
-          height: 180px;
-          border-radius: 8px;
-          background-size: cover;
-          background-position: center;
-          position: relative;
-          overflow: hidden;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-          transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .news-card-grid:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
-        }
-        .card-overlay {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          background: linear-gradient(to top, rgba(15,23,42,0.95) 0%, rgba(15,23,42,0.8) 50%, rgba(15,23,42,0) 100%);
-          padding: 15px;
-        }
-        .card-tag {
-          font-size: 10px;
-          color: white;
-          text-transform: uppercase;
-          font-weight: 800;
-          padding: 3px 6px;
-          border-radius: 3px;
-          display: inline-block;
-          margin-bottom: 6px;
-          letter-spacing: 0.5px;
-        }
-        .card-title-grid {
-          /* Forced pure white text with a heavy drop shadow for perfect readability */
-          color: #ffffff !important;
-          font-size: 14px;
-          font-weight: 700;
-          line-height: 1.3;
-          font-family: 'Helvetica Neue', Arial, sans-serif;
-          text-shadow: 1px 1px 4px rgba(0,0,0,0.9);
-        }
-        a { text-decoration: none; }
-        </style>
-        <div class="news-grid">
-        """
+        # FIXED: ALL HTML MOVED FLUSH LEFT TO PREVENT MARKDOWN "CODE BLOCK" RENDERING
+        grid_css = """<style>
+.news-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; padding-bottom: 15px; }
+.news-card-grid { width: 100%; height: 180px; border-radius: 8px; background-size: cover; background-position: center; position: relative; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.news-card-grid:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4); }
+.card-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(15,23,42,0.95) 0%, rgba(15,23,42,0.8) 50%, rgba(15,23,42,0) 100%); padding: 15px; }
+.card-tag { font-size: 10px; color: white; text-transform: uppercase; font-weight: 800; padding: 3px 6px; border-radius: 3px; display: inline-block; margin-bottom: 6px; letter-spacing: 0.5px; }
+.card-title-grid { color: #ffffff !important; font-size: 14px; font-weight: 700; line-height: 1.3; font-family: 'Helvetica Neue', Arial, sans-serif; text-shadow: 1px 1px 4px rgba(0,0,0,0.9); }
+a { text-decoration: none; }
+</style>
+<div class="news-grid">"""
 
         # Generate HTML dynamically using the Live News feed
         try:
-            # DEFINED THE MISSING VARIABLES HERE
             live_news = fetch_live_intelligence()
             colors = ["#dc2626", "#d97706", "#16a34a", "#2563eb", "#9333ea", "#0d9488", "#475569"] 
             labels = ["🔴 LATEST DISPATCH", "🟡 INDUSTRY UPDATE", "🌐 MACRO TREND", "🔵 POLICY SHIFT", "🟣 TECH BREAKTHROUGH", "🟢 MARKET DYNAMICS", "⚪ STRATEGIC MOVE"]
@@ -443,18 +397,18 @@ with tab1:
                 color = colors[i % len(colors)]
                 tag = labels[i % len(labels)]
                 
+                # FIXED: HTML MUST STAY FLUSH LEFT HERE TOO
                 grid_css += f"""
-                <a href='{article.link}' target='_blank'>
-                    <div class="news-card-grid" style="background-image: url('{img}');">
-                        <div class="card-overlay">
-                            <div class="card-tag" style="background-color: {color};">{tag}</div>
-                            <div class="card-title-grid">{clean_title}</div>
-                        </div>
-                    </div>
-                </a>
-                """
+<a href='{article.link}' target='_blank'>
+<div class="news-card-grid" style="background-image: url('{img}');">
+<div class="card-overlay">
+<div class="card-tag" style="background-color: {color};">{tag}</div>
+<div class="card-title-grid">{clean_title}</div>
+</div>
+</div>
+</a>"""
         except Exception as e:
-            grid_css += "<div style='color:red;'>Live visual feed currently unavailable.</div>"
+            grid_css += "<div>Live visual feed currently unavailable.</div>"
 
         grid_css += "</div>"
         
