@@ -535,7 +535,8 @@ with tab1:
                     angularaxis=dict(tickfont=dict(color='#8B4513', size=13, weight='bold')) 
                 ),
                 showlegend=False,
-                margin=dict(l=40, r=40, t=20, b=20),
+                # FIXED: Doubled the left and right margins so the brown text doesn't get clipped
+                margin=dict(l=80, r=80, t=30, b=30),
                 paper_bgcolor='rgba(0,0,0,0)',
                 plot_bgcolor='rgba(0,0,0,0)'
             )
