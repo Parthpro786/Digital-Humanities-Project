@@ -361,7 +361,7 @@ with tab1:
             st.warning("Intelligence feed temporarily offline. Unable to establish uplink.")
 
         # --- DYNAMIC VISUAL GRID (LIVE NEWS) ---
-        st.markdown("<br>### 🌐 The Silicon Hegemony: Visual Intelligence", unsafe_allow_html=True)
+        st.markdown("<br> The Silicon Hegemony: Visual Intelligence", unsafe_allow_html=True)
         st.markdown("<span style='font-size: 13px; color: #475569;'>Live geopolitical and market intersections.</span><br><br>", unsafe_allow_html=True)
 
         # High-res thematic background images to pair with the news
