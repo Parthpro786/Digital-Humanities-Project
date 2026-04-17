@@ -360,6 +360,115 @@ with tab1:
         except Exception as e:
             st.warning("Intelligence feed temporarily offline. Unable to establish uplink.")
 
+        # --- VISUAL SLIDESHOW / CAROUSEL (NEW) ---
+        st.markdown("<br>###  The Silicon Hegemony: Visual Intelligence", unsafe_allow_html=True)
+        st.markdown("<span style='font-size: 13px; color: #475569;'>Horizontal Scroll to view the intersection of Global Capital, AI Compute, and Terrain.</span><br><br>", unsafe_allow_html=True)
+
+        carousel_html = """
+        <style>
+        /* CSS for the interactive scrolling carousel */
+        .scrolling-wrapper {
+          display: flex;
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          gap: 16px;
+          padding-bottom: 15px;
+        }
+        /* Styling the scrollbar to look modern */
+        .scrolling-wrapper::-webkit-scrollbar {
+          height: 8px;
+        }
+        .scrolling-wrapper::-webkit-scrollbar-track {
+          background: #f1f5f9;
+          border-radius: 4px;
+        }
+        .scrolling-wrapper::-webkit-scrollbar-thumb {
+          background: #cbd5e1;
+          border-radius: 4px;
+        }
+        .scrolling-wrapper::-webkit-scrollbar-thumb:hover {
+          background: #94a3b8;
+        }
+        /* Styling the individual image cards */
+        .news-card {
+          flex: 0 0 auto;
+          width: 280px;
+          height: 180px;
+          border-radius: 8px;
+          background-size: cover;
+          background-position: center;
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          cursor: pointer;
+        }
+        .news-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        }
+        /* The dark gradient text box at the bottom of each image */
+        .card-overlay {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          background: linear-gradient(to top, rgba(15,23,42,0.95) 0%, rgba(15,23,42,0.7) 60%, rgba(15,23,42,0) 100%);
+          padding: 15px;
+          color: white;
+        }
+        .card-tag {
+          font-size: 10px;
+          text-transform: uppercase;
+          font-weight: 800;
+          padding: 3px 6px;
+          border-radius: 3px;
+          display: inline-block;
+          margin-bottom: 6px;
+          letter-spacing: 0.5px;
+        }
+        .card-title {
+          font-size: 14px;
+          font-weight: 600;
+          line-height: 1.3;
+          font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+        </style>
+
+        <div class="scrolling-wrapper">
+          <div class="news-card" style="background-image: url('https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=600&q=80');">
+            <div class="card-overlay">
+              <div class="card-tag" style="background-color: #9333ea;">AI EVOLUTION</div>
+              <div class="card-title">Nvidia GPUs drive global data center energy consumption up 40%</div>
+            </div>
+          </div>
+          
+          <div class="news-card" style="background-image: url('https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=600&q=80');">
+            <div class="card-overlay">
+              <div class="card-tag" style="background-color: #16a34a;">FINANCIAL MARKETS</div>
+              <div class="card-title">Semiconductor Market Cap surpasses $5 Trillion: The New "Digital Gold"</div>
+            </div>
+          </div>
+
+          <div class="news-card" style="background-image: url('https://images.unsplash.com/photo-1590247813693-5541d1c609fd?auto=format&fit=crop&w=600&q=80');">
+            <div class="card-overlay">
+              <div class="card-tag" style="background-color: #dc2626;">SOVEREIGN RISK</div>
+              <div class="card-title">TSMC shifts 15% of advanced node production to mitigate coastal blockade risks</div>
+            </div>
+          </div>
+          
+          <div class="news-card" style="background-image: url('https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=600&q=80');">
+            <div class="card-overlay">
+              <div class="card-tag" style="background-color: #d97706;">HUMAN GEOGRAPHY</div>
+              <div class="card-title">How "Fab Towns" are permanently altering regional economics and mass migration</div>
+            </div>
+          </div>
+        </div>
+        """
+        
+        st.markdown(carousel_html, unsafe_allow_html=True)
+
         if map_event and map_event.selection.objects:
             if "facility_pins" in map_event.selection.objects:
                 clicked_data = map_event.selection.objects["facility_pins"]
