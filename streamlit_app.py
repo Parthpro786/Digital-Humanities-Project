@@ -416,7 +416,7 @@ with tab1:
           letter-spacing: 0.5px;
         }
         .card-title-grid {
-          /* FIXED: Forced pure white text with a heavy drop shadow for perfect readability */
+          /* Forced pure white text with a heavy drop shadow for perfect readability */
           color: #ffffff !important;
           font-size: 14px;
           font-weight: 700;
@@ -431,6 +431,11 @@ with tab1:
 
         # Generate HTML dynamically using the Live News feed
         try:
+            # DEFINED THE MISSING VARIABLES HERE
+            live_news = fetch_live_intelligence()
+            colors = ["#dc2626", "#d97706", "#16a34a", "#2563eb", "#9333ea", "#0d9488", "#475569"] 
+            labels = ["🔴 LATEST DISPATCH", "🟡 INDUSTRY UPDATE", "🌐 MACRO TREND", "🔵 POLICY SHIFT", "🟣 TECH BREAKTHROUGH", "🟢 MARKET DYNAMICS", "⚪ STRATEGIC MOVE"]
+            
             # Grab the top 4 articles for the 2x2 grid
             for i, article in enumerate(live_news[:4]):
                 clean_title = article.title.rsplit(" - ", 1)[0]
