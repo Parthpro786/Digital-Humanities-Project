@@ -224,11 +224,15 @@ def get_color(cap):
     return [22, 163, 74]                      # Green
 df['color'] = df['cap'].apply(get_color)
 
-# --- 5. TOP BAR UI (COMMAND CENTER HUD) ---
+# --- 5. TOP BAR UI (CYBER COMMAND HUD) ---
 
-# Custom CSS for the new HUD Cards
+# Custom CSS for HUD Cards, Cyber Title, and Tactical Timeline
 st.markdown("""
     <style>
+    /* Import Robotic/Tech Font */
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap');
+
+    /* 1. HUD Card Styling */
     .hud-card {
         background-color: #ffffff;
         border: 1px solid #e2e8f0;
@@ -243,34 +247,70 @@ st.markdown("""
     .hud-value { font-size: 32px; font-weight: 800; color: #1e1b4b; line-height: 1.2; }
     .hud-label { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
     
-    /* Pulsing Live Dot */
-    @keyframes pulse {
-        0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
-        70% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    /* 2. Cyberpunk Title Animation */
+    .cyber-title {
+        font-family: 'Orbitron', sans-serif !important;
+        color: #ffffff !important;
+        font-size: 36px !important;
+        margin: 0 !important;
+        letter-spacing: 2px !important;
+        text-transform: uppercase;
+        animation: neon-pulse 2s infinite alternate;
+    }
+    @keyframes neon-pulse {
+        0% { text-shadow: 0 0 5px rgba(6, 182, 212, 0.5), 0 0 10px rgba(6, 182, 212, 0.5); }
+        100% { text-shadow: 0 0 15px rgba(6, 182, 212, 1), 0 0 30px rgba(6, 182, 212, 0.8); color: #cffafe !important; }
+    }
+
+    /* 3. Pulsing Uplink Dot */
+    @keyframes pulse-dot {
+        0% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); }
+        70% { box-shadow: 0 0 0 6px rgba(6, 182, 212, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
     }
     .pulse-dot {
         display: inline-block;
         width: 8px;
         height: 8px;
         border-radius: 50%;
-        background-color: #22c55e;
+        background-color: #06b6d4;
         margin-right: 6px;
-        animation: pulse 2s infinite;
+        animation: pulse-dot 2s infinite;
+    }
+
+    /* 4. Tactical Timeline Slider Overrides */
+    .stSlider label {
+        font-family: 'Orbitron', sans-serif !important;
+        color: #475569 !important;
+        font-weight: 700 !important;
+        letter-spacing: 1px !important;
+    }
+    /* Square, glowing slider thumb */
+    .stSlider [data-baseweb="slider"] [role="slider"] {
+        background-color: #0f172a !important;
+        border: 2px solid #06b6d4 !important;
+        border-radius: 2px !important; 
+        width: 18px !important;
+        height: 18px !important;
+        box-shadow: 0 0 10px rgba(6, 182, 212, 0.8) !important;
+    }
+    /* Neon track fill */
+    .stSlider [data-baseweb="slider"] div[data-testid="stTickBar"] > div {
+        background-color: rgba(6, 182, 212, 0.5) !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# The Dark "Hero" Banner
+# The Dark "Hero" Banner with Animated Title
 st.markdown("""
-    <div style='background: linear-gradient(135deg, #0f172a 0%, #3b0764 100%); padding: 25px 30px; border-radius: 10px; margin-bottom: 25px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);'>
+    <div style='background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); padding: 25px 30px; border-radius: 10px; margin-bottom: 25px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); border: 1px solid #334155;'>
         <div style='display: flex; justify-content: space-between; align-items: center;'>
-            <h1 style='color: white; margin: 0; font-size: 32px; letter-spacing: -0.5px;'>Strategic Topography GIS</h1>
-            <div style='background: rgba(0,0,0,0.3); padding: 5px 12px; border-radius: 20px; font-size: 11px; color: #22c55e; font-weight: 800; letter-spacing: 1px; display: flex; align-items: center;'>
+            <h1 class='cyber-title'>Strategic Topography GIS</h1>
+            <div style='background: rgba(0, 0, 0, 0.4); padding: 5px 12px; border-radius: 20px; font-size: 11px; color: #06b6d4; border: 1px solid rgba(6, 182, 212, 0.3); font-weight: 800; letter-spacing: 1px; display: flex; align-items: center;'>
                 <span class='pulse-dot'></span> SECURE UPLINK
             </div>
         </div>
-        <p style='color: #cbd5e1; font-size: 15px; margin: 8px 0 0 0; font-weight: 400;'>Macro-Analysis of Semiconductor Infrastructure, Topographical Friction, and Strategic Routing.</p>
+        <p style='color: #94a3b8; font-size: 15px; margin: 8px 0 0 0; font-family: "Courier New", Courier, monospace;'>Macro-Analysis of Semiconductor Infrastructure, Topographical Friction, and Strategic Routing.</p>
     </div>
 """, unsafe_allow_html=True)
 
@@ -280,7 +320,9 @@ tab1, tab2, tab3 = st.tabs(["INDIA TIMELINE ECOSYSTEM", "GLOBAL MACRO ECOSYSTEM"
 # --- TAB 1: INDIA ECOSYSTEM ---
 with tab1:
     st.markdown("<br>", unsafe_allow_html=True)
-    selected_year = st.select_slider("Historical Timeline Integration:", options=[1980, 1990, 2000, 2010, 2020, 2026], value=2026)
+    
+    # Upgraded Slider Title
+    selected_year = st.select_slider("⏳ Temporal Integration Engine [YEAR]:", options=[1980, 1990, 2000, 2010, 2020, 2026], value=2026)
     active_df = df[(df['region'] == 'India') & (df['year'] <= selected_year)].copy()
     
     # NEW HUD LAYER (Replaces st.metric)
@@ -290,15 +332,15 @@ with tab1:
     st.markdown(f"""
     <div style='display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 15px; margin-bottom: 30px;'>
         <div class='hud-card'>
-            <div class='hud-label'>📡 Active Sovereign Nodes</div>
+            <div class='hud-label'> Active Sovereign Nodes</div>
             <div class='hud-value'>{len(active_df)}</div>
         </div>
         <div class='hud-card'>
-            <div class='hud-label'>⛰️ Mean Topographical Index</div>
+            <div class='hud-label'> Mean Topographical Index</div>
             <div class='hud-value'>{avg_sti}</div>
         </div>
         <div class='hud-card'>
-            <div class='hud-label'>🛣️ Logistics Efficiency (LCP)</div>
+            <div class='hud-label'> Logistics Efficiency (LCP)</div>
             <div class='hud-value'>{avg_lcp}</div>
         </div>
     </div>
