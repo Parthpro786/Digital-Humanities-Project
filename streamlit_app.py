@@ -781,49 +781,72 @@ with tab3:
     """)
 
 
-
-
 # ==============================================================================
 # --- FLOATING SEMICONBOT (MINIMIZABLE POPUP) ---
 # ==============================================================================
 
-# 1. Custom CSS: Bottom-Left, Small Circle, Ultra-Fast Animations
+# 1. Custom CSS: Bottom-Left, Small Circle, White Text, No Bar!
 st.markdown("""
 <style>
-/* Anchor to Bottom-Left */
+/* 1. Force the wrapper itself to be small so it NEVER becomes a long bar */
 div[data-testid="stPopover"] {
-    position: fixed;
-    bottom: 30px;
-    left: 30px;
-    z-index: 9999;
+    position: fixed !important;
+    bottom: 30px !important;
+    left: 30px !important;
+    width: 60px !important;
+    height: 60px !important;
+    z-index: 99999 !important;
 }
-/* Force into a Small Perfect Circle */
+
+/* 2. Style the button to be a perfect circle */
 div[data-testid="stPopover"] > button {
     background-color: #9333ea !important;
     color: #ffffff !important;
-    border-radius: 50% !important; /* Makes it a circle */
-    width: 60px !important;  /* Fixed small width */
-    height: 60px !important; /* Fixed small height */
+    border-radius: 50% !important; 
+    width: 60px !important;  
+    height: 60px !important; 
     padding: 0 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    font-size: 26px !important; /* Icon size */
+    font-size: 26px !important; 
     border: 2px solid #c084fc !important;
     box-shadow: 0 8px 16px rgba(0,0,0,0.3) !important;
-    transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1) !important; /* Snappy hover */
+    transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1) !important; 
 }
+
 div[data-testid="stPopover"] > button:hover {
-    transform: scale(1.15) translateY(-4px); 
+    transform: scale(1.15) translateY(-4px) !important; 
     box-shadow: 0 12px 24px rgba(147,51,234,0.6) !important;
     background-color: #7e22ce !important;
 }
-/* Chat Window Styling */
+
+/* 3. Hide Streamlit's default down-arrow (chevron) on the popover button */
+div[data-testid="stPopover"] > button svg {
+    display: none !important; 
+}
+
+/* 4. Chat Window Styling (Dark mode + White Text) */
 div[data-testid="stPopoverBody"] {
     width: 380px !important;
+    background-color: #0f172a !important; /* Dark Cyber Background */
     border-radius: 12px !important;
     border: 2px solid #9333ea !important;
     box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
+}
+
+/* Force all text inside the chat window to be pure white */
+div[data-testid="stPopoverBody"] p, 
+div[data-testid="stPopoverBody"] span, 
+div[data-testid="stPopoverBody"] div.stMarkdown,
+div[data-testid="stChatMessage"] {
+    color: #ffffff !important;
+}
+
+/* Style the chat input box so the typing text is white too */
+div[data-testid="stChatInput"] textarea {
+    color: #ffffff !important;
+    background-color: #1e293b !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -834,11 +857,12 @@ if "chat_messages" not in st.session_state:
         {"role": "assistant", "content": "Commander, I am **SemiconBot**. Hooked directly into the GIS framework. How can I assist you today?"}
     ]
 
-# 3. Create the Popover (Using ONLY an emoji prevents the "long bar")
-with st.popover("💬"):
+# 3. Create the Popover (Using ONLY an emoji)
+# We set use_container_width=False to stop Streamlit from stretching it
+with st.popover("💬", use_container_width=False):
     
     # Header inside the popup
-    st.markdown("<div style='color: #6b21a8; font-family: Orbitron; font-weight: 900; font-size: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 10px;'>🤖 SemiconBot OS v3.0</div>", unsafe_allow_html=True)
+    st.markdown("<div style='color: #c084fc; font-family: Orbitron; font-weight: 900; font-size: 16px; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 10px;'>🤖 SemiconBot OS v3.0</div>", unsafe_allow_html=True)
     
     # Scrollable chat container
     chat_container = st.container(height=350)
@@ -858,23 +882,21 @@ with st.popover("💬"):
                 st.markdown(prompt)
         
         # -------------------------------------------------------------------
-        # BRAIN LOGIC: Try OpenAI API first, fallback to offline rules
+        # BRAIN LOGIC
         # -------------------------------------------------------------------
         bot_reply = ""
         
-        # Try to use OpenAI API if you have imported it and set a key
         try:
-            # If you want real ChatGPT logic, uncomment the 3 lines below and add your key!
-            # from openai import OpenAI
-            # client = OpenAI(api_key="sk-YOUR-API-KEY-HERE")
-            # response = client.chat.completions.create(model="gpt-3.5-turbo", messages=st.session_state.chat_messages)
-            # bot_reply = response.choices[0].message.content
+            # If you want real ChatGPT logic, uncomment these lines and add your OpenAI key!
+            from openai import OpenAI
+            client = OpenAI(api_key="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")
+            response = client.chat.completions.create(model="gpt-3.5-turbo", messages=st.session_state.chat_messages)
+            bot_reply = response.choices[0].message.content
             
-            # Since the API isn't active yet, we force an error to trigger the fallback logic
             raise Exception("API not active")
             
         except Exception:
-            # OFFLINE FALLBACK BRAIN (Handles generic chatter + specific facts)
+            # OFFLINE FALLBACK BRAIN
             lower_prompt = prompt.lower()
             
             if lower_prompt in ["hi", "hello", "hey", "greetings"]:
