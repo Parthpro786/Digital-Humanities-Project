@@ -778,3 +778,107 @@ with tab3:
     * **The Spatialization of Power and Labor:** Semiconductors do not just process data; they restructure the earth. The routing data in this GIS model proves that these Mega-Fabs act as gravitational black holes. They literally reroute rivers (desalination pipelines) and dictate human migration, pulling elite intellectual labor into highly specific, localized 'techno-enclaves' (like Dholera or the Assam frontier), permanently altering local cultures and economies.
     * **The Sovereign Shield:** To the average citizen, a microchip is invisible. But this map proves that the "Cyber Frontline" is deeply physical. Every time the STI variance shifts, it represents billions of dollars poured into concrete, steel, and water routing to ensure that the silicon powering India's hospitals, military radars, and digital economy cannot be turned off by a foreign power. **In the 21st century, geographical infrastructure is destiny.**
     """)
+
+
+
+
+
+# ==============================================================================
+# --- FLOATING SEMICONBOT (MINIMIZABLE POPUP) ---
+# ==============================================================================
+
+# 1. Custom CSS to float the button to the bottom right and style it
+st.markdown("""
+    <style>
+    /* Float the popover button to bottom right */
+    div[data-testid="stPopover"] {
+        position: fixed;
+        bottom: 40px;
+        right: 40px;
+        z-index: 9999;
+    }
+    /* Style the button to look like a futuristic chat bubble */
+    div[data-testid="stPopover"] > button {
+        background-color: #9333ea !important;
+        color: white !important;
+        border-radius: 50px !important;
+        padding: 15px 30px !important;
+        font-family: 'Orbitron', sans-serif !important;
+        font-size: 16px !important;
+        font-weight: 900 !important;
+        letter-spacing: 1px !important;
+        border: 2px solid #c084fc !important;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.4) !important;
+        transition: all 0.3s ease !important;
+    }
+    div[data-testid="stPopover"] > button:hover {
+        transform: scale(1.05) translateY(-5px);
+        box-shadow: 0 15px 25px rgba(147,51,234,0.6) !important;
+        background-color: #7e22ce !important;
+    }
+    /* Style the popup window inside */
+    div[data-testid="stPopoverBody"] {
+        width: 400px !important;
+        border-radius: 12px !important;
+        border: 2px solid #9333ea !important;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# 2. Initialize the chat memory in session state
+if "chat_messages" not in st.session_state:
+    st.session_state.chat_messages = [
+        {"role": "assistant", "content": "Commander, I am **SemiconBot**. I am hooked directly into the GIS framework and live intelligence feeds. What strategic analysis do you require?"}
+    ]
+
+# 3. Create the Popover (This acts as the minimizable button)
+with st.popover("💬 COMMAND UPLINK"):
+    
+    # Header inside the popup
+    st.markdown("<div style='color: #9333ea; font-family: Orbitron; font-weight: 900; font-size: 18px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 10px;'>🤖 SemiconBot OS v2.0</div>", unsafe_allow_html=True)
+    
+    # Chat container with a fixed height so it scrolls like a real app
+    chat_container = st.container(height=350)
+    
+    with chat_container:
+        for msg in st.session_state.chat_messages:
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
+    
+    # 4. The Native Chat Input
+    if prompt := st.chat_input("Transmit encrypted message..."):
+        
+        # Add user message to UI
+        st.session_state.chat_messages.append({"role": "user", "content": prompt})
+        with chat_container:
+            with st.chat_message("user"):
+                st.markdown(prompt)
+                
+        # --- REAL AI INTEGRATION POINT ---
+        # To make this act EXACTLY like ChatGPT, you would put your OpenAI or Gemini API code here!
+        # Example: 
+        # response = openai.ChatCompletion.create(model="gpt-4", messages=st.session_state.chat_messages)
+        # bot_reply = response.choices[0].message.content
+        
+        # ------------------------------------------------
+        # Temporary Advanced Local Logic (Until API is connected)
+        lower_prompt = prompt.lower()
+        if "taiwan" in lower_prompt or "tsmc" in lower_prompt:
+            bot_reply = "TSMC currently controls over 90% of the sub-5nm logic market. However, geographic concentration creates a massive geopolitical single-point-of-failure."
+        elif "india" in lower_prompt or "dholera" in lower_prompt:
+            bot_reply = "The Dholera Megafab is India's premier Sovereign Node. Our data shows a Logistics Efficiency (LCP) of 0.97, making it optimal for 28nm fabrication."
+        elif "api" in lower_prompt or "real" in lower_prompt:
+            bot_reply = "I am currently running on localized GIS logic. To unlock full Generative AI capabilities, insert an OpenAI/Gemini API key at line 400 of the source code."
+        else:
+            bot_reply = f"Scanning databases for: '{prompt}'... \n\n*Topographical and intelligence matrices processed. Awaiting specific sector queries.*"
+        # ------------------------------------------------
+
+        # Add bot message to UI
+        st.session_state.chat_messages.append({"role": "assistant", "content": bot_reply})
+        with chat_container:
+            with st.chat_message("assistant"):
+                st.markdown(bot_reply)
+        
+        # Forces the app to refresh and stay inside the popup
+        st.rerun()
