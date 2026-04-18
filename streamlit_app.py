@@ -226,7 +226,7 @@ df['color'] = df['cap'].apply(get_color)
 
 # --- 5. TOP BAR UI (COMMAND CENTER HUD) ---
 
-# Custom CSS for HUD Cards, Sleek Title, and Thin Slider
+# Custom CSS for HUD Cards, Bulletproof Title, Thicker Slider, and Interactive Tabs
 st.markdown("""
     <style>
     /* Import Robotic/Tech Font */
@@ -247,18 +247,19 @@ st.markdown("""
     .hud-value { font-size: 32px; font-weight: 800; color: #1e1b4b; line-height: 1.2; }
     .hud-label { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
     
-    /* 2. Cyber/Robotics Title (Refined & Clean) */
-    .cyber-title {
+    /* 2. Bulletproof Title (Using div instead of h1 to bypass global CSS) */
+    .hero-title {
         font-family: 'Orbitron', sans-serif !important;
         color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important; /* Ultimate override */
         font-size: 36px !important;
+        font-weight: 900 !important;
         margin: 0 !important;
         letter-spacing: 2px !important;
         text-transform: uppercase;
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     }
 
-    /* 3. Pulsing Uplink Dot (Restored to Green) */
+    /* 3. Pulsing Uplink Dot */
     @keyframes pulse-dot {
         0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
         70% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
@@ -274,15 +275,44 @@ st.markdown("""
         animation: pulse-dot 2s infinite;
     }
 
-    /* 4. Minimalist Thin Slider */
+    /* 4. Thicker, Styled Timeline Slider */
     .stSlider label {
-        font-weight: 600 !important;
+        font-weight: 700 !important;
         color: #475569 !important;
         font-size: 14px !important;
     }
-    /* Forces the slider track to be thin */
     .stSlider [data-baseweb="slider"] div[data-testid="stTickBar"] {
-        height: 2px !important;
+        height: 6px !important; /* Thicker line */
+        border-radius: 3px !important;
+    }
+    .stSlider [data-baseweb="slider"] [role="slider"] {
+        width: 20px !important;
+        height: 20px !important;
+        background-color: #9333ea !important; /* Purple thumb */
+        border: 3px solid #ffffff !important;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
+    }
+
+    /* 5. Interactive Tabs */
+    button[data-baseweb="tab"] {
+        background-color: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        border-bottom: none !important;
+        border-radius: 8px 8px 0 0 !important;
+        padding: 10px 24px !important;
+        margin-right: 4px !important;
+        transition: all 0.3s ease !important;
+    }
+    button[data-baseweb="tab"]:hover {
+        background-color: #e2e8f0 !important;
+        transform: translateY(-2px);
+    }
+    button[data-baseweb="tab"][aria-selected="true"] {
+        background-color: #9333ea !important;
+    }
+    button[data-baseweb="tab"][aria-selected="true"] p {
+        color: #ffffff !important;
+        font-weight: 800 !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -291,7 +321,7 @@ st.markdown("""
 st.markdown("""
     <div style='background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); padding: 25px 30px; border-radius: 10px; margin-bottom: 25px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); border: 1px solid #334155;'>
         <div style='display: flex; justify-content: space-between; align-items: center;'>
-            <h1 class='cyber-title'>Strategic Topography GIS</h1>
+            <div class='hero-title'>Strategic Topography GIS</div>
             <div style='background: rgba(0, 0, 0, 0.4); padding: 5px 12px; border-radius: 20px; font-size: 11px; color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.3); font-weight: 800; letter-spacing: 1px; display: flex; align-items: center;'>
                 <span class='pulse-dot'></span> SECURE UPLINK
             </div>
