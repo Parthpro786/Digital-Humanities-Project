@@ -224,9 +224,9 @@ def get_color(cap):
     return [22, 163, 74]                      # Green
 df['color'] = df['cap'].apply(get_color)
 
-# --- 5. TOP BAR UI (CYBER COMMAND HUD) ---
+# --- 5. TOP BAR UI (COMMAND CENTER HUD) ---
 
-# Custom CSS for HUD Cards, Cyber Title, and Tactical Timeline
+# Custom CSS for HUD Cards, Sleek Title, and Thin Slider
 st.markdown("""
     <style>
     /* Import Robotic/Tech Font */
@@ -247,7 +247,7 @@ st.markdown("""
     .hud-value { font-size: 32px; font-weight: 800; color: #1e1b4b; line-height: 1.2; }
     .hud-label { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
     
-    /* 2. Cyberpunk Title Animation */
+    /* 2. Cyber/Robotics Title (Refined & Clean) */
     .cyber-title {
         font-family: 'Orbitron', sans-serif !important;
         color: #ffffff !important;
@@ -255,58 +255,44 @@ st.markdown("""
         margin: 0 !important;
         letter-spacing: 2px !important;
         text-transform: uppercase;
-        animation: neon-pulse 2s infinite alternate;
-    }
-    @keyframes neon-pulse {
-        0% { text-shadow: 0 0 5px rgba(6, 182, 212, 0.5), 0 0 10px rgba(6, 182, 212, 0.5); }
-        100% { text-shadow: 0 0 15px rgba(6, 182, 212, 1), 0 0 30px rgba(6, 182, 212, 0.8); color: #cffafe !important; }
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
     }
 
-    /* 3. Pulsing Uplink Dot */
+    /* 3. Pulsing Uplink Dot (Restored to Green) */
     @keyframes pulse-dot {
-        0% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.7); }
-        70% { box-shadow: 0 0 0 6px rgba(6, 182, 212, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
+        0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+        70% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
     }
     .pulse-dot {
         display: inline-block;
         width: 8px;
         height: 8px;
         border-radius: 50%;
-        background-color: #06b6d4;
+        background-color: #22c55e;
         margin-right: 6px;
         animation: pulse-dot 2s infinite;
     }
 
-    /* 4. Tactical Timeline Slider Overrides */
+    /* 4. Minimalist Thin Slider */
     .stSlider label {
-        font-family: 'Orbitron', sans-serif !important;
+        font-weight: 600 !important;
         color: #475569 !important;
-        font-weight: 700 !important;
-        letter-spacing: 1px !important;
+        font-size: 14px !important;
     }
-    /* Square, glowing slider thumb */
-    .stSlider [data-baseweb="slider"] [role="slider"] {
-        background-color: #0f172a !important;
-        border: 2px solid #06b6d4 !important;
-        border-radius: 2px !important; 
-        width: 18px !important;
-        height: 18px !important;
-        box-shadow: 0 0 10px rgba(6, 182, 212, 0.8) !important;
-    }
-    /* Neon track fill */
-    .stSlider [data-baseweb="slider"] div[data-testid="stTickBar"] > div {
-        background-color: rgba(6, 182, 212, 0.5) !important;
+    /* Forces the slider track to be thin */
+    .stSlider [data-baseweb="slider"] div[data-testid="stTickBar"] {
+        height: 2px !important;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# The Dark "Hero" Banner with Animated Title
+# The Dark "Hero" Banner
 st.markdown("""
     <div style='background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); padding: 25px 30px; border-radius: 10px; margin-bottom: 25px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); border: 1px solid #334155;'>
         <div style='display: flex; justify-content: space-between; align-items: center;'>
             <h1 class='cyber-title'>Strategic Topography GIS</h1>
-            <div style='background: rgba(0, 0, 0, 0.4); padding: 5px 12px; border-radius: 20px; font-size: 11px; color: #06b6d4; border: 1px solid rgba(6, 182, 212, 0.3); font-weight: 800; letter-spacing: 1px; display: flex; align-items: center;'>
+            <div style='background: rgba(0, 0, 0, 0.4); padding: 5px 12px; border-radius: 20px; font-size: 11px; color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.3); font-weight: 800; letter-spacing: 1px; display: flex; align-items: center;'>
                 <span class='pulse-dot'></span> SECURE UPLINK
             </div>
         </div>
@@ -321,11 +307,11 @@ tab1, tab2, tab3 = st.tabs(["INDIA TIMELINE ECOSYSTEM", "GLOBAL MACRO ECOSYSTEM"
 with tab1:
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # Upgraded Slider Title
-    selected_year = st.select_slider("⏳ Temporal Integration Engine [YEAR]:", options=[1980, 1990, 2000, 2010, 2020, 2026], value=2026)
+    # Cleaned up Timeline label
+    selected_year = st.select_slider("Historical Timeline:", options=[1980, 1990, 2000, 2010, 2020, 2026], value=2026)
     active_df = df[(df['region'] == 'India') & (df['year'] <= selected_year)].copy()
     
-    # NEW HUD LAYER (Replaces st.metric)
+    # HUD LAYER 
     avg_sti = f"{active_df['sti'].mean():.1f}%" if not active_df.empty else "N/A"
     avg_lcp = f"{active_df['lcp'].mean():.2f}" if not active_df.empty else "N/A"
     
