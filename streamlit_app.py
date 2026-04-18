@@ -247,18 +247,38 @@ st.markdown("""
     .hud-value { font-size: 32px; font-weight: 800; color: #1e1b4b; line-height: 1.2; }
     .hud-label { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
     
-    /* 2. Bulletproof Title (Using div instead of h1 to bypass global CSS) */
+    /* 2. Premium Shimmer Title Animation */
     .hero-title {
         font-family: 'Orbitron', sans-serif !important;
-        color: #ffffff !important;
-        -webkit-text-fill-color: #ffffff !important; /* Ultimate override */
         font-size: 36px !important;
         font-weight: 900 !important;
         margin: 0 !important;
         letter-spacing: 2px !important;
         text-transform: uppercase;
+        
+        /* The Shimmer Gradient Setup */
+        background: linear-gradient(
+            to right, 
+            #ffffff 20%, 
+            #c084fc 40%, /* Subtle purple reflection */
+            #22d3ee 60%, /* Subtle cyan reflection */
+            #ffffff 80%
+        );
+        background-size: 200% auto;
+        
+        /* Clip the background to the text shape */
+        color: transparent !important;
+        -webkit-background-clip: text !important;
+        background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        
+        /* The Animation */
+        animation: premium-shine 6s linear infinite;
     }
 
+    @keyframes premium-shine {
+        to { background-position: 200% center; }
+    }
     /* 3. Pulsing Uplink Dot */
     @keyframes pulse-dot {
         0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
