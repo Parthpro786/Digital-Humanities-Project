@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from openai import OpenAI
 import pydeck as pdk
 import numpy as np
 import altair as alt
@@ -778,6 +779,126 @@ with tab3:
     * **The Spatialization of Power and Labor:** Semiconductors do not just process data; they restructure the earth. The routing data in this GIS model proves that these Mega-Fabs act as gravitational black holes. They literally reroute rivers (desalination pipelines) and dictate human migration, pulling elite intellectual labor into highly specific, localized 'techno-enclaves' (like Dholera or the Assam frontier), permanently altering local cultures and economies.
     * **The Sovereign Shield:** To the average citizen, a microchip is invisible. But this map proves that the "Cyber Frontline" is deeply physical. Every time the STI variance shifts, it represents billions of dollars poured into concrete, steel, and water routing to ensure that the silicon powering India's hospitals, military radars, and digital economy cannot be turned off by a foreign power. **In the 21st century, geographical infrastructure is destiny.**
     """)
+
+
+
+
+# ==============================================================================
+# --- FLOATING SEMICONBOT (MINIMIZABLE POPUP) ---
+# ==============================================================================
+
+# 1. Custom CSS: Bottom-Left, Small Circle, Ultra-Fast Animations
+st.markdown("""
+<style>
+/* Anchor to Bottom-Left */
+div[data-testid="stPopover"] {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    z-index: 9999;
+}
+/* Force into a Small Perfect Circle */
+div[data-testid="stPopover"] > button {
+    background-color: #9333ea !important;
+    color: #ffffff !important;
+    border-radius: 50% !important; /* Makes it a circle */
+    width: 60px !important;  /* Fixed small width */
+    height: 60px !important; /* Fixed small height */
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 26px !important; /* Icon size */
+    border: 2px solid #c084fc !important;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3) !important;
+    transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1) !important; /* Snappy hover */
+}
+div[data-testid="stPopover"] > button:hover {
+    transform: scale(1.15) translateY(-4px); 
+    box-shadow: 0 12px 24px rgba(147,51,234,0.6) !important;
+    background-color: #7e22ce !important;
+}
+/* Chat Window Styling */
+div[data-testid="stPopoverBody"] {
+    width: 380px !important;
+    border-radius: 12px !important;
+    border: 2px solid #9333ea !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# 2. Initialize Chat Memory
+if "chat_messages" not in st.session_state:
+    st.session_state.chat_messages = [
+        {"role": "assistant", "content": "Commander, I am **SemiconBot**. Hooked directly into the GIS framework. How can I assist you today?"}
+    ]
+
+# 3. Create the Popover (Using ONLY an emoji prevents the "long bar")
+with st.popover("💬"):
+    
+    # Header inside the popup
+    st.markdown("<div style='color: #6b21a8; font-family: Orbitron; font-weight: 900; font-size: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 10px;'>🤖 SemiconBot OS v3.0</div>", unsafe_allow_html=True)
+    
+    # Scrollable chat container
+    chat_container = st.container(height=350)
+    
+    with chat_container:
+        for msg in st.session_state.chat_messages:
+            with st.chat_message(msg["role"]):
+                st.markdown(msg["content"])
+    
+    # 4. Chat Input & AI Logic
+    if prompt := st.chat_input("Transmit message..."):
+        
+        # Display user message instantly
+        st.session_state.chat_messages.append({"role": "user", "content": prompt})
+        with chat_container:
+            with st.chat_message("user"):
+                st.markdown(prompt)
+        
+        # -------------------------------------------------------------------
+        # BRAIN LOGIC: Try OpenAI API first, fallback to offline rules
+        # -------------------------------------------------------------------
+        bot_reply = ""
+        
+        # Try to use OpenAI API if you have imported it and set a key
+        try:
+            # If you want real ChatGPT logic, uncomment the 3 lines below and add your key!
+            # from openai import OpenAI
+            # client = OpenAI(api_key="sk-YOUR-API-KEY-HERE")
+            # response = client.chat.completions.create(model="gpt-3.5-turbo", messages=st.session_state.chat_messages)
+            # bot_reply = response.choices[0].message.content
+            
+            # Since the API isn't active yet, we force an error to trigger the fallback logic
+            raise Exception("API not active")
+            
+        except Exception:
+            # OFFLINE FALLBACK BRAIN (Handles generic chatter + specific facts)
+            lower_prompt = prompt.lower()
+            
+            if lower_prompt in ["hi", "hello", "hey", "greetings"]:
+                bot_reply = "Greetings! I am online and ready. Do you need a briefing on a specific facility, or an overview of the global macro ecosystem?"
+            elif "how are you" in lower_prompt:
+                bot_reply = "All systems are nominal. My GIS routing subroutines are running at peak efficiency. What is our next objective?"
+            elif "who are you" in lower_prompt or "what are you" in lower_prompt:
+                bot_reply = "I am SemiconBot, a localized Tactical AI designed to assist you with geopolitical topography and semiconductor supply chain analysis."
+            elif "taiwan" in lower_prompt or "tsmc" in lower_prompt:
+                bot_reply = "TSMC currently controls over 90% of the sub-5nm logic market. However, geographic concentration creates a massive geopolitical single-point-of-failure."
+            elif "india" in lower_prompt or "dholera" in lower_prompt:
+                bot_reply = "The Dholera Megafab is India's premier Sovereign Node. Our data shows a Logistics Efficiency (LCP) of 0.97, making it optimal for 28nm fabrication."
+            else:
+                bot_reply = f"Scanning databases for: '{prompt}'... \n\n*To unlock my full generative AI capabilities for this query, please enter an OpenAI API key in the source code.*"
+        # -------------------------------------------------------------------
+
+        # Display bot response
+        st.session_state.chat_messages.append({"role": "assistant", "content": bot_reply})
+        with chat_container:
+            with st.chat_message("assistant"):
+                st.markdown(bot_reply)
+        
+        # Instantly refresh to keep chat window open and updated
+        st.rerun()
 
 
 
