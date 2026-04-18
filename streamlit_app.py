@@ -892,7 +892,7 @@ with st.popover("💬", use_container_width=False):
             import json
             
             # --- PUT YOUR SECRET API KEY HERE ---
-            API_KEY = "sk-YOUR-API-KEY-HERE" 
+            API_KEY = "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" 
             
             # Format the request exactly how OpenAI expects it
             url = "https://api.openai.com/v1/chat/completions"
