@@ -226,59 +226,6 @@ df['color'] = df['cap'].apply(get_color)
 
 
 
-# --- AI STRATEGIC ADVISOR (SIDEBAR CHATBOT) ---
-
-with st.sidebar:
-    st.markdown("""
-        <div style='background-color: #0f172a; padding: 15px; border-radius: 8px; border-left: 4px solid #06b6d4; margin-bottom: 20px;'>
-            <h3 style='color: white; margin: 0; font-family: "Orbitron", sans-serif; font-size: 16px; letter-spacing: 1px;'>🤖 TACTICAL AI</h3>
-            <span style='color: #22c55e; font-size: 11px; font-weight: bold;'>● ONLINE & READY</span>
-        </div>
-    """, unsafe_allow_html=True)
-
-    # 1. Initialize chat history in session state
-    if "messages" not in st.session_state:
-        st.session_state.messages = [
-            {"role": "assistant", "content": "Welcome, Commander. I am your Strategic Logistics AI. Ask me to analyze topographical friction or supply chain risks."}
-        ]
-
-    # 2. Display existing chat messages
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
-
-    # 3. Chat Input Box at the bottom of the sidebar
-    if prompt := st.chat_input("Enter query..."):
-        
-        # Add user message to chat history and display it
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
-
-        # 4. Generate AI Response
-        # Note: Right now this is an "echo" bot for demonstration. 
-        # You can connect this to a real AI API later!
-        with st.chat_message("assistant"):
-            if "assam" in prompt.lower() or "tsat" in prompt.lower():
-                response = "Assam (TSAT) offers immense geopolitical defense but suffers from high topographical friction. Ensure water routing is prioritized."
-            elif "dholera" in prompt.lower() or "gujarat" in prompt.lower():
-                response = "The Dholera-Sanand corridor operates at 0.97 LCP efficiency. It is the primary node for logic fabrication."
-            elif "risk" in prompt.lower() or "supply" in prompt.lower():
-                response = "Warning: Neon Gas and High Bandwidth Memory face extreme market volatility. Recommend stockpiling protocols."
-            else:
-                response = f"Processing query parameters: '{prompt}'. Topographical analysis complete. Please specify a facility or region for deeper insights."
-            
-            st.markdown(response)
-            
-        # Add assistant response to chat history
-        st.session_state.messages.append({"role": "assistant", "content": response})
-
-
-
-
-
-
-
 
 # --- 5. TOP BAR UI (COMMAND CENTER HUD) ---
 
