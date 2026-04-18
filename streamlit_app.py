@@ -882,37 +882,52 @@ with st.popover("💬", use_container_width=False):
                 st.markdown(prompt)
         
         # -------------------------------------------------------------------
-        # BRAIN LOGIC
+        # BRAIN LOGIC: Zero-Install Native API Call
         # -------------------------------------------------------------------
         bot_reply = ""
         
         try:
-            # If you want real ChatGPT logic, uncomment these lines and add your OpenAI key!
-            from openai import OpenAI
-            client = OpenAI(api_key="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")
-            response = client.chat.completions.create(model="gpt-3.5-turbo", messages=st.session_state.chat_messages)
-            bot_reply = response.choices[0].message.content
+            # We use native Python libraries - NO pip install required!
+            import urllib.request
+            import json
             
-            raise Exception("API not active")
+            # --- PUT YOUR SECRET API KEY HERE ---
+            API_KEY = "sk-YOUR-API-KEY-HERE" 
             
-        except Exception:
-            # OFFLINE FALLBACK BRAIN
+            # Format the request exactly how OpenAI expects it
+            url = "https://api.openai.com/v1/chat/completions"
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {API_KEY}"
+            }
+            data = {
+                "model": "gpt-3.5-turbo",
+                "messages": st.session_state.chat_messages
+            }
+            
+            # Fire the native internet request
+            req = urllib.request.Request(url, data=json.dumps(data).encode("utf-8"), headers=headers)
+            with urllib.request.urlopen(req, timeout=10) as response:
+                result = json.loads(response.read().decode("utf-8"))
+                bot_reply = result["choices"][0]["message"]["content"]
+                
+        except Exception as e:
+            # OFFLINE FALLBACK BRAIN (Triggers if API key is blank, wrong, or no internet)
             lower_prompt = prompt.lower()
             
             if lower_prompt in ["hi", "hello", "hey", "greetings"]:
-                bot_reply = "Greetings! I am online and ready. Do you need a briefing on a specific facility, or an overview of the global macro ecosystem?"
+                bot_reply = "Greetings! I am online and ready. Do you need a briefing on a specific facility?"
             elif "how are you" in lower_prompt:
-                bot_reply = "All systems are nominal. My GIS routing subroutines are running at peak efficiency. What is our next objective?"
+                bot_reply = "All systems are nominal. My GIS routing subroutines are running at peak efficiency."
             elif "who are you" in lower_prompt or "what are you" in lower_prompt:
-                bot_reply = "I am SemiconBot, a localized Tactical AI designed to assist you with geopolitical topography and semiconductor supply chain analysis."
+                bot_reply = "I am SemiconBot, a localized Tactical AI designed to assist you with geopolitical topography."
             elif "taiwan" in lower_prompt or "tsmc" in lower_prompt:
                 bot_reply = "TSMC currently controls over 90% of the sub-5nm logic market. However, geographic concentration creates a massive geopolitical single-point-of-failure."
             elif "india" in lower_prompt or "dholera" in lower_prompt:
-                bot_reply = "The Dholera Megafab is India's premier Sovereign Node. Our data shows a Logistics Efficiency (LCP) of 0.97, making it optimal for 28nm fabrication."
+                bot_reply = "The Dholera Megafab is India's premier Sovereign Node. Our data shows a Logistics Efficiency (LCP) of 0.97."
             else:
-                bot_reply = f"Scanning databases for: '{prompt}'... \n\n*To unlock my full generative AI capabilities for this query, please enter an OpenAI API key in the source code.*"
+                bot_reply = f"Scanning databases for: '{prompt}'...\n\n*(Local cache only. To unlock Generative AI, a valid OpenAI key must be present in the source code.)*"
         # -------------------------------------------------------------------
-
         # Display bot response
         st.session_state.chat_messages.append({"role": "assistant", "content": bot_reply})
         with chat_container:
