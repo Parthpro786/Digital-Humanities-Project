@@ -224,28 +224,85 @@ def get_color(cap):
     return [22, 163, 74]                      # Green
 df['color'] = df['cap'].apply(get_color)
 
-# --- 5. TOP BAR UI ---
-st.title("Strategic Topography GIS Explorer")
-st.markdown("Macro-Analysis of Semiconductor Infrastructure, Topographical Friction, and Strategic Routing.")
+# --- 5. TOP BAR UI (COMMAND CENTER HUD) ---
+
+# Custom CSS for the new HUD Cards
+st.markdown("""
+    <style>
+    .hud-card {
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 15px 20px;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        border-top: 4px solid #9333ea;
+        text-align: center;
+        transition: transform 0.2s ease;
+    }
+    .hud-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+    .hud-value { font-size: 32px; font-weight: 800; color: #1e1b4b; line-height: 1.2; }
+    .hud-label { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
+    
+    /* Pulsing Live Dot */
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+        70% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+    .pulse-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #22c55e;
+        margin-right: 6px;
+        animation: pulse 2s infinite;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# The Dark "Hero" Banner
+st.markdown("""
+    <div style='background: linear-gradient(135deg, #0f172a 0%, #3b0764 100%); padding: 25px 30px; border-radius: 10px; margin-bottom: 25px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3);'>
+        <div style='display: flex; justify-content: space-between; align-items: center;'>
+            <h1 style='color: white; margin: 0; font-size: 32px; letter-spacing: -0.5px;'>Strategic Topography GIS</h1>
+            <div style='background: rgba(0,0,0,0.3); padding: 5px 12px; border-radius: 20px; font-size: 11px; color: #22c55e; font-weight: 800; letter-spacing: 1px; display: flex; align-items: center;'>
+                <span class='pulse-dot'></span> SECURE UPLINK
+            </div>
+        </div>
+        <p style='color: #cbd5e1; font-size: 15px; margin: 8px 0 0 0; font-weight: 400;'>Macro-Analysis of Semiconductor Infrastructure, Topographical Friction, and Strategic Routing.</p>
+    </div>
+""", unsafe_allow_html=True)
 
 # Tab Selection
 tab1, tab2, tab3 = st.tabs(["INDIA TIMELINE ECOSYSTEM", "GLOBAL MACRO ECOSYSTEM", "S.T.I. STATISTICAL DISTRIBUTION"])
 
-# --- TAB 1: INDIA ECOSYSTEM (Corrected Layout) ---
+# --- TAB 1: INDIA ECOSYSTEM ---
 with tab1:
+    st.markdown("<br>", unsafe_allow_html=True)
     selected_year = st.select_slider("Historical Timeline Integration:", options=[1980, 1990, 2000, 2010, 2020, 2026], value=2026)
     active_df = df[(df['region'] == 'India') & (df['year'] <= selected_year)].copy()
     
-    # NEW HUD LAYER
-    col_kpi1, col_kpi2, col_kpi3 = st.columns(3)
-    with col_kpi1:
-        st.metric("Active Indian Nodes", len(active_df))
-    with col_kpi2:
-        st.metric("Average STI Score", f"{active_df['sti'].mean():.1f}%" if not active_df.empty else "N/A")
-    with col_kpi3:
-        st.metric("Average LCP Efficiency", f"{active_df['lcp'].mean():.2f}" if not active_df.empty else "N/A")
+    # NEW HUD LAYER (Replaces st.metric)
+    avg_sti = f"{active_df['sti'].mean():.1f}%" if not active_df.empty else "N/A"
+    avg_lcp = f"{active_df['lcp'].mean():.2f}" if not active_df.empty else "N/A"
     
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown(f"""
+    <div style='display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 15px; margin-bottom: 30px;'>
+        <div class='hud-card'>
+            <div class='hud-label'>📡 Active Sovereign Nodes</div>
+            <div class='hud-value'>{len(active_df)}</div>
+        </div>
+        <div class='hud-card'>
+            <div class='hud-label'>⛰️ Mean Topographical Index</div>
+            <div class='hud-value'>{avg_sti}</div>
+        </div>
+        <div class='hud-card'>
+            <div class='hud-label'>🛣️ Logistics Efficiency (LCP)</div>
+            <div class='hud-value'>{avg_lcp}</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
     col_map, col_dossier = st.columns([6, 4], gap="large")
 
