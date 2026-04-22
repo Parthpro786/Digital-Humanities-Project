@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-from openai import OpenAI
 import pydeck as pdk
 import numpy as np
 import altair as alt
@@ -15,29 +14,217 @@ st.set_page_config(layout="wide", page_title="Strategic Topography GIS", page_ic
 
 st.markdown("""
     <style>
-        /* Light washy magenta/lavender background */
-        .stApp { background-color: #fdf4ff; }
+        /* Premium Cinematic Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Montserrat:wght@300;400;600;700&display=swap');
+
+        /* Dark Cinematic Background */
+        .stApp { 
+            background-color: #050505; 
+            background-image: radial-gradient(circle at 50% -20%, #1a1a1a 0%, #050505 80%);
+        }
+        
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
         .block-container {padding-top: 2rem; padding-bottom: 0rem; max-width: 98%;}
-        h1, h2, h3, p, span, div {font-family: 'Helvetica Neue', Arial, sans-serif; color: #1e1b4b;}
         
-        /* Sidebar and Technical Dossier Styling */
-        [data-testid="stSidebar"] {background-color: #ffffff; border-right: 1px solid #e2e8f0;}
-        .metric-box {background-color: #ffffff; padding: 14px; border-radius: 4px; border-left: 4px solid #9333ea; margin-bottom: 12px; border: 1px solid #e5e7eb; box-shadow: 0 1px 2px rgba(0,0,0,0.05);}
+        /* Global Typography */
+        h1, h2, h3, p, span, div {
+            font-family: 'Montserrat', sans-serif; 
+            color: #e0e0e0;
+        }
+        h1, h2, h3 {
+            font-family: 'Cinzel', serif;
+            color: #d4af37;
+            letter-spacing: 1px;
+        }
         
-        /* INCREASED TEXT SIZES FOR THE TECHNICAL DOSSIER */
-        .metric-title {color: #4b5563; font-size: 13.5px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 700;}
-        .metric-text {color: #0f172a; font-size: 16.5px; line-height: 1.6;}
+        /* Sidebar and Technical Dossier Styling - Glassmorphism */
+        [data-testid="stSidebar"] {
+            background-color: rgba(10, 10, 10, 0.8); 
+            border-right: 1px solid rgba(212, 175, 55, 0.2);
+            backdrop-filter: blur(10px);
+        }
         
-        /* Cap Tags */
-        .tag-large {color: #dc2626; font-weight: bold; text-transform: uppercase; font-size: 12px;}
-        .tag-mid {color: #d97706; font-weight: bold; text-transform: uppercase; font-size: 12px;}
-        .tag-small {color: #16a34a; font-weight: bold; text-transform: uppercase; font-size: 12px;}
+        /* Glassmorphic Metric Boxes */
+        .metric-box {
+            background: rgba(20, 20, 20, 0.65);
+            backdrop-filter: blur(12px);
+            padding: 16px; 
+            border-radius: 8px; 
+            border-left: 4px solid #d4af37; 
+            margin-bottom: 15px; 
+            border-top: 1px solid rgba(212, 175, 55, 0.15);
+            border-right: 1px solid rgba(212, 175, 55, 0.15);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.15);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .metric-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.15);
+        }
+        
+        .metric-title {color: #a3a3a3; font-size: 13.5px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 600;}
+        .metric-text {color: #f3f4f6; font-size: 16.5px; line-height: 1.6; font-weight: 300;}
+        
+        /* Cap Tags - Premium Colors */
+        .tag-large {color: #d4af37; font-weight: bold; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;} /* Gold */
+        .tag-mid {color: #b87333; font-weight: bold; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;}  /* Bronze */
+        .tag-small {color: #c0c0c0; font-weight: bold; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;} /* Silver */
         
         /* High-Contrast Return Button */
-        .stButton>button {background-color: #701a75; color: #ffffff; border: none; font-weight: 600; padding: 10px 20px;}
-        .stButton>button:hover {background-color: #4a044e; color: #ffffff;}
+        .stButton>button {
+            background: linear-gradient(135deg, #d4af37 0%, #aa8c2c 100%); 
+            color: #000000 !important; 
+            border: 1px solid #ffe55c; 
+            font-weight: 700; 
+            padding: 10px 20px;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            transition: all 0.3s ease;
+        }
+        .stButton>button:hover {
+            background: linear-gradient(135deg, #aa8c2c 0%, #8c7324 100%); 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+            color: #ffffff !important;
+        }
+
+        /* 1. HUD Card Styling (Glassmorphism) */
+        .hud-card {
+            background: rgba(15, 15, 15, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 8px 32px 0 rgba(0,0,0,0.5);
+            border-top: 3px solid #d4af37;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .hud-card:hover { transform: translateY(-3px); box-shadow: 0 10px 25px -3px rgba(212, 175, 55, 0.2); border-top: 3px solid #ffe55c;}
+        .hud-value { font-size: 36px; font-family: 'Cinzel', serif; font-weight: 800; color: #d4af37; line-height: 1.2; text-shadow: 0 0 15px rgba(212,175,55,0.4); }
+        .hud-label { font-size: 13px; font-weight: 600; color: #9ca3af; text-transform: uppercase; letter-spacing: 1.5px; }
+        
+        /* 2. Premium Shimmer Title Animation */
+        .hero-title {
+            font-family: 'Cinzel', serif !important;
+            font-size: 38px !important;
+            font-weight: 800 !important;
+            margin: 0 !important;
+            letter-spacing: 3px !important;
+            text-transform: uppercase;
+            
+            background: linear-gradient(
+                to right, 
+                #d4af37 20%, 
+                #fff7cc 40%, 
+                #d4af37 60%, 
+                #aa8c2c 80%
+            );
+            background-size: 200% auto;
+            color: transparent !important;
+            -webkit-background-clip: text !important;
+            background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            animation: premium-shine 6s linear infinite;
+        }
+
+        @keyframes premium-shine {
+            to { background-position: 200% center; }
+        }
+
+        /* 3. Pulsing Uplink Dot (Gold) */
+        @keyframes pulse-dot-gold {
+            0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(212, 175, 55, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+        }
+        .pulse-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #d4af37;
+            margin-right: 8px;
+            animation: pulse-dot-gold 2s infinite;
+        }
+
+        /* 4. Styled Timeline Slider */
+        .stSlider label {
+            font-weight: 600 !important;
+            color: #d4af37 !important;
+            font-size: 14px !important;
+            letter-spacing: 1px;
+        }
+        .stSlider [data-baseweb="slider"] div[data-testid="stTickBar"] {
+            background-color: #333 !important;
+            height: 4px !important; 
+        }
+        .stSlider [data-baseweb="slider"] [role="slider"] {
+            width: 22px !important;
+            height: 22px !important;
+            background-color: #000000 !important;
+            border: 3px solid #d4af37 !important;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.8) !important;
+        }
+
+        /* 5. Interactive Tabs - Luxury Theme */
+        button[data-baseweb="tab"] {
+            background-color: transparent !important;
+            border: none !important;
+            border-bottom: 2px solid #333 !important;
+            padding: 12px 24px !important;
+            margin-right: 8px !important;
+            transition: all 0.3s ease !important;
+        }
+        button[data-baseweb="tab"]:hover {
+            border-bottom: 2px solid rgba(212, 175, 55, 0.5) !important;
+        }
+        button[data-baseweb="tab"][aria-selected="true"] {
+            background-color: rgba(212, 175, 55, 0.1) !important;
+            border-bottom: 2px solid #d4af37 !important;
+        }
+        button[data-baseweb="tab"][aria-selected="true"] p {
+            color: #d4af37 !important;
+            font-weight: 700 !important;
+            letter-spacing: 1px;
+        }
+        button[data-baseweb="tab"] p {
+            color: #9ca3af !important;
+            font-weight: 600 !important;
+            font-family: 'Montserrat', sans-serif !important;
+        }
+
+        /* Live Hover Card Updates */
+        .live-hover-card { 
+            background: rgba(15, 15, 15, 0.6); 
+            backdrop-filter: blur(8px);
+            padding: 16px; 
+            border-radius: 6px; 
+            margin-bottom: 10px; 
+            border: 1px solid rgba(212, 175, 55, 0.15); 
+            border-left: 4px solid #d4af37; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3); 
+            transition: all 0.3s ease; 
+            cursor: pointer; 
+        }
+        .live-hover-card:hover { 
+            background: rgba(30, 30, 30, 0.8) !important; 
+            border-left-color: #ffe55c !important; 
+            transform: translateX(8px); 
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.2); 
+        }
+        .live-hover-card:hover .hover-tag { color: #ffe55c !important; }
+        .live-hover-card:hover .hover-title { color: #ffffff !important; }
+        a.card-link { text-decoration: none; display: block; }
+        
+        /* Table Styles for Tab 3 */
+        .stDataFrame {
+            background-color: transparent !important;
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -63,7 +250,7 @@ def fetch_live_intelligence():
     # Pulls the live RSS feed from Google News specifically for Indian Semiconductors
     url = "https://news.google.com/rss/search?q=India+semiconductor+manufacturing&hl=en-IN&gl=IN&ceid=IN:en"
     feed = feedparser.parse(url)
-    return feed.entries[:7] # Returns the top 3 most recent articles
+    return feed.entries[:7]
 
 # --- 4. THE UNIFIED DATASET (India + Global) ---
 data = [
@@ -214,143 +401,30 @@ data = [
 
 df = pd.DataFrame(data)
 
-# Pin mapping colors
+# Pin mapping colors: Luxury Metallic Theme
 ICON_URL = "https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png"
 icon_data = {"url": ICON_URL, "width": 128, "height": 128, "y": 128, "anchorY": 128}
 df['icon_data'] = [icon_data for _ in range(len(df))]
 
 def get_color(cap):
-    if cap == "Large": return [220, 38, 38]   # Red
-    if cap == "Mid": return [217, 119, 6]     # Orange
-    return [22, 163, 74]                      # Green
+    if cap == "Large": return [212, 175, 55]   # Gold
+    if cap == "Mid": return [184, 115, 51]     # Bronze
+    return [192, 192, 192]                     # Silver
 df['color'] = df['cap'].apply(get_color)
-
-
 
 
 # --- 5. TOP BAR UI (COMMAND CENTER HUD) ---
 
-# Custom CSS for HUD Cards, Bulletproof Title, Thicker Slider, and Interactive Tabs
+# The Dark Cinematic "Hero" Banner
 st.markdown("""
-    <style>
-    /* Import Robotic/Tech Font */
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap');
-
-    /* 1. HUD Card Styling */
-    .hud-card {
-        background-color: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 8px;
-        padding: 15px 20px;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-        border-top: 4px solid #9333ea;
-        text-align: center;
-        transition: transform 0.2s ease;
-    }
-    .hud-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
-    .hud-value { font-size: 32px; font-weight: 800; color: #1e1b4b; line-height: 1.2; }
-    .hud-label { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
-    
-    /* 2. Premium Shimmer Title Animation */
-    .hero-title {
-        font-family: 'Orbitron', sans-serif !important;
-        font-size: 36px !important;
-        font-weight: 900 !important;
-        margin: 0 !important;
-        letter-spacing: 2px !important;
-        text-transform: uppercase;
-        
-        /* The Shimmer Gradient Setup */
-        background: linear-gradient(
-            to right, 
-            #ffffff 20%, 
-            #c084fc 40%, /* Subtle purple reflection */
-            #22d3ee 60%, /* Subtle cyan reflection */
-            #ffffff 80%
-        );
-        background-size: 200% auto;
-        
-        /* Clip the background to the text shape */
-        color: transparent !important;
-        -webkit-background-clip: text !important;
-        background-clip: text !important;
-        -webkit-text-fill-color: transparent !important;
-        
-        /* The Animation */
-        animation: premium-shine 6s linear infinite;
-    }
-
-    @keyframes premium-shine {
-        to { background-position: 200% center; }
-    }
-    /* 3. Pulsing Uplink Dot */
-    @keyframes pulse-dot {
-        0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
-        70% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
-    }
-    .pulse-dot {
-        display: inline-block;
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background-color: #22c55e;
-        margin-right: 6px;
-        animation: pulse-dot 2s infinite;
-    }
-
-    /* 4. Thicker, Styled Timeline Slider */
-    .stSlider label {
-        font-weight: 700 !important;
-        color: #475569 !important;
-        font-size: 14px !important;
-    }
-    .stSlider [data-baseweb="slider"] div[data-testid="stTickBar"] {
-        height: 6px !important; /* Thicker line */
-        border-radius: 3px !important;
-    }
-    .stSlider [data-baseweb="slider"] [role="slider"] {
-        width: 20px !important;
-        height: 20px !important;
-        background-color: #9333ea !important; /* Purple thumb */
-        border: 3px solid #ffffff !important;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2) !important;
-    }
-
-    /* 5. Interactive Tabs */
-    button[data-baseweb="tab"] {
-        background-color: #f8fafc !important;
-        border: 1px solid #e2e8f0 !important;
-        border-bottom: none !important;
-        border-radius: 8px 8px 0 0 !important;
-        padding: 10px 24px !important;
-        margin-right: 4px !important;
-        transition: all 0.3s ease !important;
-    }
-    button[data-baseweb="tab"]:hover {
-        background-color: #e2e8f0 !important;
-        transform: translateY(-2px);
-    }
-    button[data-baseweb="tab"][aria-selected="true"] {
-        background-color: #9333ea !important;
-    }
-    button[data-baseweb="tab"][aria-selected="true"] p {
-        color: #ffffff !important;
-        font-weight: 800 !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
-# The Dark "Hero" Banner
-st.markdown("""
-    <div style='background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); padding: 25px 30px; border-radius: 10px; margin-bottom: 25px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.3); border: 1px solid #334155;'>
+    <div style='background: rgba(10, 10, 10, 0.85); backdrop-filter: blur(15px); padding: 30px 35px; border-radius: 12px; margin-bottom: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.6); border: 1px solid rgba(212, 175, 55, 0.3); border-bottom: 4px solid #d4af37;'>
         <div style='display: flex; justify-content: space-between; align-items: center;'>
-            <div class='hero-title'>Strategic Topography GIS</div>
-            <div style='background: rgba(0, 0, 0, 0.4); padding: 5px 12px; border-radius: 20px; font-size: 11px; color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.3); font-weight: 800; letter-spacing: 1px; display: flex; align-items: center;'>
+            <div class='hero-title'>STRATEGIC TOPOGRAPHY GIS</div>
+            <div style='background: rgba(212, 175, 55, 0.1); padding: 8px 16px; border-radius: 30px; font-size: 11px; color: #d4af37; border: 1px solid rgba(212, 175, 55, 0.5); font-weight: 700; letter-spacing: 2px; display: flex; align-items: center; box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);'>
                 <span class='pulse-dot'></span> SECURE UPLINK
             </div>
         </div>
-        <p style='color: #94a3b8; font-size: 15px; margin: 8px 0 0 0; font-family: "Courier New", Courier, monospace;'>Macro-Analysis of Semiconductor Infrastructure, Topographical Friction, and Strategic Routing.</p>
+        <p style='color: #a3a3a3; font-size: 15px; margin: 12px 0 0 0; font-family: "Montserrat", sans-serif; letter-spacing: 0.5px;'>Macro-Analysis of Semiconductor Infrastructure, Topographical Friction, and Strategic Routing.</p>
     </div>
 """, unsafe_allow_html=True)
 
@@ -361,7 +435,6 @@ tab1, tab2, tab3 = st.tabs(["INDIA TIMELINE ECOSYSTEM", "GLOBAL MACRO ECOSYSTEM"
 with tab1:
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # Cleaned up Timeline label
     selected_year = st.select_slider("Historical Timeline:", options=[1980, 1990, 2000, 2010, 2020, 2026], value=2026)
     active_df = df[(df['region'] == 'India') & (df['year'] <= selected_year)].copy()
     
@@ -370,7 +443,7 @@ with tab1:
     avg_lcp = f"{active_df['lcp'].mean():.2f}" if not active_df.empty else "N/A"
     
     st.markdown(f"""
-    <div style='display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 15px; margin-bottom: 30px;'>
+    <div style='display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin-top: 20px; margin-bottom: 35px;'>
         <div class='hud-card'>
             <div class='hud-label'> Active Sovereign Nodes</div>
             <div class='hud-value'>{len(active_df)}</div>
@@ -389,11 +462,31 @@ with tab1:
     col_map, col_dossier = st.columns([6, 4], gap="large")
 
     with col_map:
+        # Create a cinematic glowing aura under the pins
         layers = [
-            pdk.Layer("IconLayer", active_df, get_icon="icon_data", get_size=4, size_scale=12, get_position=["lon", "lat"], get_color="color", pickable=True, id="facility_pins")
+            pdk.Layer(
+                "ScatterplotLayer",
+                active_df,
+                get_position=["lon", "lat"],
+                get_fill_color="color",
+                get_radius=8500,
+                opacity=0.15,
+                pickable=False
+            ),
+            pdk.Layer(
+                "IconLayer", 
+                active_df, 
+                get_icon="icon_data", 
+                get_size=4, 
+                size_scale=12, 
+                get_position=["lon", "lat"], 
+                get_color="color", 
+                pickable=True, 
+                id="facility_pins"
+            )
         ]
 
-        init_view = pdk.ViewState(latitude=22.0, longitude=79.0, zoom=4.2, pitch=0)
+        init_view = pdk.ViewState(latitude=22.0, longitude=79.0, zoom=4.2, pitch=15)
 
         # --- DYNAMIC ROUTING & SEPARATED LABELS ---
         if st.session_state.selected_node:
@@ -405,39 +498,39 @@ with tab1:
             l_curve, l_mid = generate_curve([n['l_lon'], n['l_lat']], f_coord, -0.1)
 
             route_data = [
-                {"path": w_curve, "color": [6, 182, 212]}, # Cyan
-                {"path": m_curve, "color": [255, 255, 255]}, # White
-                {"path": l_curve, "color": [234, 179, 8]}  # Yellow
+                {"path": w_curve, "color": [0, 191, 255]},  # Bright Blue
+                {"path": m_curve, "color": [212, 175, 55]}, # Gold
+                {"path": l_curve, "color": [169, 169, 169]} # Light Gray
             ]
             layers.append(pdk.Layer("PathLayer", pd.DataFrame(route_data), get_path="path", get_color="color", width_scale=20, width_min_pixels=3, get_dash_array=[8, 8], dash_justified=True))
 
             res_data = [
-                {"lon": n['w_lon'], "lat": n['w_lat'], "color": [6, 182, 212]},
-                {"lon": n['m_lon'], "lat": n['m_lat'], "color": [255, 255, 255]},
-                {"lon": n['l_lon'], "lat": n['l_lat'], "color": [234, 179, 8]}
+                {"lon": n['w_lon'], "lat": n['w_lat'], "color": [0, 191, 255]},
+                {"lon": n['m_lon'], "lat": n['m_lat'], "color": [212, 175, 55]},
+                {"lon": n['l_lon'], "lat": n['l_lat'], "color": [169, 169, 169]}
             ]
             layers.append(pdk.Layer("ScatterplotLayer", pd.DataFrame(res_data), get_position=["lon", "lat"], get_fill_color="color", get_radius=3500, stroked=True, get_line_color=[0, 0, 0]))
 
             # Anti-Overlap Text Labels
             label_data = [
                 {"lon": n['lon'], "lat": n['lat'], "text": f"Target: {n['lat']} N, {n['lon']} E", "color": [255, 255, 255], "offset": [0, -40]},
-                {"lon": w_mid[0], "lat": w_mid[1], "text": f"{n['w_dist']}km (Water Corridor)", "color": [6, 182, 212], "offset": [0, 25]},
-                {"lon": m_mid[0], "lat": m_mid[1], "text": f"{n['m_dist']}km (Raw Material Transit)", "color": [255, 255, 255], "offset": [0, -25]},
-                {"lon": l_mid[0], "lat": l_mid[1], "text": f"{n['l_dist']}km (Urban Labor Corridor)", "color": [234, 179, 8], "offset": [40, 0]}
+                {"lon": w_mid[0], "lat": w_mid[1], "text": f"{n['w_dist']}km (Water Corridor)", "color": [0, 191, 255], "offset": [0, 25]},
+                {"lon": m_mid[0], "lat": m_mid[1], "text": f"{n['m_dist']}km (Raw Material Transit)", "color": [212, 175, 55], "offset": [0, -25]},
+                {"lon": l_mid[0], "lat": l_mid[1], "text": f"{n['l_dist']}km (Urban Labor Corridor)", "color": [200, 200, 200], "offset": [40, 0]}
             ]
             layers.append(pdk.Layer(
                 "TextLayer", pd.DataFrame(label_data), get_position=["lon", "lat"], get_text="text", 
                 get_color="color", get_size=13, get_alignment_baseline="'center'", get_pixel_offset="offset"
             ))
 
-            init_view = pdk.ViewState(latitude=n['lat'], longitude=n['lon'], zoom=6.8, pitch=0)
+            init_view = pdk.ViewState(latitude=n['lat'], longitude=n['lon'], zoom=6.8, pitch=35)
 
         map_event = st.pydeck_chart(
             pdk.Deck(
                 layers=layers, 
                 initial_view_state=init_view,
                 map_style='https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
-                tooltip={"text": "{name}\nCap: {cap}"}
+                tooltip={"html": "<b style='color:#d4af37'>{name}</b><br/><span style='color:#aaa'>Cap: {cap}</span>", "style": {"backgroundColor": "rgba(10,10,10,0.9)", "color": "white", "border": "1px solid #d4af37"}}
             ),
             on_select="rerun",
             selection_mode="single-object"
@@ -445,51 +538,41 @@ with tab1:
         
         # Legend Overlay
         st.markdown("""
-            <div style="background-color: #1e293b; padding: 10px; border-radius: 4px; color: white; font-size: 13px; margin-top: -10px; border: 1px solid #475569;">
-                <b>Legend:</b> &nbsp;&nbsp; 
-                <span style="color:#ef4444">Large Cap Node</span> &nbsp;|&nbsp; 
-                <span style="color:#f59e0b">Mid Cap Node</span> &nbsp;|&nbsp; 
-                <span style="color:#22c55e">Small Cap Node</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <b>Logistics Routes:</b> &nbsp;
-                <span style="color:#22d3ee">--- Water Corridor</span> &nbsp;|&nbsp;
-                <span style="color:#ffffff">--- Raw Material</span> &nbsp;|&nbsp;
-                <span style="color:#facc15">--- Urban Labor Node</span>
+            <div style="background: rgba(15, 15, 15, 0.8); backdrop-filter: blur(8px); padding: 12px; border-radius: 6px; color: #e0e0e0; font-size: 13px; margin-top: -10px; border: 1px solid rgba(212, 175, 55, 0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+                <b style="color: #d4af37; font-family: 'Cinzel', serif;">LEGEND:</b> &nbsp;&nbsp; 
+                <span style="color:#d4af37">■ Large Cap</span> &nbsp;|&nbsp; 
+                <span style="color:#b87333">■ Mid Cap</span> &nbsp;|&nbsp; 
+                <span style="color:#c0c0c0">■ Small Cap</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <b style="color: #d4af37; font-family: 'Cinzel', serif;">ROUTES:</b> &nbsp;
+                <span style="color:#00bfff">--- Water</span> &nbsp;|&nbsp;
+                <span style="color:#d4af37">--- Material</span> &nbsp;|&nbsp;
+                <span style="color:#a9a9a9">--- Labor</span>
             </div>
         """, unsafe_allow_html=True)
 
-       # --- LIVE STRATEGIC INTELLIGENCE FEED ---
-        st.markdown("<br> 📡 **Live Strategic Intelligence**", unsafe_allow_html=True)
+        # --- LIVE STRATEGIC INTELLIGENCE FEED ---
+        st.markdown("<br> 📡 <b style='color:#d4af37; font-family:\"Cinzel\", serif; font-size:18px;'>Live Strategic Intelligence</b>", unsafe_allow_html=True)
         
         try:
             live_news = fetch_live_intelligence()
             
-            colors = ["#dc2626", "#d97706", "#16a34a", "#2563eb", "#9333ea", "#0d9488", "#475569"] 
+            # Premium Muted Colors for Tags
+            colors = ["#d4af37", "#b87333", "#c0c0c0", "#8c7324", "#7a5c18", "#a6a6a6", "#cfb53b"] 
             labels = ["🔴 LATEST DISPATCH", "🟡 INDUSTRY UPDATE", "🌐 MACRO TREND", "🔵 POLICY SHIFT", "🟣 TECH BREAKTHROUGH", "🟢 MARKET DYNAMICS", "⚪ STRATEGIC MOVE"]
-            
-            # CSS for the green hover state, white text transition, and physical slide effect
-            hover_css = """<style>
-.live-hover-card { background-color: #ffffff; padding: 14px; border-radius: 4px; margin-bottom: 8px; border: 1px solid #e5e7eb; border-left: 4px solid #9333ea; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.3s ease; cursor: pointer; }
-.live-hover-card:hover { background-color: #16a34a !important; border-left-color: #15803d !important; transform: translateX(6px); box-shadow: 0 6px 12px -2px rgba(0,0,0,0.15); }
-.live-hover-card:hover .hover-tag { color: #f8fafc !important; }
-.live-hover-card:hover .hover-title { color: #ffffff !important; }
-a.card-link { text-decoration: none; display: block; }
-</style>"""
-            st.markdown(hover_css, unsafe_allow_html=True)
             
             for i, article in enumerate(live_news):
                 color = colors[i % len(colors)]
                 label = labels[i % len(labels)]
                 clean_title = article.title.rsplit(" - ", 1)[0] 
                 
-                # HTML FLUSH LEFT TO PREVENT MARKDOWN CODE BLOCKS
                 st.markdown(f"""
 <a href='{article.link}' target='_blank' class='card-link'>
 <div class='live-hover-card'>
 <div class='hover-tag' style='color: {color}; font-size: 11px; font-weight: 800; letter-spacing: 1px; transition: color 0.3s;'>
 {label} | {article.published[5:16]}
 </div>
-<div style='margin-top: 4px;'>
-<span class='hover-title' style='color: #1e1b4b; font-weight: 700; font-size: 14px; transition: color 0.3s;'>
+<div style='margin-top: 6px;'>
+<span class='hover-title' style='color: #e0e0e0; font-weight: 600; font-family: "Montserrat", sans-serif; font-size: 14.5px; transition: color 0.3s;'>
 {clean_title}
 </span>
 </div>
@@ -501,10 +584,9 @@ a.card-link { text-decoration: none; display: block; }
             st.warning("Intelligence feed temporarily offline. Unable to establish uplink.")
 
         # --- DYNAMIC VISUAL GRID (LIVE NEWS) ---
-        st.markdown("<br> The Silicon Hegemony: Visual Intelligence", unsafe_allow_html=True)
-        st.markdown("<span style='font-size: 13px; color: #475569;'>Live geopolitical and market intersections.</span><br><br>", unsafe_allow_html=True)
+        st.markdown("<br> <b style='color:#d4af37; font-family:\"Cinzel\", serif; font-size:18px;'>The Silicon Hegemony: Visual Intelligence</b>", unsafe_allow_html=True)
+        st.markdown("<span style='font-size: 13px; color: #9ca3af;'>Live geopolitical and market intersections.</span><br><br>", unsafe_allow_html=True)
 
-        # High-res thematic background images to pair with the news
         bg_images = [
             "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=600&q=80",
             "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=600&q=80",
@@ -512,32 +594,28 @@ a.card-link { text-decoration: none; display: block; }
             "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=600&q=80"
         ]
 
-        # FIXED: ALL HTML MOVED FLUSH LEFT TO PREVENT MARKDOWN "CODE BLOCK" RENDERING
         grid_css = """<style>
 .news-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; padding-bottom: 15px; }
-.news-card-grid { width: 100%; height: 180px; border-radius: 8px; background-size: cover; background-position: center; position: relative; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; }
-.news-card-grid:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4); }
-.card-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(15,23,42,0.95) 0%, rgba(15,23,42,0.8) 50%, rgba(15,23,42,0) 100%); padding: 15px; }
-.card-tag { font-size: 10px; color: white; text-transform: uppercase; font-weight: 800; padding: 3px 6px; border-radius: 3px; display: inline-block; margin-bottom: 6px; letter-spacing: 0.5px; }
-.card-title-grid { color: #ffffff !important; font-size: 14px; font-weight: 700; line-height: 1.3; font-family: 'Helvetica Neue', Arial, sans-serif; text-shadow: 1px 1px 4px rgba(0,0,0,0.9); }
+.news-card-grid { width: 100%; height: 180px; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.2); background-size: cover; background-position: center; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease; }
+.news-card-grid:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(212, 175, 55, 0.25); border: 1px solid rgba(212, 175, 55, 0.6); }
+.card-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(5,5,5,0.95) 0%, rgba(5,5,5,0.8) 50%, rgba(5,5,5,0) 100%); padding: 15px; }
+.card-tag { font-size: 10px; color: #000; text-transform: uppercase; font-weight: 800; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px; letter-spacing: 1px; }
+.card-title-grid { color: #ffffff !important; font-size: 14px; font-weight: 600; line-height: 1.4; font-family: 'Montserrat', sans-serif; text-shadow: 0px 2px 4px rgba(0,0,0,1); }
 a { text-decoration: none; }
 </style>
 <div class="news-grid">"""
 
-        # Generate HTML dynamically using the Live News feed
         try:
             live_news = fetch_live_intelligence()
-            colors = ["#dc2626", "#d97706", "#16a34a", "#2563eb", "#9333ea", "#0d9488", "#475569"] 
-            labels = ["🔴 LATEST DISPATCH", "🟡 INDUSTRY UPDATE", "🌐 MACRO TREND", "🔵 POLICY SHIFT", "🟣 TECH BREAKTHROUGH", "🟢 MARKET DYNAMICS", "⚪ STRATEGIC MOVE"]
+            colors = ["#d4af37", "#b87333", "#c0c0c0", "#8c7324"] 
+            labels = ["🔴 LATEST DISPATCH", "🟡 INDUSTRY UPDATE", "🌐 MACRO TREND", "🔵 POLICY SHIFT"]
             
-            # Grab the top 4 articles for the 2x2 grid
             for i, article in enumerate(live_news[:4]):
                 clean_title = article.title.rsplit(" - ", 1)[0]
                 img = bg_images[i % len(bg_images)]
                 color = colors[i % len(colors)]
                 tag = labels[i % len(labels)]
                 
-                # FIXED: HTML MUST STAY FLUSH LEFT HERE TOO
                 grid_css += f"""
 <a href='{article.link}' target='_blank'>
 <div class="news-card-grid" style="background-image: url('{img}');">
@@ -551,8 +629,6 @@ a { text-decoration: none; }
             grid_css += "<div>Live visual feed currently unavailable.</div>"
 
         grid_css += "</div>"
-        
-        # Render the final HTML
         st.markdown(grid_css, unsafe_allow_html=True)
 
         if map_event and map_event.selection.objects:
@@ -567,38 +643,39 @@ a { text-decoration: none; }
         if st.session_state.selected_node:
             n = st.session_state.selected_node
             
-            # High-Contrast Return Button
             if st.button("Return to Map Overview", use_container_width=True):
                 clear_selection()
                 st.rerun()
             
+            st.markdown("<br>", unsafe_allow_html=True)
             st.image(n['img'], use_container_width=True)
-            st.markdown(f"<h2>{n['name']}</h2>", unsafe_allow_html=True)
-            st.markdown(f"<span class='tag-{n['cap'].lower()}'>{n['cap']} Cap Facility</span> | <b>Coordinates:</b> {n['lat']} N, {n['lon']} E", unsafe_allow_html=True)
+            st.markdown(f"<h2 style='margin-bottom:0;'>{n['name']}</h2>", unsafe_allow_html=True)
+            st.markdown(f"<span class='tag-{n['cap'].lower()}'>{n['cap']} Cap Facility</span> &nbsp;|&nbsp; <b style='color:#a3a3a3; font-size:13px;'>Coordinates:</b> <span style='font-size:13px;'>{n['lat']} N, {n['lon']} E</span>", unsafe_allow_html=True)
             
-            st.markdown("---")
+            st.markdown("<hr style='border-color: rgba(212, 175, 55, 0.2);'>", unsafe_allow_html=True)
             
-            # ALTAIR TERRAIN GRAPH (Jagged & Checkpoint Diamond Marker)
-            st.markdown("<b>Topographical Integration Profile</b>", unsafe_allow_html=True)
+            # ALTAIR TERRAIN GRAPH (Cinematic Theme)
+            st.markdown("<b style='color:#d4af37; font-family:\"Cinzel\", serif; font-size:16px;'>Topographical Integration Profile</b>", unsafe_allow_html=True)
             
             total_dist = n['m_dist'] + n['w_dist']
             x_dist = np.linspace(0, total_dist, len(n['profile']))
             chart_df = pd.DataFrame({"Distance (km)": x_dist, "Elevation (MSL)": n['profile']})
             
             base = alt.Chart(chart_df).encode(
-                x=alt.X('Distance (km):Q', title=f"Distance: 0km ({n['m_name']}) → {n['m_dist']}km (Facility) → {total_dist}km ({n['w_name']})"), 
-                y=alt.Y('Elevation (MSL):Q', title="Elevation (m)", scale=alt.Scale(domain=[0, max(n['profile'])+50]))
+                x=alt.X('Distance (km):Q', title=f"Distance: 0km ({n['m_name']}) → {n['m_dist']}km (Facility) → {total_dist}km ({n['w_name']})", 
+                        axis=alt.Axis(labelColor='#a3a3a3', titleColor='#d4af37', gridColor='rgba(255,255,255,0.05)')), 
+                y=alt.Y('Elevation (MSL):Q', title="Elevation (m)", scale=alt.Scale(domain=[0, max(n['profile'])+50]),
+                        axis=alt.Axis(labelColor='#a3a3a3', titleColor='#d4af37', gridColor='rgba(255,255,255,0.05)'))
             )
-            area = base.mark_area(opacity=0.4, color="#9333ea")
-            line = base.mark_line(color="#7e22ce", strokeWidth=2)
+            area = base.mark_area(opacity=0.2, color="#d4af37")
+            line = base.mark_line(color="#d4af37", strokeWidth=2)
             
-            # Diamond checkpoint marker
             facility_mark = pd.DataFrame({"x": [n['m_dist']], "y": [n['elev']]})
-            point = alt.Chart(facility_mark).mark_point(color='#dc2626', size=150, shape='diamond', filled=True).encode(x='x:Q', y='y:Q')
+            point = alt.Chart(facility_mark).mark_point(color='#ffffff', size=150, shape='diamond', filled=True, opacity=0.9).encode(x='x:Q', y='y:Q')
             
-            st.altair_chart(area + line + point, use_container_width=True)
+            st.altair_chart((area + line + point).configure_view(strokeWidth=0).configure_concat(spacing=0).properties(background='transparent'), use_container_width=True)
 
-            # STRATEGIC METRICS
+            # STRATEGIC METRICS (Glassmorphic)
             st.markdown("<div class='metric-box'><div class='metric-title'>Strategic Breakthrough</div>"
                         f"<div class='metric-text'>{n['bt']}</div></div>", unsafe_allow_html=True)
                         
@@ -609,32 +686,32 @@ a { text-decoration: none; }
             <div class='metric-box'>
                 <div class='metric-title'>Logistics Matrix (LCP Efficiency: {n['lcp']})</div>
                 <div class='metric-text'>
-                    <b>Material Hub:</b> {n['m_name']} <span style='color:gray'>({n['m_dist']}km route)</span><br>
-                    <b>Water Catchment:</b> {n['w_name']} <span style='color:gray'>({n['w_dist']}km route)</span><br>
-                    <b>Urban Labor Center:</b> {n['l_name']} <span style='color:gray'>({n['l_dist']}km route)</span>
+                    <b style='color:#d4af37;'>Material Hub:</b> {n['m_name']} <span style='color:#737373'>({n['m_dist']}km route)</span><br>
+                    <b style='color:#d4af37;'>Water Catchment:</b> {n['w_name']} <span style='color:#737373'>({n['w_dist']}km route)</span><br>
+                    <b style='color:#d4af37;'>Urban Labor Center:</b> {n['l_name']} <span style='color:#737373'>({n['l_dist']}km route)</span>
                 </div>
             </div>
             """, unsafe_allow_html=True)
             
-            # VULNERABILITY RADAR CHART
-            st.markdown("<b>Vulnerability & Stability Radar</b>", unsafe_allow_html=True)
+            # VULNERABILITY RADAR CHART (Gold Theme)
+            st.markdown("<br><b style='color:#d4af37; font-family:\"Cinzel\", serif; font-size:16px;'>Vulnerability & Stability Radar</b>", unsafe_allow_html=True)
             categories = ['Seismic Stability', 'Water Security', 'Logistics Efficiency', 'Geopolitical Safety', 'Labor Proximity']
             fig = go.Figure()
             fig.add_trace(go.Scatterpolar(
                 r=n['rad'],
                 theta=categories,
                 fill='toself',
-                fillcolor='rgba(147, 51, 234, 0.4)',
-                line=dict(color='#7e22ce'),
+                fillcolor='rgba(212, 175, 55, 0.25)',
+                line=dict(color='#d4af37', width=2),
                 name=n['name']
             ))
             fig.update_layout(
                 polar=dict(
-                    radialaxis=dict(visible=True, range=[0, 100]),
-                    angularaxis=dict(tickfont=dict(color='#8B4513', size=13, weight='bold')) 
+                    bgcolor='rgba(0,0,0,0)',
+                    radialaxis=dict(visible=True, range=[0, 100], gridcolor='rgba(255,255,255,0.1)', tickfont=dict(color='#a3a3a3')),
+                    angularaxis=dict(tickfont=dict(color='#e0e0e0', size=12, family="Montserrat"), gridcolor='rgba(255,255,255,0.1)') 
                 ),
                 showlegend=False,
-                # FIXED: Doubled the left and right margins so the brown text doesn't get clipped
                 margin=dict(l=80, r=80, t=30, b=30),
                 paper_bgcolor='rgba(0,0,0,0)',
                 plot_bgcolor='rgba(0,0,0,0)'
@@ -642,23 +719,37 @@ a { text-decoration: none; }
             st.plotly_chart(fig, use_container_width=True)
 
         else:
-            st.info("👆 Click a location tag on the map to view its Technical Dossier and logistics profile.")
+            st.markdown("""
+            <div style='background: rgba(15, 15, 15, 0.6); backdrop-filter: blur(8px); padding: 40px; border-radius: 12px; border: 1px dashed rgba(212, 175, 55, 0.4); text-align: center; margin-top: 50px;'>
+                <div style='font-size: 40px; margin-bottom: 15px;'>📍</div>
+                <h3 style='font-family: "Cinzel", serif; color: #d4af37; margin-bottom: 10px;'>AWAITING SELECTION</h3>
+                <p style='color: #a3a3a3; font-family: "Montserrat", sans-serif;'>Click a location tag on the map to access its secure Technical Dossier and logistics profile.</p>
+            </div>
+            """, unsafe_allow_html=True)
 
 # --- TAB 2: GLOBAL ECOSYSTEM ---
 with tab2:
+    st.markdown("<br>", unsafe_allow_html=True)
     global_df = df.copy()
-    layers = [pdk.Layer("IconLayer", global_df, get_icon="icon_data", get_size=4, size_scale=10, get_position=["lon", "lat"], get_color="color", pickable=True)]
-    st.pydeck_chart(pdk.Deck(layers=layers, initial_view_state=pdk.ViewState(latitude=30.0, longitude=20.0, zoom=1.8, pitch=0), map_style='https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json', tooltip={"text": "{name}\nCap: {cap}"}))
+    layers = [
+        pdk.Layer("ScatterplotLayer", global_df, get_position=["lon", "lat"], get_fill_color="color", get_radius=85000, opacity=0.15, pickable=False),
+        pdk.Layer("IconLayer", global_df, get_icon="icon_data", get_size=4, size_scale=10, get_position=["lon", "lat"], get_color="color", pickable=True)
+    ]
+    st.pydeck_chart(pdk.Deck(
+        layers=layers, 
+        initial_view_state=pdk.ViewState(latitude=30.0, longitude=20.0, zoom=1.8, pitch=0), 
+        map_style='https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json', 
+        tooltip={"html": "<b style='color:#d4af37'>{name}</b><br/><span style='color:#aaa'>Cap: {cap}</span>", "style": {"backgroundColor": "rgba(10,10,10,0.9)", "color": "white", "border": "1px solid #d4af37"}}
+    ))
 
 # --- TAB 3: S.T.I. STATISTICAL DISTRIBUTION & INFERENCE ---
 with tab3:
-    st.markdown("### Continuous Probability Density & Inferential Statistics")
-    st.markdown("This module applies Kernel Density Estimation (KDE) and rigorous hypothesis testing to the Strategic Topographical Index (STI). By modeling the variance ($\\sigma^2$) and mean ($\\mu$) across facility classifications, we can mathematically infer India's sovereign site-selection strategy.")
+    st.markdown("<br><h3>Continuous Probability Density & Inferential Statistics</h3>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #a3a3a3;'>This module applies Kernel Density Estimation (KDE) and rigorous hypothesis testing to the Strategic Topographical Index (STI). By modeling the variance ($\\sigma^2$) and mean ($\\mu$) across facility classifications, we can mathematically infer India's sovereign site-selection strategy.</p>", unsafe_allow_html=True)
     
-    # --- PREP DATA ---
     stats_df = df[(df['region'] == 'India')].dropna(subset=['sti', 'cap']).copy()
     
-    # 1. ALTAIR CONTINUOUS DENSITY PLOT
+    # ALTAIR CONTINUOUS DENSITY PLOT (Cinematic Colors)
     density_plot = alt.Chart(stats_df).transform_density(
         'sti',
         as_=['sti', 'density'],
@@ -666,37 +757,30 @@ with tab3:
         extent=[60, 110], 
         steps=200,
         bandwidth=4 
-    ).mark_area(opacity=0.45).encode(
-        x=alt.X('sti:Q', title="Strategic Topographical Index (STI %)", scale=alt.Scale(domain=[65, 105])),
-        y=alt.Y('density:Q', title="Probability Density", axis=alt.Axis(labels=False, ticks=False), stack=None),
-        color=alt.Color('cap:N', scale=alt.Scale(domain=['Large', 'Mid', 'Small'], range=['#dc2626', '#d97706', '#16a34a']))
-    ).properties(height=350)
+    ).mark_area(opacity=0.35).encode(
+        x=alt.X('sti:Q', title="Strategic Topographical Index (STI %)", scale=alt.Scale(domain=[65, 105]), axis=alt.Axis(labelColor='#a3a3a3', titleColor='#d4af37', gridColor='rgba(255,255,255,0.05)')),
+        y=alt.Y('density:Q', title="Probability Density", axis=alt.Axis(labels=False, ticks=False, titleColor='#d4af37', grid=False), stack=None),
+        color=alt.Color('cap:N', scale=alt.Scale(domain=['Large', 'Mid', 'Small'], range=['#d4af37', '#b87333', '#c0c0c0']), legend=alt.Legend(title="Facility Cap", titleColor='#d4af37', labelColor='#e0e0e0'))
+    ).properties(height=350, background='transparent')
     
-    st.altair_chart(density_plot, use_container_width=True)
+    st.altair_chart(density_plot.configure_view(strokeWidth=0), use_container_width=True)
 
-    st.markdown("---")
+    st.markdown("<hr style='border-color: rgba(212, 175, 55, 0.2);'>", unsafe_allow_html=True)
     
-    # --- STATISTICAL ANALYSIS ENGINE ---
     col_stats1, col_stats2 = st.columns(2, gap="large")
     
     with col_stats1:
-        # SUMMARY STATISTICS (MLE ESTIMATES)
-        st.markdown("#### || MLE-Based Distribution Parameters")
-        
-        # Calculate summary stats safely
+        st.markdown("<h4 style='color:#d4af37;'>|| MLE-Based Distribution Parameters</h4>", unsafe_allow_html=True)
         summary = stats_df.groupby('cap')['sti'].agg(
             Mean='mean',
             Variance='var',
             Std_Dev='std',
             Count='count'
         ).round(2)
-        
-        # Add skewness
         summary['Skewness'] = stats_df.groupby('cap')['sti'].apply(stats.skew).round(3)
         st.dataframe(summary, use_container_width=True)
 
-        # ANOVA TEST
-        st.markdown("#### || ANOVA Test (Mean STI Differences)")
+        st.markdown("<br><h4 style='color:#d4af37;'>|| ANOVA Test (Mean STI Differences)</h4>", unsafe_allow_html=True)
         group_values = [group['sti'].values for name, group in stats_df.groupby('cap')]
         
         if len(group_values) > 1:
@@ -707,8 +791,7 @@ with tab3:
             else:
                 st.info("Fail to reject $H_0$ → Sample size too small or means are similar.")
         
-        # LEVENE TEST
-        st.markdown("#### || Levene’s Test (Variance Equality)")
+        st.markdown("<br><h4 style='color:#d4af37;'>|| Levene’s Test (Variance Equality)</h4>", unsafe_allow_html=True)
         if len(group_values) > 1:
             levene_stat, levene_p = stats.levene(*group_values)
             st.write(f"**Statistic:** `{levene_stat:.4f}` | **p-value:** `{levene_p:.4f}`")
@@ -718,9 +801,7 @@ with tab3:
                 st.info("Fail to reject $H_0$ → Variances are statistically similar.")
 
     with col_stats2:
-        # CHI-SQUARE TEST
-        st.markdown("#### || Chi-Square Test (Categorical Dependency)")
-        # Adjusted bins to cover lower STI ranges like Mohali (75) safely
+        st.markdown("<h4 style='color:#d4af37;'>|| Chi-Square Test (Categorical Dependency)</h4>", unsafe_allow_html=True)
         bins = [0, 82, 93, 110] 
         labels = ['High Friction (<82)', 'Moderate (82-93)', 'Optimal (>93)']
         stats_df['sti_bin'] = pd.cut(stats_df['sti'], bins=bins, labels=labels)
@@ -736,13 +817,11 @@ with tab3:
         else:
             st.info("Fail to reject $H_0$ → Dependency not strictly proven at current sample size.")
 
-        # KDE OVERLAP ANALYSIS
-        st.markdown("#### || KDE Distribution Overlap")
+        st.markdown("<br><h4 style='color:#d4af37;'>|| KDE Distribution Overlap</h4>", unsafe_allow_html=True)
         x_grid = np.linspace(60, 110, 500).reshape(-1, 1)
         densities = {}
         
         for cap, group in stats_df.groupby('cap'):
-            # Using bandwidth=4 to match Altair and prevent collapse on small data
             kde = KernelDensity(kernel='gaussian', bandwidth=4.0)
             kde.fit(group['sti'].values.reshape(-1, 1))
             log_density = kde.score_samples(x_grid)
@@ -755,188 +834,29 @@ with tab3:
         
         st.dataframe(pd.DataFrame(overlap_results), use_container_width=True, hide_index=True)
 
-    st.markdown("---")
+    st.markdown("<hr style='border-color: rgba(212, 175, 55, 0.2);'>", unsafe_allow_html=True)
     
-    # --- STRATEGIC RECOMMENDATIONS BASED ON STATS ---
-    st.markdown("### || Inferences & Strategic Recommendations for Future Development")
+    st.markdown("<h3>|| Inferences & Strategic Recommendations</h3>", unsafe_allow_html=True)
     st.markdown("""
+    <div style='color: #e0e0e0; font-weight: 300; line-height: 1.7;'>
     Based on the inferential statistics derived from the current spatial data, we recommend the following frameworks for future Indian semiconductor expansion:
-    
-    1. **Strict Stratification of STI Requirements (ANOVA & Overlap Inference):** The low KDE overlap coefficient between Large and Small Cap facilities proves that India is already operating on a bifurcated strategy. **Recommendation:** Future Mega-Fabs (Large Cap) must strictly target topographies with an STI $> 92\%$ (Coastal Plateaus / Stable Plains). Attempting to build a Large Cap fab in a "Moderate" zone will result in catastrophic logistical and vibration friction.
-    2. **Leveraging Variance for Geographical Hedging (Levene's Inference):** The higher variance ($\\sigma^2$) and left-skewed tails in Small/Mid Cap facilities indicate they can survive in high-friction terrain. **Recommendation:** The government should incentivize future Mid/Small Cap facilities (OSAT, discrete power, defense) to be built in Eastern and Northern river valleys or foothills. This accepts a lower STI but establishes a distributed *Defense-in-Depth* network, ensuring the entire supply chain cannot be wiped out by a single coastal weather event or naval blockade.
-    3. **Resource Catchment Thresholds (Chi-Square Inference):** The Chi-Square contingency highlights that high-friction topographies cannot support the mass resource consumption of commercial logic nodes. **Recommendation:** Future infrastructure planning must mandate that any site with an STI $< 82\%$ be restricted to specialized, low-volume/high-margin fabrication (e.g., Silicon Carbide, Gallium Nitride) where the volume of required Ultra-Pure Water (UPW) and heavy LCP transit is statistically lower.
-    4. **Recommendation:** Planners must transition from isolated "site selection" to "cluster engineering." By anchoring a Large Cap fab (like Tata-PSMC) and immediately surrounding it with Mid Cap OSATs (like CG Power or Micron) within a 50km radius, the LCP efficiency approaches 0.99. This creates a frictionless micro-economy, similar to the Hsinchu Science Park in Taiwan.
-    5. **Recommendation:** Future Large Cap facility approvals should require integrated, localized infrastructure. Fabs built in high-STI coastal zones (like Gujarat or Tamil Nadu) must be co-located with dedicated modular nuclear (SMRs) or massive solar/wind parks, alongside captive desalination plants. This insulates the fabs from the municipal grid, ensuring that consumer water and power supplies are not drained by industrial tech demands
-    """)
+    <br><br>
+    1. <b style='color:#d4af37'>Strict Stratification of STI Requirements:</b> The low KDE overlap coefficient between Large and Small Cap facilities proves that India is already operating on a bifurcated strategy. Future Mega-Fabs must strictly target topographies with an STI $> 92\%$ (Coastal Plateaus).<br><br>
+    2. <b style='color:#d4af37'>Leveraging Variance for Geographical Hedging:</b> The higher variance and left-skewed tails in Small/Mid Cap facilities indicate survivability in high-friction terrain. The state should incentivize OSAT and defense foundries in Eastern and Northern river valleys to establish a distributed <i>Defense-in-Depth</i> network.<br><br>
+    3. <b style='color:#d4af37'>Resource Catchment Thresholds:</b> Sites with an STI $< 82\%$ must be restricted to specialized, low-volume/high-margin fabrication (e.g., Silicon Carbide) where Ultra-Pure Water (UPW) demand is statistically lower.<br><br>
+    4. <b style='color:#d4af37'>Cluster Engineering:</b> Transition from isolated "site selection" to "cluster engineering" by anchoring Large Cap fabs surrounded by Mid Cap OSATs within a 50km radius to approach a 0.99 LCP efficiency.
+    </div>
+    """, unsafe_allow_html=True)
 
-    st.markdown("---")
-    # --- DIGITAL HUMANITIES NARRATIVE ---
-    st.markdown("### || Digital Humanities Perspective: Infrastructure as Destiny")
+    st.markdown("<hr style='border-color: rgba(212, 175, 55, 0.2);'>", unsafe_allow_html=True)
+    
+    st.markdown("<h3>|| Digital Humanities Perspective: Infrastructure as Destiny</h3>", unsafe_allow_html=True)
     st.markdown("""
-    *For policymakers, historians, and the general public, the statistical variances shown above are not just numbers—they are the physical blueprints of a new geopolitical cold war.*
-    
-    * **The Architecture of Paranoia vs. Profit:** The KDE graph physically illustrates human motives. The tight cluster of 'Large Cap' Mega-Fabs on flat, coastal plains (High STI) represents **Profit**. These sites demand topographical perfection to manufacture commercial chips with zero failure rates. Conversely, the wide, left-skewed tail of 'Small Cap' facilities represents **Paranoia and Survival**. By burying strategic defense foundries deep in high-friction valleys and foothills, the state explicitly sacrifices economic efficiency for geographical immunity against naval blockades or coastal climate disasters.
-    * **The Spatialization of Power and Labor:** Semiconductors do not just process data; they restructure the earth. The routing data in this GIS model proves that these Mega-Fabs act as gravitational black holes. They literally reroute rivers (desalination pipelines) and dictate human migration, pulling elite intellectual labor into highly specific, localized 'techno-enclaves' (like Dholera or the Assam frontier), permanently altering local cultures and economies.
-    * **The Sovereign Shield:** To the average citizen, a microchip is invisible. But this map proves that the "Cyber Frontline" is deeply physical. Every time the STI variance shifts, it represents billions of dollars poured into concrete, steel, and water routing to ensure that the silicon powering India's hospitals, military radars, and digital economy cannot be turned off by a foreign power. **In the 21st century, geographical infrastructure is destiny.**
-    """)
-
-
-# ==============================================================================
-# --- FLOATING SEMICONBOT (MINIMIZABLE POPUP) ---
-# ==============================================================================
-
-# 1. Custom CSS: Bottom-Left, Small Circle, White Text, No Bar!
-st.markdown("""
-<style>
-/* 1. Force the wrapper itself to be small so it NEVER becomes a long bar */
-div[data-testid="stPopover"] {
-    position: fixed !important;
-    bottom: 30px !important;
-    left: 30px !important;
-    width: 60px !important;
-    height: 60px !important;
-    z-index: 99999 !important;
-}
-
-/* 2. Style the button to be a perfect circle */
-div[data-testid="stPopover"] > button {
-    background-color: #9333ea !important;
-    color: #ffffff !important;
-    border-radius: 50% !important; 
-    width: 60px !important;  
-    height: 60px !important; 
-    padding: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 26px !important; 
-    border: 2px solid #c084fc !important;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.3) !important;
-    transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1) !important; 
-}
-
-div[data-testid="stPopover"] > button:hover {
-    transform: scale(1.15) translateY(-4px) !important; 
-    box-shadow: 0 12px 24px rgba(147,51,234,0.6) !important;
-    background-color: #7e22ce !important;
-}
-
-/* 3. Hide Streamlit's default down-arrow (chevron) on the popover button */
-div[data-testid="stPopover"] > button svg {
-    display: none !important; 
-}
-
-/* 4. Chat Window Styling (Dark mode + White Text) */
-div[data-testid="stPopoverBody"] {
-    width: 380px !important;
-    background-color: #0f172a !important; /* Dark Cyber Background */
-    border-radius: 12px !important;
-    border: 2px solid #9333ea !important;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.5) !important;
-}
-
-/* Force all text inside the chat window to be pure white */
-div[data-testid="stPopoverBody"] p, 
-div[data-testid="stPopoverBody"] span, 
-div[data-testid="stPopoverBody"] div.stMarkdown,
-div[data-testid="stChatMessage"] {
-    color: #ffffff !important;
-}
-
-/* Style the chat input box so the typing text is white too */
-div[data-testid="stChatInput"] textarea {
-    color: #ffffff !important;
-    background-color: #1e293b !important;
-}
-</style>
-""", unsafe_allow_html=True)
-
-# 2. Initialize Chat Memory
-if "chat_messages" not in st.session_state:
-    st.session_state.chat_messages = [
-        {"role": "assistant", "content": "Commander, I am **SemiconBot**. Hooked directly into the GIS framework. How can I assist you today?"}
-    ]
-
-# 3. Create the Popover (Using ONLY an emoji)
-# We set use_container_width=False to stop Streamlit from stretching it
-with st.popover("💬", use_container_width=False):
-    
-    # Header inside the popup
-    st.markdown("<div style='color: #c084fc; font-family: Orbitron; font-weight: 900; font-size: 16px; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 10px;'>🤖 SemiconBot OS v3.0</div>", unsafe_allow_html=True)
-    
-    # Scrollable chat container
-    chat_container = st.container(height=350)
-    
-    with chat_container:
-        for msg in st.session_state.chat_messages:
-            with st.chat_message(msg["role"]):
-                st.markdown(msg["content"])
-    
-    # 4. Chat Input & AI Logic
-    if prompt := st.chat_input("Transmit message..."):
-        
-        # Display user message instantly
-        st.session_state.chat_messages.append({"role": "user", "content": prompt})
-        with chat_container:
-            with st.chat_message("user"):
-                st.markdown(prompt)
-        
-        # -------------------------------------------------------------------
-        # BRAIN LOGIC: Zero-Install Native API Call
-        # -------------------------------------------------------------------
-        bot_reply = ""
-        
-        try:
-            # We use native Python libraries - NO pip install required!
-            import urllib.request
-            import json
-            
-            # --- PUT YOUR SECRET API KEY HERE ---
-            API_KEY = "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" 
-            
-            # Format the request exactly how OpenAI expects it
-            url = "https://api.openai.com/v1/chat/completions"
-            headers = {
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {API_KEY}"
-            }
-            data = {
-                "model": "gpt-3.5-turbo",
-                "messages": st.session_state.chat_messages
-            }
-            
-            # Fire the native internet request
-            req = urllib.request.Request(url, data=json.dumps(data).encode("utf-8"), headers=headers)
-            with urllib.request.urlopen(req, timeout=10) as response:
-                result = json.loads(response.read().decode("utf-8"))
-                bot_reply = result["choices"][0]["message"]["content"]
-                
-        except Exception as e:
-            # OFFLINE FALLBACK BRAIN (Triggers if API key is blank, wrong, or no internet)
-            lower_prompt = prompt.lower()
-            
-            if lower_prompt in ["hi", "hello", "hey", "greetings"]:
-                bot_reply = "Greetings! I am online and ready. Do you need a briefing on a specific facility?"
-            elif "how are you" in lower_prompt:
-                bot_reply = "All systems are nominal. My GIS routing subroutines are running at peak efficiency."
-            elif "who are you" in lower_prompt or "what are you" in lower_prompt:
-                bot_reply = "I am SemiconBot, a localized Tactical AI designed to assist you with geopolitical topography."
-            elif "taiwan" in lower_prompt or "tsmc" in lower_prompt:
-                bot_reply = "TSMC currently controls over 90% of the sub-5nm logic market. However, geographic concentration creates a massive geopolitical single-point-of-failure."
-            elif "india" in lower_prompt or "dholera" in lower_prompt:
-                bot_reply = "The Dholera Megafab is India's premier Sovereign Node. Our data shows a Logistics Efficiency (LCP) of 0.97."
-            else:
-                bot_reply = f"Scanning databases for: '{prompt}'...\n\n*(Local cache only. To unlock Generative AI, a valid OpenAI key must be present in the source code.)*"
-        # -------------------------------------------------------------------
-        # Display bot response
-        st.session_state.chat_messages.append({"role": "assistant", "content": bot_reply})
-        with chat_container:
-            with st.chat_message("assistant"):
-                st.markdown(bot_reply)
-        
-        # Instantly refresh to keep chat window open and updated
-        st.rerun()
-
-
-
-
+    <div style='color: #a3a3a3; font-weight: 300; font-style: italic; line-height: 1.7; border-left: 3px solid #d4af37; padding-left: 20px;'>
+    For policymakers, historians, and the general public, the statistical variances shown above are not just numbers—they are the physical blueprints of a new geopolitical cold war.
+    <br><br>
+    <b style='color:#d4af37; font-style: normal;'>The Architecture of Paranoia vs. Profit:</b> The KDE graph physically illustrates human motives. The tight cluster of 'Large Cap' Mega-Fabs on flat, coastal plains represents Profit. The wide tail of 'Small Cap' facilities represents Paranoia and Survival, strategically sacrificing economic efficiency for geographical immunity.<br><br>
+    <b style='color:#d4af37; font-style: normal;'>The Spatialization of Power and Labor:</b> Semiconductors do not just process data; they restructure the earth. These Mega-Fabs act as gravitational black holes, rerouting rivers and pulling elite labor into highly specific techno-enclaves.<br><br>
+    <b style='color:#d4af37; font-style: normal;'>The Sovereign Shield:</b> The "Cyber Frontline" is deeply physical. Every shift in STI variance represents billions poured into concrete and water routing to ensure silicon powering the digital economy cannot be turned off. In the 21st century, geographical infrastructure is destiny.
+    </div>
+    """, unsafe_allow_html=True)
