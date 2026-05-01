@@ -132,6 +132,36 @@ data = [
     {"name": "Rapidus Hokkaido (Japan)", "region": "Global", "cap": "Large", "lat": 42.76, "lon": 141.67, "terrain": "Northern Island", "sti": 81.0},
     {"name": "GlobalFoundries Dresden (Ger)", "region": "Global", "cap": "Mid", "lat": 51.12, "lon": 13.71, "terrain": "River Valley", "sti": 85.0},
     {"name": "SMIC Shanghai (China)", "region": "Global", "cap": "Large", "lat": 31.20, "lon": 121.59, "terrain": "Delta Plain", "sti": 91.0},
+    # ---- ADDITIONAL GLOBAL/RUSSIAN NODES ----
+    {
+        "name": "Mikron Fab (Zelenograd)", "region": "Russia", "cap": "Mid", 
+        "lat": 55.98, "lon": 37.21, "terrain": "Continental Plain", "sti": 75.0
+    },
+    {
+        "name": "Angstrem-T (Zelenograd)", "region": "Russia", "cap": "Mid", 
+        "lat": 55.99, "lon": 37.20, "terrain": "Continental Plain", "sti": 72.0
+    },
+    {
+        "name": "NXP Semiconductors (Freising)", "region": "Global", "cap": "Mid", 
+        "lat": 48.39, "lon": 11.73, "terrain": "Bavarian Alpine Foreland", "sti": 86.0
+    },
+    {
+        "name": "STMicroelectronics (Crolles)", "region": "Global", "cap": "Large", 
+        "lat": 45.28, "lon": 5.88, "terrain": "Alpine Valley", "sti": 84.0
+    },
+    {
+        "name": "Infineon (Villach)", "region": "Global", "cap": "Mid", 
+        "lat": 46.61, "lon": 13.84, "terrain": "Alpine Basin", "sti": 82.5
+    },
+    {
+        "name": "Tower Semiconductor (Migdal HaEmek)", "region": "Global", "cap": "Mid", 
+        "lat": 32.67, "lon": 35.24, "terrain": "Jezreel Valley", "sti": 78.0
+    },
+    {
+        "name": "SilTerra (Migdal HaEmek)", "region": "Global", "cap": "Small", 
+        "lat": 5.23, "lon": 100.56, "terrain": "Kulim Coastal Plain", "sti": 85.0
+    },
+
     
     # ---- INDIAN ECOSYSTEM ----
     {
@@ -436,18 +466,25 @@ def show_technical_dossier(facility_name):
         if 'snc' in n:
             st.markdown(f"""
             <div style='display: flex; justify-content: space-between; margin-top: 5px; gap: 8px;'>
-                <div style='text-align: center; background: #111; padding: 12px 5px; border-top: 2px solid #d4af37; flex: 1; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);'>
+                
+                <div title="Strategic Node Capability: The facility's capacity to produce advanced, sovereign, defense-grade silicon." 
+                     style='text-align: center; background: #111; padding: 12px 5px; border-top: 2px solid #d4af37; flex: 1; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); cursor: help;'>
                     <div style='color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;'>Strat. Node Cap.</div>
                     <div style='color: #fff; font-size: 22px; font-weight: 700; font-family: Rajdhani;'>{n['snc']}%</div>
                 </div>
-                <div style='text-align: center; background: #111; padding: 12px 5px; border-top: 2px solid #b87333; flex: 1; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);'>
+                
+                <div title="Domestic Supply Contribution: The percentage of the facility's output dedicated to sustaining the internal Indian market." 
+                     style='text-align: center; background: #111; padding: 12px 5px; border-top: 2px solid #b87333; flex: 1; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); cursor: help;'>
                     <div style='color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;'>Dom. Supply</div>
                     <div style='color: #fff; font-size: 22px; font-weight: 700; font-family: Rajdhani;'>{n['dsc']}%</div>
                 </div>
-                <div style='text-align: center; background: #111; padding: 12px 5px; border-top: 2px solid #708090; flex: 1; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);'>
+                
+                <div title="Import Substitution: The estimated percentage by which this facility reduces India's reliance on foreign semiconductor imports." 
+                     style='text-align: center; background: #111; padding: 12px 5px; border-top: 2px solid #708090; flex: 1; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); cursor: help;'>
                     <div style='color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;'>Import Sub.</div>
                     <div style='color: #fff; font-size: 22px; font-weight: 700; font-family: Rajdhani;'>{n['iso']}%</div>
                 </div>
+                
             </div>
             """, unsafe_allow_html=True)
 
