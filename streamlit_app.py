@@ -486,45 +486,29 @@ with tab1:
     
     col_map, col_feed = st.columns([6, 4], gap="large")
 
+    # --- REPLACE INSIDE TAB 1 (TACTICAL MAP) ---
     with col_map:
-        st.markdown("<h3 style='font-size:18px;'>TACTICAL MAP (CLICK PIN FOR DOSSIER)</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='font-size:18px; color:#d4af37; font-family:Rajdhani;'>TACTICAL MAP (CLICK PIN FOR DOSSIER)</h3>", unsafe_allow_html=True)
         
         fig = go.Figure()
-
-        # Fix: India GeoJSON for State Highlighting Overlay
-        india_geojson = get_india_geojson()
-        if india_geojson:
-            fig.add_trace(go.Choroplethmapbox(
-                geojson=india_geojson,
-                locations=[f['properties']['ST_NM'] for f in india_geojson['features']],
-                z=[1] * len(india_geojson['features']), # Must have a valid numeric array
-                featureidkey="properties.ST_NM",
-                colorscale=[[0, 'rgba(212, 175, 55, 0.08)'], [1, 'rgba(212, 175, 55, 0.08)']], # Faint gold base
-                marker_opacity=0.6,
-                marker_line_width=1,
-                marker_line_color='#444',
-                showscale=False,
-                hoverinfo='location',
-                hovertemplate="<b style='font-family:Rajdhani; color:#d4af37; font-size:16px;'>%{location}</b><extra></extra>",
-            ))
 
         for cap, color in [("Large", "#d4af37"), ("Mid", "#b87333"), ("Small", "#708090")]:
             subset = active_df[active_df['cap'] == cap]
             if subset.empty: continue
             
-            # Layer 1: Glowing Underlay (Maximized size to compensate for lack of CSS blinking)
+            # Layer 1: Static Glowing Underlay (Simulates beacon pulse)
             fig.add_trace(go.Scattermapbox(
                 lat=subset['lat'], lon=subset['lon'], mode='markers',
-                marker=dict(size=35, color=color, opacity=0.3),
+                marker=dict(size=35, color=color, opacity=0.25),
                 hoverinfo='skip', showlegend=False
             ))
             
-            # Layer 2: Solid Core
+            # Layer 2: Solid Core Node
             fig.add_trace(go.Scattermapbox(
                 lat=subset['lat'], lon=subset['lon'], mode='markers',
                 marker=dict(size=10, color=color, opacity=1),
                 customdata=subset[['name', 'region', 'cap', 'terrain', 'sti']], 
-                hovertemplate="<b style='font-family:Rajdhani;'>%{customdata[0]}</b><br>" +
+                hovertemplate="<b style='font-family:Rajdhani; font-size:14px;'>%{customdata[0]}</b><br>" +
                               "<b>Capacity:</b> %{customdata[2]}<br>" +
                               "<b>Terrain:</b> %{customdata[3]}<br>" +
                               "<b>S.T.I.:</b> %{customdata[4]}%<extra></extra>",
@@ -533,19 +517,19 @@ with tab1:
 
         fig.update_layout(
             mapbox_style="carto-darkmatter",
-            mapbox=dict(center=dict(lat=22.0, lon=79.0), zoom=4.0, pitch=0),
+            mapbox=dict(center=dict(lat=22.0, lon=79.0), zoom=3.8, pitch=0),
             margin={"r":0, "t":0, "l":0, "b":0},
             paper_bgcolor="#111111", plot_bgcolor="#111111", height=500,
-            legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01, bgcolor="rgba(17,17,17,0.7)", font=dict(color="#ccc"))
+            legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01, bgcolor="rgba(17,17,17,0.8)", font=dict(color="#d4af37", family="Rajdhani"))
         )
 
         map_event = st.plotly_chart(fig, use_container_width=True, on_select="rerun", selection_mode="points")
         
+        # Trigger Dialog
         if map_event and map_event.selection and map_event.selection["points"]:
             clicked_data = map_event.selection["points"][0].get("customdata", [None])
             if clicked_data and len(clicked_data) > 0:
-                clicked_name = clicked_data[0]
-                show_technical_dossier(clicked_name)
+                show_technical_dossier(clicked_data[0])
 
     # --- LIVE STRATEGIC INTELLIGENCE FEED ---
     with col_feed:
@@ -603,9 +587,9 @@ a { text-decoration: none; }
         st.markdown(html_output, unsafe_allow_html=True)
 
 
-# --- TAB 2: GLOBAL ECOSYSTEM ---
+# --- REPLACE TAB 2 (GLOBAL MACRO MAP) ---
 with tab2:
-    st.markdown("<h3 style='font-size:18px;'>GLOBAL MACRO MAP</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='font-size:18px; color:#d4af37; font-family:Rajdhani;'>GLOBAL MACRO MAP</h3>", unsafe_allow_html=True)
     global_df = df.copy()
     
     fig_global = go.Figure()
@@ -613,12 +597,14 @@ with tab2:
         subset = global_df[global_df['cap'] == cap]
         if subset.empty: continue
         
+        # Layer 1: Glowing Underlay
         fig_global.add_trace(go.Scattermapbox(
             lat=subset['lat'], lon=subset['lon'], mode='markers',
             marker=dict(size=25, color=color, opacity=0.25),
             hoverinfo='skip', showlegend=False
         ))
         
+        # Layer 2: Solid Core Node
         fig_global.add_trace(go.Scattermapbox(
             lat=subset['lat'], lon=subset['lon'], mode='markers',
             marker=dict(size=8, color=color, opacity=1),
@@ -632,7 +618,7 @@ with tab2:
         mapbox=dict(center=dict(lat=30.0, lon=20.0), zoom=1.5, pitch=0),
         margin={"r":0, "t":0, "l":0, "b":0},
         paper_bgcolor="#111111", plot_bgcolor="#111111", height=600,
-        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01, bgcolor="rgba(17,17,17,0.7)", font=dict(color="#ccc"))
+        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01, bgcolor="rgba(17,17,17,0.8)", font=dict(color="#d4af37", family="Rajdhani"))
     )
     st.plotly_chart(fig_global, use_container_width=True)
 
