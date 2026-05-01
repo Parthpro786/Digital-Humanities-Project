@@ -726,3 +726,74 @@ with tab3:
     2. **Leveraging Variance for Geographical Hedging:** The higher variance and left-skewed tails in Small/Mid Cap facilities indicate they can survive in high-friction terrain, establishing a distributed *Defense-in-Depth* network.
     3. **Resource Catchment Thresholds:** The Chi-Square contingency highlights that high-friction topographies cannot support commercial logic nodes. Planning must mandate that sites with an STI $< 82\%$ be restricted to specialized, low-volume fabrication (e.g., Silicon Carbide).
     """)
+
+
+# --- ADD THIS TO THE BOTTOM OF TAB 3 ---
+    st.markdown("<hr style='border-color: #333; margin-top: 40px;'>", unsafe_allow_html=True)
+    
+    # Custom CSS for the Classified DH Manifesto Terminal
+    dh_css = """
+    <style>
+    .classified-terminal {
+        background-color: #0a0a0a;
+        border: 1px solid #333;
+        border-left: 4px solid #d4af37;
+        padding: 25px;
+        border-radius: 4px;
+        font-family: 'Courier New', Courier, monospace;
+        position: relative;
+        overflow: hidden;
+        box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+    }
+    .classified-terminal::before {
+        content: 'TOP SECRET // EYES ONLY';
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        color: rgba(212, 175, 55, 0.3);
+        font-weight: bold;
+        letter-spacing: 2px;
+        font-size: 12px;
+    }
+    .terminal-header {
+        color: #d4af37;
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        margin-bottom: 15px;
+        border-bottom: 1px dashed #333;
+        padding-bottom: 10px;
+    }
+    .terminal-text {
+        color: #a0aec0;
+        font-size: 14px;
+        line-height: 1.7;
+        margin-bottom: 15px;
+    }
+    .highlight-gold {
+        color: #d4af37;
+        font-weight: 600;
+    }
+    </style>
+
+    <div class="classified-terminal">
+        <div class="terminal-header">FILE: INFRASTRUCTURE AS DESTINY // DECRYPTED</div>
+        <p class="terminal-text">
+            For policymakers and historians, the data variances visualized above transcend mere logistics—they are the <span class="highlight-gold">physical blueprints of a new geopolitical cold war.</span>
+        </p>
+        <p class="terminal-text">
+            <span class="highlight-gold">[SUBJECT 01: Architecture of Paranoia vs. Profit]</span><br>
+            The spatial clustering reveals human motive. Mega-Fabs on flat coastal plains (High STI) signify absolute economic efficiency—demanding topographical perfection for zero failure rates. Conversely, the scattered Small/Mid Cap nodes in high-friction valleys represent pure survival mechanics. By burying defense foundries inland, the state consciously sacrifices profit to forge geographic immunity against naval blockades and climate disasters.
+        </p>
+        <p class="terminal-text">
+            <span class="highlight-gold">[SUBJECT 02: Spatialization of Power]</span><br>
+            Semiconductors do not just process data; they rewrite the earth. These Mega-Fabs function as gravitational anomalies. They literally reroute rivers via desalination pipelines and trigger mass intellectual migration, erecting hyper-localized 'techno-enclaves' that permanently rewrite indigenous cultural economies.
+        </p>
+        <p class="terminal-text" style="border-top: 1px dashed #333; padding-top: 15px; margin-top: 15px;">
+            <b>CONCLUSION:</b> To the civilian, a microchip is invisible. This GIS framework proves the "Cyber Frontline" is deeply terrestrial. Every shifting STI variance maps billions poured into concrete and water routing. In the 21st century, <span class="highlight-gold">geographical infrastructure is destiny.</span>
+        </p>
+    </div>
+    """
+    st.markdown(dh_css, unsafe_allow_html=True)
