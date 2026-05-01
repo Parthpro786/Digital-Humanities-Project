@@ -8,3 +8,14 @@ scipy
 scikit-learn
 feedparser
 openai
+streamlit
+pandas
+numpy
+altair
+plotly
+scipy
+scikit-learn
+feedparser
+requests
+folium
+streamlit-folium
