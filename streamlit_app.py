@@ -303,36 +303,48 @@ def show_technical_dossier(facility_name):
             </div>
             """, unsafe_allow_html=True)
 
-    with col2:
+   with col2:
         if 'profile' in n:
-            st.markdown("<b>Topographical Elevation Profile</b>", unsafe_allow_html=True)
-            total_dist = n['m_dist'] + n['w_dist']
-            x_dist = np.linspace(0, total_dist, len(n['profile']))
-            chart_df = pd.DataFrame({"Distance (km)": x_dist, "Elevation (MSL)": n['profile']})
+            st.markdown("<b style='color:#d4af37;'>Topographical Elevation Profile</b>", unsafe_allow_html=True)
             
+            # 1. Force standard Python floats to prevent Altair JSON serialization crashes
+            total_dist = float(n['m_dist'] + n['w_dist'])
+            x_dist = [float(x) for x in np.linspace(0, total_dist, len(n['profile']))]
+            y_elev = [float(y) for y in n['profile']]
+            
+            chart_df = pd.DataFrame({"Distance": x_dist, "Elevation": y_elev})
+            
+            # 2. Build Base Chart
             base = alt.Chart(chart_df).encode(
-                x=alt.X('Distance (km):Q', axis=alt.Axis(gridColor='#222', labelColor='#888', titleColor='#888')), 
-                y=alt.Y('Elevation (MSL):Q', scale=alt.Scale(domain=[0, max(n['profile'])+50]), axis=alt.Axis(gridColor='#222', labelColor='#888', titleColor='#888'))
+                x=alt.X('Distance:Q', title='Distance (km)', axis=alt.Axis(gridColor='#222', labelColor='#888', titleColor='#888')), 
+                y=alt.Y('Elevation:Q', title='Elevation (MSL)', scale=alt.Scale(domain=[0, max(y_elev)+50]), axis=alt.Axis(gridColor='#222', labelColor='#888', titleColor='#888'))
             )
-            area = base.mark_area(opacity=0.4, color="#d4af37")
+            area = base.mark_area(opacity=0.3, color="#d4af37")
             line = base.mark_line(color="#d4af37", strokeWidth=2)
-            facility_mark = pd.DataFrame({"x": [n['m_dist']], "y": [n['elev']]})
-            point = alt.Chart(facility_mark).mark_point(color='#ffffff', size=150, shape='diamond', filled=True).encode(x='x:Q', y='y:Q')
             
-            final_chart = alt.layer(area, line, point).properties(height=250)
-            st.altair_chart(final_chart, use_container_width=True, theme="streamlit")
+            # 3. Build Facility Marker
+            mark_df = pd.DataFrame({"x": [float(n['m_dist'])], "y": [float(n['elev'])]})
+            point = alt.Chart(mark_df).mark_point(
+                color='#ffffff', size=150, shape='diamond', filled=True, opacity=1.0
+            ).encode(x='x:Q', y='y:Q')
+            
+            # 4. Layer and strictly configure background
+            final_chart = alt.layer(area, line, point).properties(height=250).configure(background='#0a0a0a').configure_view(strokeWidth=0)
+            
+            # CRITICAL FIX: theme=None prevents Streamlit from injecting conflicting CSS inside the modal
+            st.altair_chart(final_chart, use_container_width=True, theme=None)
 
         if 'rad' in n:
-            st.markdown("<b>Vulnerability & Stability Radar</b>", unsafe_allow_html=True)
+            st.markdown("<b style='color:#d4af37;'>Vulnerability & Stability Radar</b>", unsafe_allow_html=True)
             categories = ['Seismic Stability', 'Water Security', 'Logistics Efficiency', 'Geopolitical Safety', 'Labor Proximity']
             fig = go.Figure()
-            fig.add_trace(go.Scatterpolar(r=n['rad'], theta=categories, fill='toself', fillcolor='rgba(212, 175, 55, 0.4)', line=dict(color='#d4af37'), name=n['name']))
+            fig.add_trace(go.Scatterpolar(r=n['rad'], theta=categories, fill='toself', fillcolor='rgba(212, 175, 55, 0.3)', line=dict(color='#d4af37'), name=n['name']))
             fig.update_layout(
                 polar=dict(
                     radialaxis=dict(visible=True, range=[0, 100], gridcolor='#333', linecolor='#333', tickfont=dict(color='#888')),
                     angularaxis=dict(tickfont=dict(color='#ccc', size=12, family='Rajdhani'), gridcolor='#333', linecolor='#333')
                 ),
-                showlegend=False, margin=dict(l=50, r=50, t=20, b=20), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=250
+                showlegend=False, margin=dict(l=40, r=40, t=20, b=20), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=250
             )
             st.plotly_chart(fig, use_container_width=True)
 
