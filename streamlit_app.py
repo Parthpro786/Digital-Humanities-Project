@@ -25,34 +25,98 @@ st.markdown("""
         footer {visibility: hidden;}
         .block-container {padding-top: 2rem; padding-bottom: 2rem; max-width: 98%;}
         
-        /* The Dark "Hero" Banner */
+        /* --- ANIMATED HERO BANNER --- */
         .hero-banner {
-            background: linear-gradient(135deg, #111111 0%, #0a0a0a 100%);
-            padding: 25px 35px;
-            border-radius: 8px;
+            background: linear-gradient(135deg, #111111 0%, #050505 100%);
+            padding: 30px 40px;
+            border-radius: 6px;
             margin-bottom: 30px;
-            border-top: 3px solid #d4af37;
-            border-bottom: 1px solid #222;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+            border-top: 2px solid #d4af37;
+            border-bottom: 1px solid #1a1a1a;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.9), inset 0 0 20px rgba(212, 175, 55, 0.05);
             position: relative;
             overflow: hidden;
         }
+
+        /* Subtle Radar Scanline Overlay */
+        .hero-banner::after {
+            content: "";
+            position: absolute;
+            top: -100%; left: 0; width: 100%; height: 200%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(212, 175, 55, 0.03) 50%, rgba(255,255,255,0) 100%);
+            animation: radar-scan 6s infinite linear;
+            pointer-events: none;
+        }
+        @keyframes radar-scan {
+            0% { transform: translateY(-50%); }
+            100% { transform: translateY(50%); }
+        }
+
+        /* Shimmering Title Text */
         .hero-title {
             font-family: 'Rajdhani', sans-serif !important;
-            font-size: 42px !important;
-            font-weight: 700 !important;
+            font-size: 44px !important;
+            font-weight: 800 !important;
             margin: 0 !important;
-            color: #d4af37 !important;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0px 0px 15px rgba(212, 175, 55, 0.3);
+            letter-spacing: 3px;
+            background: linear-gradient(90deg, #d4af37 0%, #fff2c8 20%, #d4af37 40%, #b87333 80%, #d4af37 100%);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: gold-shimmer 5s linear infinite;
+            text-shadow: 0px 0px 25px rgba(212, 175, 55, 0.2);
         }
+        @keyframes gold-shimmer {
+            to { background-position: 200% center; }
+        }
+
         .hero-subtitle {
             color: #888;
             font-size: 14px;
-            margin-top: 5px;
-            letter-spacing: 1px;
+            margin-top: 8px;
+            letter-spacing: 2px;
             text-transform: uppercase;
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Breathing Border on the Badge */
+        .uplink-badge {
+            background: rgba(212, 175, 55, 0.05);
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #d4af37;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            font-weight: 700;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            font-family: 'Rajdhani', sans-serif;
+            animation: border-breathe 3s infinite alternate ease-in-out;
+            z-index: 2; /* Keeps it above the scanline */
+            position: relative;
+        }
+        @keyframes border-breathe {
+            0% { box-shadow: 0 0 5px rgba(212, 175, 55, 0.1); border-color: rgba(212, 175, 55, 0.3); }
+            100% { box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); border-color: rgba(212, 175, 55, 0.8); }
+        }
+
+        /* Heartbeat Connection Dot */
+        .pulse-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #22c55e; /* Uplink Green */
+            margin-right: 10px;
+            animation: uplink-ping 1.5s infinite ease-in-out;
+        }
+        @keyframes uplink-ping {
+            0% { transform: scale(0.8); opacity: 0.6; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 10px 4px rgba(34, 197, 94, 0); }
+            100% { transform: scale(0.8); opacity: 0.6; box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
         }
         
         .hud-card {
@@ -481,12 +545,13 @@ def show_technical_dossier(facility_name):
             </div>
             """, unsafe_allow_html=True)
 
-# --- 5. TOP BAR UI (COMMAND CENTER HUD) ---
+
+# --- 5. TOP BAR UI ---
 st.markdown("""
     <div class='hero-banner'>
         <div style='display: flex; justify-content: space-between; align-items: center;'>
             <div class='hero-title'>Strategic Topography GIS</div>
-            <div style='background: rgba(212, 175, 55, 0.1); padding: 5px 12px; border-radius: 4px; font-size: 11px; color: #d4af37; border: 1px solid rgba(212, 175, 55, 0.4); font-weight: 800; letter-spacing: 1px; display: flex; align-items: center;'>
+            <div class='uplink-badge'>
                 <span class='pulse-dot'></span> SECURE UPLINK
             </div>
         </div>
