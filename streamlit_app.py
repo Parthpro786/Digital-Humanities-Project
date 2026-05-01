@@ -447,7 +447,8 @@ with tab1:
             fig.add_trace(go.Scattermapbox(
                 lat=subset['lat'], lon=subset['lon'],
                 mode='markers',
-                marker=dict(size=10, color=color, opacity=1, line=dict(width=1, color='#000')),
+                # REMOVED: line=dict(...) from the dictionary below
+                marker=dict(size=10, color=color, opacity=1), 
                 customdata=subset[['name', 'region', 'cap', 'terrain', 'sti']], 
                 hovertemplate="<b style='font-family:Rajdhani;'>%{customdata[0]}</b><br>" +
                               "<b>State/Region:</b> %{customdata[1]}<br>" +
@@ -548,6 +549,7 @@ with tab2:
         fig_global.add_trace(go.Scattermapbox(
             lat=subset['lat'], lon=subset['lon'],
             mode='markers',
+            # REMOVED: line=dict(...) from the dictionary below
             marker=dict(size=8, color=color, opacity=1),
             customdata=subset[['name', 'region', 'cap']], 
             hovertemplate="<b style='font-family:Rajdhani;'>%{customdata[0]}</b><br>" +
