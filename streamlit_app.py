@@ -7,16 +7,16 @@ from scipy import stats
 from sklearn.neighbors import KernelDensity
 from itertools import combinations
 import feedparser
+import requests
+import datetime
 
 # --- 1. PROFESSIONAL PAGE CONFIG & CSS ---
 st.set_page_config(layout="wide", page_title="Strategic Topography GIS", page_icon="🗺️")
 
 st.markdown("""
     <style>
-        /* Import Google Fonts */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Rajdhani:wght@500;600;700&display=swap');
 
-        /* Deep Cinematic Background & Typography */
         .stApp { background-color: #0a0a0a; }
         h1, h2, h3, h4, h5, h6 { font-family: 'Rajdhani', sans-serif !important; color: #d4af37 !important; }
         p, span, div, li { font-family: 'Inter', sans-serif; color: #e2e8f0; }
@@ -81,10 +81,7 @@ st.markdown("""
             text-align: center;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-        .hud-card:hover { 
-            transform: translateY(-4px); 
-            box-shadow: 0 12px 20px -3px rgba(212, 175, 55, 0.15); 
-        }
+        .hud-card:hover { transform: translateY(-4px); box-shadow: 0 12px 20px -3px rgba(212, 175, 55, 0.15); }
         .hud-value { font-size: 36px; font-family: 'Rajdhani', sans-serif; font-weight: 700; color: #fff; line-height: 1.2; }
         .hud-label { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 1.5px; }
 
@@ -105,33 +102,25 @@ st.markdown("""
         /* Tab Styling */
         .stTabs [data-baseweb="tab-list"] { background-color: transparent; gap: 20px; }
         .stTabs [data-baseweb="tab"] {
-            background-color: #111111 !important;
-            border: 1px solid #222 !important;
-            border-bottom: none !important;
-            border-radius: 6px 6px 0 0 !important;
-            padding: 12px 24px !important;
-            color: #888 !important;
-            font-family: 'Rajdhani', sans-serif !important;
-            font-size: 16px !important;
-            letter-spacing: 1px;
-            transition: all 0.3s ease !important;
+            background-color: #111111 !important; border: 1px solid #222 !important;
+            border-bottom: none !important; border-radius: 6px 6px 0 0 !important;
+            padding: 12px 24px !important; color: #888 !important;
+            font-family: 'Rajdhani', sans-serif !important; font-size: 16px !important;
+            letter-spacing: 1px; transition: all 0.3s ease !important;
         }
         .stTabs [data-baseweb="tab"]:hover { color: #d4af37 !important; background-color: #1a1a1a !important; }
         .stTabs [aria-selected="true"] {
-            background-color: #1a1a1a !important;
-            color: #d4af37 !important;
-            border-top: 3px solid #d4af37 !important;
-            border-color: #d4af37 #222 transparent #222 !important;
+            background-color: #1a1a1a !important; color: #d4af37 !important;
+            border-top: 3px solid #d4af37 !important; border-color: #d4af37 #222 transparent #222 !important;
         }
         
-        /* Slider overrides */
         .stSlider label { color: #d4af37 !important; font-family: 'Rajdhani', sans-serif !important; font-size: 16px !important;}
         .stSlider [data-baseweb="slider"] div[data-testid="stTickBar"] { background-color: #333 !important; }
         .stSlider [data-baseweb="slider"] [role="slider"] { background-color: #d4af37 !important; border: 2px solid #000 !important; }
     </style>
 """, unsafe_allow_html=True)
 
-# --- 2. LOGISTICS CURVE & DATA RETRIEVAL (Preserved) ---
+# --- 2. LOGISTICS CURVE & EXTERNAL DATA FETCHING ---
 def generate_curve(start, end, bend=0.2):
     p0, p2 = np.array(start), np.array(end)
     mid = (p0 + p2) / 2
@@ -143,13 +132,25 @@ def generate_curve(start, end, bend=0.2):
 
 @st.cache_data(ttl=3600)
 def fetch_live_intelligence():
-    url = "https://news.google.com/rss/search?q=India+semiconductor+manufacturing&hl=en-IN&gl=IN&ceid=IN:en"
-    feed = feedparser.parse(url)
-    return feed.entries[:7]
+    try:
+        url = "https://news.google.com/rss/search?q=India+semiconductor+manufacturing&hl=en-IN&gl=IN&ceid=IN:en"
+        feed = feedparser.parse(url)
+        return feed.entries[:7]
+    except:
+        return []
+
+@st.cache_data(ttl=86400)
+def get_india_geojson():
+    # Fetches standard GeoJSON for Indian States to enable hover-highlighting
+    try:
+        url = "https://gist.githubusercontent.com/jbrobst/56c13bbbf9d97d187fea01ca62ea5112/raw/e388c4cae20aa53cb5090210a42ebb9b765c0a36/india_states.geojson"
+        response = requests.get(url, timeout=5)
+        return response.json()
+    except:
+        return None
 
 # --- 3. THE UNIFIED DATASET (India + Global) ---
 data = [
-    # Global
     {"name": "TSMC Fab 18 (Taiwan)", "region": "Global", "cap": "Large", "lat": 23.10, "lon": 120.28, "terrain": "Island Coastal", "sti": 82.0},
     {"name": "TSMC Kumamoto (Japan)", "region": "Global", "cap": "Large", "lat": 32.88, "lon": 130.84, "terrain": "Volcanic Island", "sti": 80.5},
     {"name": "Intel Ocotillo (USA)", "region": "Global", "cap": "Large", "lat": 33.27, "lon": -111.88, "terrain": "Desert Flat", "sti": 95.0},
@@ -160,8 +161,6 @@ data = [
     {"name": "Rapidus Hokkaido (Japan)", "region": "Global", "cap": "Large", "lat": 42.76, "lon": 141.67, "terrain": "Northern Island", "sti": 81.0},
     {"name": "GlobalFoundries Dresden (Ger)", "region": "Global", "cap": "Mid", "lat": 51.12, "lon": 13.71, "terrain": "River Valley", "sti": 85.0},
     {"name": "SMIC Shanghai (China)", "region": "Global", "cap": "Large", "lat": 31.20, "lon": 121.59, "terrain": "Delta Plain", "sti": 91.0},
-
-    # India
     {
         "name": "Tata-PSMC Dholera", "region": "India", "year": 2026, "cap": "Large", 
         "lat": 22.25, "lon": 72.11, "elev": 15, "terrain": "Coastal Plateau",
@@ -297,9 +296,9 @@ data = [
 df = pd.DataFrame(data)
 
 def get_color_hex(cap):
-    if cap == "Large": return "#d4af37" # Gold
-    if cap == "Mid": return "#b87333"   # Copper
-    return "#708090"                    # Slate
+    if cap == "Large": return "#d4af37" 
+    if cap == "Mid": return "#b87333"   
+    return "#708090"                    
 
 df['hex_color'] = df['cap'].apply(get_color_hex)
 
@@ -319,7 +318,6 @@ def show_technical_dossier(facility_name):
             st.image(n['img'], use_container_width=True)
             
         st.markdown(f"<div class='metric-box'><div class='metric-title'>Strategic Payload</div><div class='metric-text'>{n.get('bt', 'Classified / N/A')}</div></div>", unsafe_allow_html=True)
-        
         st.markdown(f"<div class='metric-box'><div class='metric-title'>Topographical Stabilization (Elev: {n.get('elev', 'N/A')}m MSL)</div><div class='metric-text'>{n.get('rationale', 'No terrain data available.')}</div></div>", unsafe_allow_html=True)
         
         if 'lcp' in n:
@@ -335,6 +333,7 @@ def show_technical_dossier(facility_name):
             """, unsafe_allow_html=True)
 
     with col2:
+        # BUG FIX 1: Altair Layered Chart Configuration Error Fix
         if 'profile' in n:
             st.markdown("<b>Topographical Elevation Profile</b>", unsafe_allow_html=True)
             total_dist = n['m_dist'] + n['w_dist']
@@ -351,7 +350,9 @@ def show_technical_dossier(facility_name):
             facility_mark = pd.DataFrame({"x": [n['m_dist']], "y": [n['elev']]})
             point = alt.Chart(facility_mark).mark_point(color='#ffffff', size=150, shape='diamond', filled=True).encode(x='x:Q', y='y:Q')
             
-            st.altair_chart((area + line + point).properties(height=250).configure(background='#0a0a0a').configure_view(strokeWidth=0), use_container_width=True)
+            # Removed the chained .configure() which was throwing the ValueError on layered charts
+            final_chart = alt.layer(area, line, point).properties(height=250)
+            st.altair_chart(final_chart, use_container_width=True, theme="streamlit")
 
         if 'rad' in n:
             st.markdown("<b>Vulnerability & Stability Radar</b>", unsafe_allow_html=True)
@@ -392,7 +393,6 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# Tab Selection
 tab1, tab2, tab3 = st.tabs(["INDIA TIMELINE ECOSYSTEM", "GLOBAL MACRO ECOSYSTEM", "S.T.I. STATISTICAL DISTRIBUTION"])
 
 # --- TAB 1: INDIA ECOSYSTEM ---
@@ -407,18 +407,9 @@ with tab1:
     
     st.markdown(f"""
     <div style='display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 15px; margin-bottom: 30px;'>
-        <div class='hud-card'>
-            <div class='hud-label'> Active Sovereign Nodes</div>
-            <div class='hud-value'>{len(active_df)}</div>
-        </div>
-        <div class='hud-card'>
-            <div class='hud-label'> Mean Topographical Index</div>
-            <div class='hud-value'>{avg_sti}</div>
-        </div>
-        <div class='hud-card'>
-            <div class='hud-label'> Logistics Efficiency (LCP)</div>
-            <div class='hud-value'>{avg_lcp}</div>
-        </div>
+        <div class='hud-card'><div class='hud-label'> Active Sovereign Nodes</div><div class='hud-value'>{len(active_df)}</div></div>
+        <div class='hud-card'><div class='hud-label'> Mean Topographical Index</div><div class='hud-value'>{avg_sti}</div></div>
+        <div class='hud-card'><div class='hud-label'> Logistics Efficiency (LCP)</div><div class='hud-value'>{avg_lcp}</div></div>
     </div>
     """, unsafe_allow_html=True)
     
@@ -427,9 +418,26 @@ with tab1:
     with col_map:
         st.markdown("<h3 style='font-size:18px;'>TACTICAL MAP (CLICK PIN FOR DOSSIER)</h3>", unsafe_allow_html=True)
         
-        # Interactive Plotly Mapbox
         fig = go.Figure()
-        
+
+        # Fetch India GeoJSON for State Highlighting Overlay
+        india_geojson = get_india_geojson()
+        if india_geojson:
+            fig.add_trace(go.Choroplethmapbox(
+                geojson=india_geojson,
+                locations=[f['properties']['ST_NM'] for f in india_geojson['features']],
+                z=[0] * len(india_geojson['features']), # Dummy metric just to render the shape
+                featureidkey="properties.ST_NM",
+                colorscale=[[0, 'rgba(0,0,0,0)'], [1, 'rgba(0,0,0,0)']],
+                marker_opacity=0.05,
+                marker_line_width=1,
+                marker_line_color='#333',
+                showscale=False,
+                hoverinfo='location',
+                hovertemplate="<b style='font-family:Rajdhani; color:#d4af37;'>%{location}</b><extra></extra>",
+                selected=dict(marker=dict(opacity=0.3)) 
+            ))
+
         for cap, color in [("Large", "#d4af37"), ("Mid", "#b87333"), ("Small", "#708090")]:
             subset = active_df[active_df['cap'] == cap]
             if subset.empty: continue
@@ -438,20 +446,17 @@ with tab1:
             fig.add_trace(go.Scattermapbox(
                 lat=subset['lat'], lon=subset['lon'],
                 mode='markers',
-                marker=dict(size=25, color=color, opacity=0.3),
-                hoverinfo='skip',
-                showlegend=False
+                marker=dict(size=30, color=color, opacity=0.25),
+                hoverinfo='skip', showlegend=False
             ))
             
             # Layer 2: Solid Core with Custom Tooltip
             fig.add_trace(go.Scattermapbox(
                 lat=subset['lat'], lon=subset['lon'],
                 mode='markers',
-                # REMOVED: line=dict(...) from the dictionary below
-                marker=dict(size=10, color=color, opacity=1), 
+                marker=dict(size=10, color=color, opacity=1),
                 customdata=subset[['name', 'region', 'cap', 'terrain', 'sti']], 
                 hovertemplate="<b style='font-family:Rajdhani;'>%{customdata[0]}</b><br>" +
-                              "<b>State/Region:</b> %{customdata[1]}<br>" +
                               "<b>Capacity:</b> %{customdata[2]}<br>" +
                               "<b>Terrain:</b> %{customdata[3]}<br>" +
                               "<b>S.T.I.:</b> %{customdata[4]}%<extra></extra>",
@@ -460,20 +465,18 @@ with tab1:
 
         fig.update_layout(
             mapbox_style="carto-darkmatter",
-            mapbox=dict(center=dict(lat=22.0, lon=79.0), zoom=3.8, pitch=0),
+            mapbox=dict(center=dict(lat=22.0, lon=79.0), zoom=4.0, pitch=0),
             margin={"r":0, "t":0, "l":0, "b":0},
-            paper_bgcolor="#111111",
-            plot_bgcolor="#111111",
-            height=500,
+            paper_bgcolor="#111111", plot_bgcolor="#111111", height=500,
             legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01, bgcolor="rgba(17,17,17,0.7)", font=dict(color="#ccc"))
         )
 
         map_event = st.plotly_chart(fig, use_container_width=True, on_select="rerun", selection_mode="points")
         
-        # Event Handling for Dossier popup
         if map_event and map_event.selection and map_event.selection["points"]:
-            clicked_name = map_event.selection["points"][0].get("customdata", [None])[0]
-            if clicked_name:
+            clicked_data = map_event.selection["points"][0].get("customdata", [None])
+            if clicked_data and len(clicked_data) > 0:
+                clicked_name = clicked_data[0]
                 show_technical_dossier(clicked_name)
 
     # --- LIVE STRATEGIC INTELLIGENCE FEED ---
@@ -495,32 +498,39 @@ with tab1:
         .card-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(10,10,10,0.95) 0%, rgba(10,10,10,0.8) 50%, rgba(10,10,10,0) 100%); padding: 15px; }
         .card-tag { font-size: 10px; color: #0a0a0a; text-transform: uppercase; font-weight: 800; padding: 3px 6px; border-radius: 2px; display: inline-block; margin-bottom: 6px; letter-spacing: 0.5px; }
         .card-title-grid { color: #ffffff !important; font-size: 14px; font-weight: 600; line-height: 1.3; font-family: 'Inter', sans-serif; text-shadow: 1px 1px 4px rgba(0,0,0,0.9); }
+        .card-date { color: #888; font-size: 10px; margin-top: 5px; font-family: 'Rajdhani', sans-serif; }
         a { text-decoration: none; }
         </style>
         <div class="news-grid">"""
 
-        try:
-            live_news = fetch_live_intelligence()
+        # BUG FIX 2: Added Robust Date/Attribute Parsing
+        live_news = fetch_live_intelligence()
+        if not live_news:
+             grid_css += "<div>Live visual feed currently offline or blocked by corporate firewall.</div>"
+        else:
             colors = ["#d4af37", "#b87333", "#708090", "#888"] 
             labels = ["LATEST DISPATCH", "INDUSTRY UPDATE", "MACRO TREND", "POLICY SHIFT"]
             
             for i, article in enumerate(live_news[:4]):
-                clean_title = article.title.rsplit(" - ", 1)[0]
+                clean_title = getattr(article, 'title', 'Encrypted Transmission Intercepted').rsplit(" - ", 1)[0]
+                
+                # Safely attempt to parse the publication date, fallback to current day
+                raw_date = getattr(article, 'published', datetime.datetime.now().strftime("%a, %d %b %Y"))
+                clean_date = raw_date[:16] if len(raw_date) > 16 else raw_date
+                
                 img = bg_images[i % len(bg_images)]
                 color = colors[i % len(colors)]
                 tag = labels[i % len(labels)]
+                link = getattr(article, 'link', '#')
                 
                 grid_css += f"""
-                <a href='{article.link}' target='_blank'>
+                <a href='{link}' target='_blank'>
                 <div class="news-card-grid" style="background-image: url('{img}');">
                 <div class="card-overlay">
                 <div class="card-tag" style="background-color: {color};">{tag}</div>
                 <div class="card-title-grid">{clean_title}</div>
-                </div>
-                </div>
-                </a>"""
-        except Exception as e:
-            grid_css += "<div>Live visual feed currently unavailable.</div>"
+                <div class="card-date">{clean_date}</div>
+                </div></div></a>"""
 
         grid_css += "</div>"
         st.markdown(grid_css, unsafe_allow_html=True)
@@ -538,18 +548,14 @@ with tab2:
         
         # Outer glow
         fig_global.add_trace(go.Scattermapbox(
-            lat=subset['lat'], lon=subset['lon'],
-            mode='markers',
-            marker=dict(size=20, color=color, opacity=0.3),
-            hoverinfo='skip',
-            showlegend=False
+            lat=subset['lat'], lon=subset['lon'], mode='markers',
+            marker=dict(size=25, color=color, opacity=0.25),
+            hoverinfo='skip', showlegend=False
         ))
         
         # Inner solid
         fig_global.add_trace(go.Scattermapbox(
-            lat=subset['lat'], lon=subset['lon'],
-            mode='markers',
-            # REMOVED: line=dict(...) from the dictionary below
+            lat=subset['lat'], lon=subset['lon'], mode='markers',
             marker=dict(size=8, color=color, opacity=1),
             customdata=subset[['name', 'region', 'cap']], 
             hovertemplate="<b style='font-family:Rajdhani;'>%{customdata[0]}</b><br>" +
@@ -562,9 +568,7 @@ with tab2:
         mapbox_style="carto-darkmatter",
         mapbox=dict(center=dict(lat=30.0, lon=20.0), zoom=1.5, pitch=0),
         margin={"r":0, "t":0, "l":0, "b":0},
-        paper_bgcolor="#111111",
-        plot_bgcolor="#111111",
-        height=600,
+        paper_bgcolor="#111111", plot_bgcolor="#111111", height=600,
         legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01, bgcolor="rgba(17,17,17,0.7)", font=dict(color="#ccc"))
     )
     st.plotly_chart(fig_global, use_container_width=True)
@@ -574,123 +578,114 @@ with tab3:
     st.markdown("### Continuous Probability Density & Inferential Statistics")
     st.markdown("This module applies Kernel Density Estimation (KDE) and rigorous hypothesis testing to the Strategic Topographical Index (STI). By modeling the variance ($\\sigma^2$) and mean ($\\mu$) across facility classifications, we can mathematically infer India's sovereign site-selection strategy.")
     
-    # --- PREP DATA ---
+    # --- BUG FIX 3: Sanitizing Stats Distribution Data & Render ---
     stats_df = df[(df['region'] == 'India')].dropna(subset=['sti', 'cap']).copy()
     
-    # 1. ALTAIR CONTINUOUS DENSITY PLOT
+    # Altair Density Fix
     density_plot = alt.Chart(stats_df).transform_density(
-        'sti',
-        as_=['sti', 'density'],
-        groupby=['cap'],
-        extent=[60, 110], 
-        steps=200,
-        bandwidth=4 
+        'sti', as_=['sti', 'density'], groupby=['cap'],
+        extent=[60, 110], steps=200, bandwidth=4 
     ).mark_area(opacity=0.45).encode(
         x=alt.X('sti:Q', title="Strategic Topographical Index (STI %)", scale=alt.Scale(domain=[65, 105]), axis=alt.Axis(gridColor='#222', labelColor='#888', titleColor='#888')),
         y=alt.Y('density:Q', title="Probability Density", axis=alt.Axis(labels=False, ticks=False, gridColor='#222', titleColor='#888'), stack=None),
         color=alt.Color('cap:N', scale=alt.Scale(domain=['Large', 'Mid', 'Small'], range=['#d4af37', '#b87333', '#708090']))
     ).properties(height=350)
     
-    st.altair_chart(density_plot.configure(background='#0a0a0a').configure_view(strokeWidth=0), use_container_width=True)
+    st.altair_chart(density_plot, use_container_width=True, theme="streamlit")
 
     st.markdown("<hr style='border-color: #333;'>", unsafe_allow_html=True)
-    
-    # --- STATISTICAL ANALYSIS ENGINE ---
     col_stats1, col_stats2 = st.columns(2, gap="large")
     
     with col_stats1:
-        # SUMMARY STATISTICS (MLE ESTIMATES)
         st.markdown("#### || MLE-Based Distribution Parameters")
-        
-        summary = stats_df.groupby('cap')['sti'].agg(
-            Mean='mean',
-            Variance='var',
-            Std_Dev='std',
-            Count='count'
-        ).round(2)
-        
+        summary = stats_df.groupby('cap')['sti'].agg(Mean='mean', Variance='var', Std_Dev='std', Count='count').round(2)
         summary['Skewness'] = stats_df.groupby('cap')['sti'].apply(stats.skew).round(3)
         st.dataframe(summary, use_container_width=True)
 
-        # ANOVA TEST
+        # Robust Scipy Stats Execution
         st.markdown("#### || ANOVA Test (Mean STI Differences)")
-        group_values = [group['sti'].values for name, group in stats_df.groupby('cap')]
+        try:
+            group_values = [group['sti'].values for name, group in stats_df.groupby('cap') if len(group['sti'].values) > 0]
+            if len(group_values) > 1:
+                anova_stat, anova_p = stats.f_oneway(*group_values)
+                st.write(f"**F-statistic:** `{anova_stat:.4f}` | **p-value:** `{anova_p:.4f}`")
+                if pd.notna(anova_p) and anova_p < 0.05:
+                    st.success("Reject $H_0$ → Mean STI differs significantly across Cap categories.")
+                else:
+                    st.info("Fail to reject $H_0$ → Sample size too small or means are similar.")
+        except Exception as e:
+            st.error("Insufficient variance in dataset to perform ANOVA.")
         
-        if len(group_values) > 1:
-            anova_stat, anova_p = stats.f_oneway(*group_values)
-            st.write(f"**F-statistic:** `{anova_stat:.4f}` | **p-value:** `{anova_p:.4f}`")
-            if anova_p < 0.05:
-                st.success("Reject $H_0$ → Mean STI differs significantly across Cap categories.")
-            else:
-                st.info("Fail to reject $H_0$ → Sample size too small or means are similar.")
-        
-        # LEVENE TEST
         st.markdown("#### || Levene’s Test (Variance Equality)")
-        if len(group_values) > 1:
-            levene_stat, levene_p = stats.levene(*group_values)
-            st.write(f"**Statistic:** `{levene_stat:.4f}` | **p-value:** `{levene_p:.4f}`")
-            if levene_p < 0.05:
-                st.success("Reject $H_0$ → Topographical variances ($\\sigma^2$) are significantly different.")
-            else:
-                st.info("Fail to reject $H_0$ → Variances are statistically similar.")
+        try:
+            if len(group_values) > 1:
+                levene_stat, levene_p = stats.levene(*group_values)
+                st.write(f"**Statistic:** `{levene_stat:.4f}` | **p-value:** `{levene_p:.4f}`")
+                if pd.notna(levene_p) and levene_p < 0.05:
+                    st.success("Reject $H_0$ → Topographical variances ($\\sigma^2$) are significantly different.")
+                else:
+                    st.info("Fail to reject $H_0$ → Variances are statistically similar.")
+        except:
+             st.error("Insufficient variance in dataset to perform Levene's Test.")
 
     with col_stats2:
-        # CHI-SQUARE TEST
         st.markdown("#### || Chi-Square Test (Categorical Dependency)")
-        bins = [0, 82, 93, 110] 
-        labels = ['High Friction (<82)', 'Moderate (82-93)', 'Optimal (>93)']
-        stats_df['sti_bin'] = pd.cut(stats_df['sti'], bins=bins, labels=labels)
-        contingency_table = pd.crosstab(stats_df['cap'], stats_df['sti_bin'])
-        
-        st.write("Contingency Table (Count):")
-        st.dataframe(contingency_table, use_container_width=True)
-        
-        chi2_stat, chi2_p, dof, expected = stats.chi2_contingency(contingency_table)
-        st.write(f"**Chi2:** `{chi2_stat:.4f}` | **p-value:** `{chi2_p:.4f}`")
-        if chi2_p < 0.05:
-            st.success("Reject $H_0$ → STI risk category strictly depends on facility Cap type.")
-        else:
-            st.info("Fail to reject $H_0$ → Dependency not strictly proven at current sample size.")
+        try:
+            bins = [0, 82, 93, 110] 
+            labels = ['High Friction (<82)', 'Moderate (82-93)', 'Optimal (>93)']
+            stats_df['sti_bin'] = pd.cut(stats_df['sti'], bins=bins, labels=labels)
+            contingency_table = pd.crosstab(stats_df['cap'], stats_df['sti_bin'])
+            
+            st.write("Contingency Table (Count):")
+            st.dataframe(contingency_table, use_container_width=True)
+            
+            chi2_stat, chi2_p, dof, expected = stats.chi2_contingency(contingency_table)
+            st.write(f"**Chi2:** `{chi2_stat:.4f}` | **p-value:** `{chi2_p:.4f}`")
+            if pd.notna(chi2_p) and chi2_p < 0.05:
+                st.success("Reject $H_0$ → STI risk category strictly depends on facility Cap type.")
+            else:
+                st.info("Fail to reject $H_0$ → Dependency not strictly proven at current sample size.")
+        except:
+            st.error("Failed to generate contingency table constraints.")
 
-        # KDE OVERLAP ANALYSIS
         st.markdown("#### || KDE Distribution Overlap")
-        x_grid = np.linspace(60, 110, 500).reshape(-1, 1)
-        densities = {}
-        
-        for cap, group in stats_df.groupby('cap'):
-            kde = KernelDensity(kernel='gaussian', bandwidth=4.0)
-            kde.fit(group['sti'].values.reshape(-1, 1))
-            log_density = kde.score_samples(x_grid)
-            densities[cap] = np.exp(log_density)
+        try:
+            x_grid = np.linspace(60, 110, 500).reshape(-1, 1)
+            densities = {}
+            for cap, group in stats_df.groupby('cap'):
+                if len(group) > 0:
+                    kde = KernelDensity(kernel='gaussian', bandwidth=4.0)
+                    kde.fit(group['sti'].values.reshape(-1, 1))
+                    densities[cap] = np.exp(kde.score_samples(x_grid))
 
-        overlap_results = []
-        for cap1, cap2 in combinations(densities.keys(), 2):
-            overlap = np.trapezoid(np.minimum(densities[cap1], densities[cap2]), x_grid.flatten())
-            overlap_results.append({"Comparison": f"{cap1} vs {cap2}", "Overlap Coefficient": round(overlap, 4)})
-        
-        st.dataframe(pd.DataFrame(overlap_results), use_container_width=True, hide_index=True)
+            overlap_results = []
+            for cap1, cap2 in combinations(densities.keys(), 2):
+                overlap = np.trapezoid(np.minimum(densities[cap1], densities[cap2]), x_grid.flatten())
+                overlap_results.append({"Comparison": f"{cap1} vs {cap2}", "Overlap Coefficient": round(overlap, 4)})
+            
+            if overlap_results:
+                st.dataframe(pd.DataFrame(overlap_results), use_container_width=True, hide_index=True)
+            else:
+                st.info("Insufficient groups for overlap calculation.")
+        except:
+             st.error("Matrix error calculating KDE distribution overlaps.")
 
     st.markdown("<hr style='border-color: #333;'>", unsafe_allow_html=True)
-    
-    # --- STRATEGIC RECOMMENDATIONS BASED ON STATS ---
     st.markdown("### || Inferences & Strategic Recommendations for Future Development")
     st.markdown("""
     Based on the inferential statistics derived from the current spatial data, we recommend the following frameworks for future Indian semiconductor expansion:
     
-    1. **Strict Stratification of STI Requirements (ANOVA & Overlap Inference):** The low KDE overlap coefficient between Large and Small Cap facilities proves that India is already operating on a bifurcated strategy. **Recommendation:** Future Mega-Fabs (Large Cap) must strictly target topographies with an STI $> 92\%$ (Coastal Plateaus / Stable Plains). Attempting to build a Large Cap fab in a "Moderate" zone will result in catastrophic logistical and vibration friction.
-    2. **Leveraging Variance for Geographical Hedging (Levene's Inference):** The higher variance ($\\sigma^2$) and left-skewed tails in Small/Mid Cap facilities indicate they can survive in high-friction terrain. **Recommendation:** The government should incentivize future Mid/Small Cap facilities (OSAT, discrete power, defense) to be built in Eastern and Northern river valleys or foothills. This accepts a lower STI but establishes a distributed *Defense-in-Depth* network, ensuring the entire supply chain cannot be wiped out by a single coastal weather event or naval blockade.
-    3. **Resource Catchment Thresholds (Chi-Square Inference):** The Chi-Square contingency highlights that high-friction topographies cannot support the mass resource consumption of commercial logic nodes. **Recommendation:** Future infrastructure planning must mandate that any site with an STI $< 82\%$ be restricted to specialized, low-volume/high-margin fabrication (e.g., Silicon Carbide, Gallium Nitride) where the volume of required Ultra-Pure Water (UPW) and heavy LCP transit is statistically lower.
-    4. **Recommendation:** Planners must transition from isolated "site selection" to "cluster engineering." By anchoring a Large Cap fab (like Tata-PSMC) and immediately surrounding it with Mid Cap OSATs (like CG Power or Micron) within a 50km radius, the LCP efficiency approaches 0.99. This creates a frictionless micro-economy, similar to the Hsinchu Science Park in Taiwan.
-    5. **Recommendation:** Future Large Cap facility approvals should require integrated, localized infrastructure. Fabs built in high-STI coastal zones (like Gujarat or Tamil Nadu) must be co-located with dedicated modular nuclear (SMRs) or massive solar/wind parks, alongside captive desalination plants. This insulates the fabs from the municipal grid, ensuring that consumer water and power supplies are not drained by industrial tech demands.
+    1. **Strict Stratification of STI Requirements:** The low KDE overlap coefficient between Large and Small Cap facilities proves that India is already operating on a bifurcated strategy. Future Mega-Fabs (Large Cap) must strictly target topographies with an STI $> 92\%$ (Coastal Plateaus / Stable Plains). Attempting to build a Large Cap fab in a "Moderate" zone will result in catastrophic logistical and vibration friction.
+    2. **Leveraging Variance for Geographical Hedging:** The higher variance ($\\sigma^2$) and left-skewed tails in Small/Mid Cap facilities indicate they can survive in high-friction terrain. The government should incentivize future Mid/Small Cap facilities (OSAT, discrete power, defense) to be built in Eastern and Northern river valleys or foothills. This establishes a distributed *Defense-in-Depth* network, ensuring the entire supply chain cannot be wiped out by a single coastal weather event or naval blockade.
+    3. **Resource Catchment Thresholds:** The Chi-Square contingency highlights that high-friction topographies cannot support the mass resource consumption of commercial logic nodes. Future infrastructure planning must mandate that any site with an STI $< 82\%$ be restricted to specialized, low-volume/high-margin fabrication (e.g., Silicon Carbide, Gallium Nitride).
     """)
 
     st.markdown("<hr style='border-color: #333;'>", unsafe_allow_html=True)
-    # --- DIGITAL HUMANITIES NARRATIVE ---
     st.markdown("### || Digital Humanities Perspective: Infrastructure as Destiny")
     st.markdown("""
     *For policymakers, historians, and the general public, the statistical variances shown above are not just numbers—they are the physical blueprints of a new geopolitical cold war.*
     
-    * **The Architecture of Paranoia vs. Profit:** The KDE graph physically illustrates human motives. The tight cluster of 'Large Cap' Mega-Fabs on flat, coastal plains (High STI) represents **Profit**. These sites demand topographical perfection to manufacture commercial chips with zero failure rates. Conversely, the wide, left-skewed tail of 'Small Cap' facilities represents **Paranoia and Survival**. By burying strategic defense foundries deep in high-friction valleys and foothills, the state explicitly sacrifices economic efficiency for geographical immunity against naval blockades or coastal climate disasters.
-    * **The Spatialization of Power and Labor:** Semiconductors do not just process data; they restructure the earth. The routing data in this GIS model proves that these Mega-Fabs act as gravitational black holes. They literally reroute rivers (desalination pipelines) and dictate human migration, pulling elite intellectual labor into highly specific, localized 'techno-enclaves' (like Dholera or the Assam frontier), permanently altering local cultures and economies.
-    * **The Sovereign Shield:** To the average citizen, a microchip is invisible. But this map proves that the "Cyber Frontline" is deeply physical. Every time the STI variance shifts, it represents billions of dollars poured into concrete, steel, and water routing to ensure that the silicon powering India's hospitals, military radars, and digital economy cannot be turned off by a foreign power. **In the 21st century, geographical infrastructure is destiny.**
+    * **The Architecture of Paranoia vs. Profit:** The KDE graph physically illustrates human motives. The tight cluster of 'Large Cap' Mega-Fabs on flat, coastal plains (High STI) represents **Profit**. Conversely, the wide, left-skewed tail of 'Small Cap' facilities represents **Paranoia and Survival**. By burying strategic defense foundries deep in high-friction valleys and foothills, the state explicitly sacrifices economic efficiency for geographical immunity.
+    * **The Spatialization of Power and Labor:** Semiconductors do not just process data; they restructure the earth. The routing data in this GIS model proves that these Mega-Fabs act as gravitational black holes. They literally reroute rivers (desalination pipelines) and dictate human migration.
+    * **The Sovereign Shield:** To the average citizen, a microchip is invisible. But this map proves that the "Cyber Frontline" is deeply physical. **In the 21st century, geographical infrastructure is destiny.**
     """)
