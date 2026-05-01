@@ -132,6 +132,8 @@ data = [
     {"name": "Rapidus Hokkaido (Japan)", "region": "Global", "cap": "Large", "lat": 42.76, "lon": 141.67, "terrain": "Northern Island", "sti": 81.0},
     {"name": "GlobalFoundries Dresden (Ger)", "region": "Global", "cap": "Mid", "lat": 51.12, "lon": 13.71, "terrain": "River Valley", "sti": 85.0},
     {"name": "SMIC Shanghai (China)", "region": "Global", "cap": "Large", "lat": 31.20, "lon": 121.59, "terrain": "Delta Plain", "sti": 91.0},
+    
+    # ---- INDIAN ECOSYSTEM ----
     {
         "name": "Tata-PSMC Dholera", "region": "India", "year": 2026, "cap": "Large", 
         "lat": 22.25, "lon": 72.11, "elev": 15, "terrain": "Coastal Plateau",
@@ -139,11 +141,18 @@ data = [
         "m_name": "Gulf of Khambhat Port", "m_lat": 21.75, "m_lon": 72.25, "m_dist": 55,
         "l_name": "Ahmedabad Urban Center", "l_lat": 23.02, "l_lon": 72.57, "l_dist": 85,
         "bt": "India's First Commercial 28nm Mega-Fab.", 
-        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqIQdQsnEGk-qsjXopCw4ZG3o-HgKqlO5aDg&s",
+        "imgs": [
+            "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1563770660941-20978e870e26?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80"
+        ],
         "profile": [0, 8, 3, 14, 15, 15, 15, 15, 11, 4, 5], 
         "sti": 99.5, "lcp": 0.97,
         "rad": [99, 95, 98, 90, 85], 
-        "rationale": "Engineered for 0.02% seismic vibration friction."
+        "rationale": "Engineered for 0.02% seismic vibration friction.",
+        "snc": 78, "dsc": 85, "iso": 92
     },
     {
         "name": "Tata-TSAT Assam", "region": "India", "year": 2026, "cap": "Large", 
@@ -152,11 +161,18 @@ data = [
         "m_name": "Haldia Port Transit", "m_lat": 25.50, "m_lon": 91.00, "m_dist": 180,
         "l_name": "Guwahati Metropolis", "l_lat": 26.14, "l_lon": 91.73, "l_dist": 65,
         "bt": "Sovereign Advanced Packaging Hub.", 
-        "img": "https://scontent.ftrv2-1.fna.fbcdn.net/v/t39.30808-6/535992862_1186350260197029_12401593196388291_n.jpg?stp=dst-jpg_s640x640_tt6&_nc_cat=104&ccb=1-7&_nc_sid=13d280&_nc_ohc=uCGe0x5dj7IQ7kNvwHTQgRh&_nc_oc=Adq6zKwzlR2PEBXHhilqH0ybFDm2k1OPVn86DKpb-J71nSTjjZg6rRqRNBjtcoly4QU&_nc_zt=23&_nc_ht=scontent.ftrv2-1.fna&_nc_gid=8jhxxgLQ08IWL_0Y-iLOqw&_nc_ss=7a389&oh=00_AfwQOBe7hb8uQei8t2dpJOMUz9Oz_MkAaaYJQhb18tjNUg&oe=69D1291B",
+        "imgs": [
+            "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?auto=format&fit=crop&w=800&q=80"
+        ],
         "profile": [120, 140, 85, 40, 55, 55, 55, 80, 130, 95, 110],
         "sti": 84.4, "lcp": 0.70,
         "rad": [75, 99, 65, 95, 80],
-        "rationale": "High topographical friction (34% higher logistics cost) is offset by strategic geographic defense."
+        "rationale": "High topographical friction offset by strategic geographic defense.",
+        "snc": 65, "dsc": 70, "iso": 88
     },
     {
         "name": "Micron Sanand", "region": "India", "year": 2024, "cap": "Large", 
@@ -165,11 +181,18 @@ data = [
         "m_name": "Mundra Port Transit", "m_lat": 22.80, "m_lon": 72.00, "m_dist": 250,
         "l_name": "Sanand Industrial GIDC", "l_lat": 22.95, "l_lon": 72.38, "l_dist": 5,
         "bt": "High Bandwidth Memory (HBM) ATMP validation.", 
-        "img": "https://scontent.ftrv2-1.fna.fbcdn.net/v/t39.30808-6/539589177_1185658950266160_3534972847653672713_n.jpg?stp=dst-jpg_s640x640_tt6&_nc_cat=106&ccb=1-7&_nc_sid=13d280&_nc_ohc=tDQVQ4vl_YIQ7kNvwE48ola&_nc_oc=AdqGo0sl9fFkN5yCSlit_MTSAPDNAuZBxl2WI1DpfV1CZQYvSvD5bqppSoVRPxZsd2U&_nc_zt=23&_nc_ht=scontent.ftrv2-1.fna&_nc_gid=MVD5QTrX8ZKup4kRM4qx1w&_nc_ss=7a389&oh=00_AfyKzVMKFRajrsAvhnLhJn2a3qcg7NzLBAHi-yScuNspMg&oe=69D13CE2",
+        "imgs": [
+            "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581092335397-9583eb92d232?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=800&q=80"
+        ],
         "profile": [10, 18, 12, 35, 45, 45, 45, 42, 48, 44, 48],
         "sti": 92.0, "lcp": 0.90,
         "rad": [90, 85, 88, 85, 98],
-        "rationale": "Chosen for pre-existing grid stability and rapid scalability."
+        "rationale": "Chosen for pre-existing grid stability and rapid scalability.",
+        "snc": 92, "dsc": 40, "iso": 85
     },
     {
         "name": "CG Power-Renesas Sanand", "region": "India", "year": 2025, "cap": "Mid", 
@@ -177,12 +200,19 @@ data = [
         "w_name": "Narmada Canal System", "w_lat": 23.10, "w_lon": 72.50, "w_dist": 22,
         "m_name": "Regional Rail Freight", "m_lat": 22.80, "m_lon": 72.20, "m_dist": 28,
         "l_name": "Ahmedabad Urban Grid", "l_lat": 23.02, "l_lon": 72.57, "l_dist": 25,
-        "bt": "Specialized OSAT for consumer and industrial power management ICs.", 
-        "img": "https://scontent.ftrv2-1.fna.fbcdn.net/v/t39.30808-6/536276519_1089638920018545_3749532980793753876_n.jpg?stp=dst-jpg_s640x640_tt6&_nc_cat=105&ccb=1-7&_nc_sid=13d280&_nc_ohc=Y5plPb5MCwgQ7kNvwEvXhxY&_nc_oc=AdpUyQYZysaFWNGXWTGDJ06tHVseSYdZqEV6Z-Ja5d3FuvUoz0cCk_MSOqc5lAnSYXQ&_nc_zt=23&_nc_ht=scontent.ftrv2-1.fna&_nc_gid=u0kpeP0xHHjhvfEkygxlFw&_nc_ss=7a389&oh=00_AfxJIGoSkrrBSYkniuOf2uw4HniVB9d1rM9ntB3B8mS4fw&oe=69D1333C",
+        "bt": "Specialized OSAT for consumer and industrial ICs.", 
+        "imgs": [
+            "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581092335397-9583eb92d232?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?auto=format&fit=crop&w=800&q=80"
+        ],
         "profile": [20, 28, 22, 38, 43, 43, 43, 40, 48, 42, 46],
         "sti": 89.0, "lcp": 0.88,
         "rad": [90, 85, 92, 85, 95],
-        "rationale": "Leverages the same topographical stability as the Micron facility."
+        "rationale": "Leverages localized high-density packaging clusters.",
+        "snc": 75, "dsc": 60, "iso": 50
     },
     {
         "name": "Texas Instruments Bangalore", "region": "India", "year": 1985, "cap": "Large", 
@@ -191,11 +221,18 @@ data = [
         "m_name": "HAL Airport Data Transit", "m_lat": 12.95, "m_lon": 77.66, "m_dist": 12,
         "l_name": "Bangalore Urban Grid", "l_lat": 12.97, "l_lon": 77.59, "l_dist": 2,
         "bt": "First Global R&D Center in India.", 
-        "img": "https://www.ti.com/content/dam/ticom/images/themes/facilities/india-bangalore-corporate-building.jpg",
+        "imgs": [
+            "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80"
+        ],
         "profile": [850, 890, 860, 910, 920, 920, 920, 890, 915, 870, 880],
         "sti": 88.0, "lcp": 0.85,
         "rad": [95, 75, 80, 90, 99],
-        "rationale": "Elevation provided moderate climate reducing 1980s mainframe cooling loads."
+        "rationale": "Elevation provided moderate climate for 1980s mainframes.",
+        "snc": 95, "dsc": 10, "iso": 0
     },
     {
         "name": "SCL Mohali", "region": "India", "year": 1983, "cap": "Small", 
@@ -203,12 +240,19 @@ data = [
         "w_name": "Sutlej River Tributaries", "w_lat": 30.90, "w_lon": 76.50, "w_dist": 28,
         "m_name": "Northern Rail Depot", "m_lat": 30.50, "m_lon": 76.80, "m_dist": 24,
         "l_name": "Chandigarh Sector 17", "l_lat": 30.73, "l_lon": 76.77, "l_dist": 10,
-        "bt": "ISRO space-grade and military radiation-hardened 180nm CMOS nodes.", 
-        "img": "https://pbs.twimg.com/media/G66Lu77bkAIWVpP.jpg",
+        "bt": "ISRO space-grade military 180nm CMOS nodes.", 
+        "imgs": [
+            "https://images.unsplash.com/photo-1581092335397-9583eb92d232?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?auto=format&fit=crop&w=800&q=80"
+        ],
         "profile": [280, 270, 295, 285, 310, 310, 310, 340, 320, 370, 380],
         "sti": 75.0, "lcp": 0.65,
         "rad": [60, 85, 65, 99, 88],
-        "rationale": "Defense-in-Depth location. Sacrificed maritime logistics to push sensitive military infrastructure deep inland."
+        "rationale": "Defense-in-Depth location sacrificing maritime access.",
+        "snc": 100, "dsc": 99, "iso": 100
     },
     {
         "name": "Hind Rectifiers Mumbai", "region": "India", "year": 1980, "cap": "Small", 
@@ -216,12 +260,19 @@ data = [
         "w_name": "Ulhas River Catchment", "w_lat": 19.00, "w_lon": 72.80, "w_dist": 15,
         "m_name": "JNPT Port Transit", "m_lat": 18.95, "m_lon": 72.90, "m_dist": 60,
         "l_name": "Mumbai Metropolis", "l_lat": 19.07, "l_lon": 72.87, "l_dist": 5,
-        "bt": "Pioneer in power semiconductor devices for Indian Railways.", 
-        "img": "https://investdesk.in/wp-content/uploads/2024/09/1717276048229.jpg",
+        "bt": "Power semiconductor devices for Indian Railways.", 
+        "imgs": [
+            "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581092335397-9583eb92d232?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=800&q=80"
+        ],
         "profile": [2, 12, 5, 10, 10, 10, 10, 12, 9, 7, 8],
         "sti": 91.5, "lcp": 0.92,
         "rad": [65, 80, 98, 90, 99],
-        "rationale": "Classic coastal export config. Sacrifices absolute seismic neutrality for hyper-frictionless logistics."
+        "rationale": "Classic coastal export config sacrificing seismic neutrality.",
+        "snc": 40, "dsc": 95, "iso": 30
     },
     {
         "name": "Qualcomm Hyderabad", "region": "India", "year": 2010, "cap": "Large", 
@@ -230,11 +281,18 @@ data = [
         "m_name": "Hyderabad Airport Cargo", "m_lat": 17.25, "m_lon": 78.43, "m_dist": 35,
         "l_name": "HITEC City Hub", "l_lat": 17.44, "l_lon": 78.38, "l_dist": 5,
         "bt": "Snapdragon design and validation mega-center.", 
-        "img": "https://content3.jdmagicbox.com/v2/comp/hyderabad/p8/040pxx40.xx40.230926140348.p9p8/catalogue/qualcomm-commerzone-building-silpa-gram-craft-village-hyderabad-corporate-companies-LdctlKINeF.jpg",
+        "imgs": [
+            "image_3ee2fa.jpg",
+            "https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80"
+        ],
         "profile": [500, 520, 530, 550, 550, 550, 550, 530, 510, 500, 490],
         "sti": 94.0, "lcp": 0.94,
         "rad": [92, 85, 90, 88, 99],
-        "rationale": "Chosen for pre-existing grid stability (500kV primary substation)."
+        "rationale": "Chosen for pre-existing grid stability (500kV primary substation).",
+        "snc": 99, "dsc": 15, "iso": 0
     },
     {
         "name": "Tessolve Bangalore", "region": "India", "year": 2005, "cap": "Mid", 
@@ -243,11 +301,18 @@ data = [
         "m_name": "HAL Airport Data Transit", "m_lat": 12.95, "m_lon": 77.66, "m_dist": 12,
         "l_name": "Electronics City Grid", "l_lat": 12.93, "l_lon": 77.69, "l_dist": 5,
         "bt": "Global validation and testing engineering hub.", 
-        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRCgAYNBA-p238CAGyLa0plRWE4ahnz_MAqKg&s",
+        "imgs": [
+            "https://images.unsplash.com/photo-1563770660941-20978e870e26?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=800&q=80"
+        ],
         "profile": [860, 880, 890, 910, 910, 910, 910, 890, 880, 870, 860],
         "sti": 89.0, "lcp": 0.88,
         "rad": [95, 80, 85, 92, 98],
-        "rationale": "Standard high-plateau configuration maximizing labor corridor access."
+        "rationale": "Standard high-plateau configuration maximizing labor access.",
+        "snc": 85, "dsc": 50, "iso": 10
     },
     {
         "name": "Continental Device India Limited", "region": "India", "year": 1964, "cap": "Small", 
@@ -256,11 +321,18 @@ data = [
         "m_name": "NCR Rail Corridor", "m_lat": 28.70, "m_lon": 77.25, "m_dist": 10,
         "l_name": "Delhi Urban Grid", "l_lat": 28.67, "l_lon": 77.22, "l_dist": 5,
         "bt": "India's first fabless design and discrete transistor manufacturing.", 
-        "img": "https://pbs.twimg.com/media/GyJiMM4XQAAIBrY?format=jpg&name=small",
+        "imgs": [
+            "https://images.unsplash.com/photo-1581092335397-9583eb92d232?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
+            "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=800&q=80"
+        ],
         "profile": [190, 195, 200, 210, 210, 210, 210, 200, 198, 195, 190],
         "sti": 78.0, "lcp": 0.65,
         "rad": [65, 70, 88, 85, 99],
-        "rationale": "Topographical variance is high due to the Yamuna river plain's inherent instability."
+        "rationale": "Topographical variance is high due to river plain instability.",
+        "snc": 30, "dsc": 90, "iso": 20
     }
 ]
 
@@ -285,8 +357,26 @@ def show_technical_dossier(facility_name):
     col1, col2 = st.columns([1, 1], gap="medium")
     
     with col1:
-        if 'img' in n and pd.notnull(n['img']):
-            st.image(n['img'], use_container_width=True)
+        # Cinematic Image Carousel (Horizontal Scroll Snap)
+        if 'imgs' in n and isinstance(n['imgs'], list):
+            carousel_html = f"""
+            <style>
+            .slider-container {{
+                display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+                gap: 10px; padding-bottom: 10px; margin-bottom: 15px;
+            }}
+            .slider-container::-webkit-scrollbar {{ height: 6px; }}
+            .slider-container::-webkit-scrollbar-thumb {{ background: #d4af37; border-radius: 3px; }}
+            .slider-img {{
+                flex: 0 0 100%; scroll-snap-align: center; border-radius: 4px;
+                object-fit: cover; height: 260px; border: 1px solid #333;
+            }}
+            </style>
+            <div class="slider-container">
+                {"".join([f'<img class="slider-img" src="{img_url}">' for img_url in n['imgs']])}
+            </div>
+            """
+            st.markdown(carousel_html, unsafe_allow_html=True)
             
         st.markdown(f"<div class='metric-box'><div class='metric-title'>Strategic Payload</div><div class='metric-text'>{n.get('bt', 'Classified / N/A')}</div></div>", unsafe_allow_html=True)
         st.markdown(f"<div class='metric-box'><div class='metric-title'>Topographical Stabilization (Elev: {n.get('elev', 'N/A')}m MSL)</div><div class='metric-text'>{n.get('rationale', 'No terrain data available.')}</div></div>", unsafe_allow_html=True)
@@ -294,7 +384,7 @@ def show_technical_dossier(facility_name):
         if 'lcp' in n:
             st.markdown(f"""
             <div class='metric-box'>
-                <div class='metric-title'>Logistics Matrix (LCP: {n['lcp']})</div>
+                <div class='metric-title'>Logistics Matrix (Least Cost Path: {n['lcp']})</div>
                 <div class='metric-text'>
                     <span style='color:#d4af37;'>►</span> <b>Material Hub:</b> {n['m_name']} ({n['m_dist']}km)<br>
                     <span style='color:#d4af37;'>►</span> <b>Water Catchment:</b> {n['w_name']} ({n['w_dist']}km)<br>
@@ -307,14 +397,12 @@ def show_technical_dossier(facility_name):
         if 'profile' in n:
             st.markdown("<b style='color:#d4af37;'>Topographical Elevation Profile</b>", unsafe_allow_html=True)
             
-            # 1. Force standard Python floats to prevent Altair JSON serialization crashes
             total_dist = float(n['m_dist'] + n['w_dist'])
             x_dist = [float(x) for x in np.linspace(0, total_dist, len(n['profile']))]
             y_elev = [float(y) for y in n['profile']]
             
             chart_df = pd.DataFrame({"Distance": x_dist, "Elevation": y_elev})
             
-            # 2. Build Base Chart
             base = alt.Chart(chart_df).encode(
                 x=alt.X('Distance:Q', title='Distance (km)', axis=alt.Axis(gridColor='#222', labelColor='#888', titleColor='#888')), 
                 y=alt.Y('Elevation:Q', title='Elevation (MSL)', scale=alt.Scale(domain=[0, max(y_elev)+50]), axis=alt.Axis(gridColor='#222', labelColor='#888', titleColor='#888'))
@@ -322,16 +410,12 @@ def show_technical_dossier(facility_name):
             area = base.mark_area(opacity=0.3, color="#d4af37")
             line = base.mark_line(color="#d4af37", strokeWidth=2)
             
-            # 3. Build Facility Marker
             mark_df = pd.DataFrame({"x": [float(n['m_dist'])], "y": [float(n['elev'])]})
             point = alt.Chart(mark_df).mark_point(
                 color='#ffffff', size=150, shape='diamond', filled=True, opacity=1.0
             ).encode(x='x:Q', y='y:Q')
             
-            # 4. Layer and strictly configure background
-            final_chart = alt.layer(area, line, point).properties(height=250).configure(background='#0a0a0a').configure_view(strokeWidth=0)
-            
-            # CRITICAL FIX: theme=None prevents Streamlit from injecting conflicting CSS inside the modal
+            final_chart = alt.layer(area, line, point).properties(height=230).configure(background='#0a0a0a').configure_view(strokeWidth=0)
             st.altair_chart(final_chart, use_container_width=True, theme=None)
 
         if 'rad' in n:
@@ -344,10 +428,28 @@ def show_technical_dossier(facility_name):
                     radialaxis=dict(visible=True, range=[0, 100], gridcolor='#333', linecolor='#333', tickfont=dict(color='#888')),
                     angularaxis=dict(tickfont=dict(color='#ccc', size=12, family='Rajdhani'), gridcolor='#333', linecolor='#333')
                 ),
-                showlegend=False, margin=dict(l=40, r=40, t=20, b=20), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=250
+                showlegend=False, margin=dict(l=40, r=40, t=20, b=20), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=230
             )
             st.plotly_chart(fig, use_container_width=True)
 
+        # F1-Style Mini Metrics for Capability
+        if 'snc' in n:
+            st.markdown(f"""
+            <div style='display: flex; justify-content: space-between; margin-top: 5px; gap: 8px;'>
+                <div style='text-align: center; background: #111; padding: 12px 5px; border-top: 2px solid #d4af37; flex: 1; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);'>
+                    <div style='color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;'>Strat. Node Cap.</div>
+                    <div style='color: #fff; font-size: 22px; font-weight: 700; font-family: Rajdhani;'>{n['snc']}%</div>
+                </div>
+                <div style='text-align: center; background: #111; padding: 12px 5px; border-top: 2px solid #b87333; flex: 1; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);'>
+                    <div style='color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;'>Dom. Supply</div>
+                    <div style='color: #fff; font-size: 22px; font-weight: 700; font-family: Rajdhani;'>{n['dsc']}%</div>
+                </div>
+                <div style='text-align: center; background: #111; padding: 12px 5px; border-top: 2px solid #708090; flex: 1; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);'>
+                    <div style='color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;'>Import Sub.</div>
+                    <div style='color: #fff; font-size: 22px; font-weight: 700; font-family: Rajdhani;'>{n['iso']}%</div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
 # --- 5. TOP BAR UI (COMMAND CENTER HUD) ---
 st.markdown("""
