@@ -238,11 +238,11 @@ data = [
         "l_name": "Ahmedabad Urban Center", "l_lat": 23.02, "l_lon": 72.57, "l_dist": 85,
         "bt": "India's First Commercial 28nm Mega-Fab.", 
         "imgs": [
-            "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1563770660941-20978e870e26?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80"
+            "https://www.instagram.com/p/DN98esSk-AU/",
+            "https://www.instagram.com/p/DRd_6ANDJ5Y/",
+            "https://mirrikh.com/tata-semiconductor-plant-in-dholera-investment-jobs/",
+            "https://www.outlookbusiness.com/corporate/tata-electronics-sends-200-personnel-to-taiwan-for-psmc-training-as-91000cr-dholera-fab-advances",
+            "https://www.facebook.com/dholeraawareness/posts/tata-is-king-%EF%B8%8Findias-biggest-semiconductor-plant-is-coming-to-dholera-gujarat-ta/835250015926192/"
         ],
         "profile": [0, 8, 3, 14, 15, 15, 15, 15, 11, 4, 5], 
         "sti": 99.5, "lcp": 0.97,
@@ -258,11 +258,11 @@ data = [
         "l_name": "Guwahati Metropolis", "l_lat": 26.14, "l_lon": 91.73, "l_dist": 65,
         "bt": "Sovereign Advanced Packaging Hub.", 
         "imgs": [
-            "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?auto=format&fit=crop&w=800&q=80"
+            "https://www.facebook.com/NeGDofficial/posts/tata-electronics-private-limited-tepl-is-establishing-a-large-scale-semiconducto/1186350346863687/",
+            "https://www.natstrat.org/articledetail/publications/india-s-quest-for-a-semiconductor-ecosystem-234.html",
+            "https://x.com/aidc_ltd/status/1893261957219680421",
+            "https://www.tataelectronics.com/semiconductor-assembly-and-test",
+            "https://medial.app/news/tata-group-submits-application-to-set-up-semiconductor-processing-plant-in-assam-to-invest-rs-40000-crore-ed184aabbb3e8"
         ],
         "profile": [120, 140, 85, 40, 55, 55, 55, 80, 130, 95, 110],
         "sti": 84.4, "lcp": 0.70,
@@ -278,11 +278,11 @@ data = [
         "l_name": "Sanand Industrial GIDC", "l_lat": 22.95, "l_lon": 72.38, "l_dist": 5,
         "bt": "High Bandwidth Memory (HBM) ATMP validation.", 
         "imgs": [
-            "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581092335397-9583eb92d232?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=800&q=80"
+            "https://www.techpowerup.com/346914/micron-celebrates-opening-of-indias-first-semiconductor-assembly-and-test-facility",
+            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNsNv0CW87kzwywihofNSAPY-IzEpdo5cIIw&s",
+            "https://dailypioneer.com/news/pm-narendra-modi-inaugurates-semiconductor-plant-at-sanand",
+            "https://www.deccanherald.com/india/gujarat/pm-inaugurates-semiconductor-plant-at-sanand-says-india-is-making-its-mark-in-hardware-too-3915406",
+            "https://www.hindustantimes.com/business/micron-begins-construction-of-2-75-billion-semiconductor-plant-in-gujarat-101695478422567.html"
         ],
         "profile": [10, 18, 12, 35, 45, 45, 45, 42, 48, 44, 48],
         "sti": 92.0, "lcp": 0.90,
@@ -298,11 +298,11 @@ data = [
         "l_name": "Ahmedabad Urban Grid", "l_lat": 23.02, "l_lon": 72.57, "l_dist": 25,
         "bt": "Specialized OSAT for consumer and industrial ICs.", 
         "imgs": [
-            "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581092335397-9583eb92d232?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?auto=format&fit=crop&w=800&q=80"
+            "https://www.facebook.com/meityindia/posts/cg-semi-pvt-ltd-is-a-joint-venture-of-cg-power-india-renesas-japan-and-stars-mic/1089639610018476/",
+            "https://www.linkedin.com/pulse/36-million-indias-cg-power-acquires-renesas-electronics-dvfec",
+            "https://www.linkedin.com/posts/mohit-khannaa-5355b414_semiconductors-indiainnovation-makeinindia-activity-7367170014891769857-dMYZ",
+            "https://in.linkedin.com/company/cg-semi-private-limited",
+            "https://www.linkedin.com/posts/semiconfab_semiconductors-makeinindia-gujarat-activity-7174273653260304384-Z_Kk"
         ],
         "profile": [20, 28, 22, 38, 43, 43, 43, 40, 48, 42, 46],
         "sti": 89.0, "lcp": 0.88,
@@ -318,11 +318,11 @@ data = [
         "l_name": "Bangalore Urban Grid", "l_lat": 12.97, "l_lon": 77.59, "l_dist": 2,
         "bt": "First Global R&D Center in India.", 
         "imgs": [
-            "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80"
+            "https://careers.ti.com/en/sites/CX/pages/asia-pacific",
+            "https://www.facebook.com/texasinstrumentsindia/posts/ti-india-recently-inaugurated-its-new-sales-office-on-old-madras-road-in-bangalo/1103024355205588/",
+            "https://evtechnews.in/texas-instruments-showcases-energy-efficient-and-smart-semiconductor-solutions-at-electronica-india-2025/",
+            "https://www.indiamart.com/texas-instruments-india-pvt-ltd/aboutus.html?srsltid=AfmBOoppgQ98YGGa8v0MomYAbq0Nl8kvDpc9gorLJUDfVsLvlKjIkap7",
+            "https://www.linkedin.com/posts/analytics-india-magazine_texas-instruments-marked-40-years-in-india-activity-7426150300266307584-b_3h"
         ],
         "profile": [850, 890, 860, 910, 920, 920, 920, 890, 915, 870, 880],
         "sti": 88.0, "lcp": 0.85,
@@ -338,11 +338,12 @@ data = [
         "l_name": "Chandigarh Sector 17", "l_lat": 30.73, "l_lon": 76.77, "l_dist": 10,
         "bt": "ISRO space-grade military 180nm CMOS nodes.", 
         "imgs": [
-            "https://images.unsplash.com/photo-1581092335397-9583eb92d232?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?auto=format&fit=crop&w=800&q=80"
+            "https://x.com/Amarrrrz/status/1994685333871468915",
+            "https://www.scl.gov.in/annual_report/AR23-24.pdf",
+            "https://www.careerpower.in/blog/scl-assistant-result-2025",
+            "https://www.instagram.com/p/DRorvIeGAkc/",
+            "https://www.scl.gov.in/img/achievements/Vikram3201.png",
+            
         ],
         "profile": [280, 270, 295, 285, 310, 310, 310, 340, 320, 370, 380],
         "sti": 75.0, "lcp": 0.65,
@@ -358,11 +359,11 @@ data = [
         "l_name": "Mumbai Metropolis", "l_lat": 19.07, "l_lon": 72.87, "l_dist": 5,
         "bt": "Power semiconductor devices for Indian Railways.", 
         "imgs": [
-            "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581092335397-9583eb92d232?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=800&q=80"
+            "https://www.moneycontrol.com/news/business/markets/hind-rectifiers-acquires-france-based-belink-in-major-boost-to-global-footprint-shares-locked-at-5-percent-upper-circuit-13560062.html",
+            "https://www.linkedin.com/posts/hirect_budapest-europe-electrostaticprecipitators-activity-6991380991403577345-fa4W",
+            "https://media.licdn.com/dms/image/v2/C5622AQEz12W6TQKZug/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1640850225154?e=2147483647&v=beta&t=LWm5TrnozBO5JgL9GWxIKgW9DKptjSSrdSahr2b-yI0",
+            "https://www.linkedin.com/posts/suramyanevatia_innovation-powerelectronics-madeinindia-activity-7308333932951793664-igpH",
+            "https://scanx.trade/stock-market-news/stocks/hind-rectifiers-limited-announces-key-management-appointments-with-new-global-ceo-and-company-secretary/31345432"
         ],
         "profile": [2, 12, 5, 10, 10, 10, 10, 12, 9, 7, 8],
         "sti": 91.5, "lcp": 0.92,
@@ -379,10 +380,11 @@ data = [
         "bt": "Snapdragon design and validation mega-center.", 
         "imgs": [
             "image_3ee2fa.jpg",
-            "https://images.unsplash.com/photo-1497215842964-222b430dc094?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80"
+            "https://www.businessworld.in/article/qualcomm-completes-2nm-chip-tape-out-from-its-india-labs-592628",
+            "https://in.pinterest.com/pin/qualcomms-largest-office-in-india--1151162354726408397/",
+            "https://www.etvbharat.com/en/technology/qualcomm-to-host-snapdragon-for-india-event-on-may-7-to-showcase-new-technologies-and-chips-for-next-gen-devices-enn26042801889",
+            "https://www.business-standard.com/article/technology/qualcomm-to-open-its-2nd-largest-office-outside-us-in-hyderabad-by-october-122032201360_1.html"
+            
         ],
         "profile": [500, 520, 530, 550, 550, 550, 550, 530, 510, 500, 490],
         "sti": 94.0, "lcp": 0.94,
@@ -398,11 +400,11 @@ data = [
         "l_name": "Electronics City Grid", "l_lat": 12.93, "l_lon": 77.69, "l_dist": 5,
         "bt": "Global validation and testing engineering hub.", 
         "imgs": [
-            "https://images.unsplash.com/photo-1563770660941-20978e870e26?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=800&q=80"
+            "https://www.manufacturingtodayindia.com/tessolve-partners-with-keysight-to-boost-high-speed-semiconductor-testing",
+            "https://www.ambitionbox.com/overview/tessolve-overview/locations/bengaluru-offices",
+            "https://www.ambitionbox.com/overview/tessolve-overview/locations/bengaluru-offices",
+            "https://www.highperformr.ai/company/tessolve-services-pvt-ltd",
+            "https://www.marcamoney.com/hero-electronixs-semiconductor-firm-tessolve-raises-150-million-in-funding-from-tpg/"
         ],
         "profile": [860, 880, 890, 910, 910, 910, 910, 890, 880, 870, 860],
         "sti": 89.0, "lcp": 0.88,
@@ -418,11 +420,11 @@ data = [
         "l_name": "Delhi Urban Grid", "l_lat": 28.67, "l_lon": 77.22, "l_dist": 5,
         "bt": "India's first fabless design and discrete transistor manufacturing.", 
         "imgs": [
-            "https://images.unsplash.com/photo-1581092335397-9583eb92d232?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
-            "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=800&q=80"
+            "https://x.com/SemiconIndia/status/1961718594007683232",
+            "https://www.forbesindia.com/article/take-one-big-story-of-the-day/cdil-has-led-the-way-in-semiconductor-manufacturing-for-six-decades-whats-next/88797/1",
+            "https://www.cdil.com/news/2021/10/23/we-are-hiring",
+            "https://www.instagram.com/p/DN-OzU8kzye/",
+            "https://www.linkedin.com/posts/cdil_siliconcarbide-activity-7115274106970791938-qQwa"
         ],
         "profile": [190, 195, 200, 210, 210, 210, 210, 200, 198, 195, 190],
         "sti": 78.0, "lcp": 0.65,
