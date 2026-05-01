@@ -465,27 +465,19 @@ def show_technical_dossier(facility_name):
         # F1-Style Mini Metrics for Capability
         if 'snc' in n:
             st.markdown(f"""
-            <!-- THIS OUTER DIV IS CRITICAL FOR THE SIDE-BY-SIDE LAYOUT -->
             <div style='display: flex; justify-content: space-between; margin-top: 5px; gap: 8px;'>
-                
-                <div title="Strategic Node Capability: The facility's capacity to produce advanced, sovereign, defense-grade silicon." 
-                     style='text-align: center; background: #111; padding: 12px 5px; border-top: 2px solid #d4af37; flex: 1; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); cursor: help;'>
+                <div title="Strategic Node Capability: The facility's capacity to produce advanced, sovereign, defense-grade silicon." style='text-align: center; background: #111; padding: 12px 5px; border-top: 2px solid #d4af37; flex: 1; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); cursor: help;'>
                     <div style='color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;'>Strat. Node Cap.</div>
                     <div style='color: #fff; font-size: 22px; font-weight: 700; font-family: Rajdhani;'>{n['snc']}%</div>
                 </div>
-                
-                <div title="Domestic Supply Contribution: The percentage of the facility's output dedicated to sustaining the internal Indian market." 
-                     style='text-align: center; background: #111; padding: 12px 5px; border-top: 2px solid #b87333; flex: 1; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); cursor: help;'>
+                <div title="Domestic Supply Contribution: The percentage of the facility's output dedicated to sustaining the internal Indian market." style='text-align: center; background: #111; padding: 12px 5px; border-top: 2px solid #b87333; flex: 1; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); cursor: help;'>
                     <div style='color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;'>Dom. Supply</div>
                     <div style='color: #fff; font-size: 22px; font-weight: 700; font-family: Rajdhani;'>{n['dsc']}%</div>
                 </div>
-                
-                <div title="Import Substitution: The estimated percentage by which this facility reduces India's reliance on foreign semiconductor imports." 
-                     style='text-align: center; background: #111; padding: 12px 5px; border-top: 2px solid #708090; flex: 1; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); cursor: help;'>
+                <div title="Import Substitution: The estimated percentage by which this facility reduces India's reliance on foreign semiconductor imports." style='text-align: center; background: #111; padding: 12px 5px; border-top: 2px solid #708090; flex: 1; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); cursor: help;'>
                     <div style='color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;'>Import Sub.</div>
                     <div style='color: #fff; font-size: 22px; font-weight: 700; font-family: Rajdhani;'>{n['iso']}%</div>
                 </div>
-                
             </div>
             """, unsafe_allow_html=True)
 
