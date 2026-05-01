@@ -303,7 +303,7 @@ def show_technical_dossier(facility_name):
             </div>
             """, unsafe_allow_html=True)
 
-   with col2:
+    with col2:
         if 'profile' in n:
             st.markdown("<b style='color:#d4af37;'>Topographical Elevation Profile</b>", unsafe_allow_html=True)
             
