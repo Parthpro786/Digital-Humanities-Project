@@ -465,6 +465,7 @@ def show_technical_dossier(facility_name):
         # F1-Style Mini Metrics for Capability
         if 'snc' in n:
             st.markdown(f"""
+            <!-- THIS OUTER DIV IS CRITICAL FOR THE SIDE-BY-SIDE LAYOUT -->
             <div style='display: flex; justify-content: space-between; margin-top: 5px; gap: 8px;'>
                 
                 <div title="Strategic Node Capability: The facility's capacity to produce advanced, sovereign, defense-grade silicon." 
