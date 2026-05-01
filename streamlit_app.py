@@ -9,6 +9,8 @@ from itertools import combinations
 import feedparser
 import requests
 import datetime
+import folium
+from streamlit_folium import st_folium
 
 # --- 1. PROFESSIONAL PAGE CONFIG & CSS ---
 st.set_page_config(layout="wide", page_title="Strategic Topography GIS", page_icon="🗺️")
@@ -585,46 +587,45 @@ with tab1:
     with col_map:
         st.markdown("<h3 style='font-size:18px; color:#d4af37; font-family:Rajdhani;'>TACTICAL MAP (CLICK PIN FOR DOSSIER)</h3>", unsafe_allow_html=True)
         
-        fig = go.Figure()
+        # Initialize high-res CartoDB Dark Matter map (zoom disabled as requested)
+        m = folium.Map(location=[22.0, 79.0], zoom_start=4.4, tiles="CartoDB dark_matter", zoom_control=False, scrollWheelZoom=False)
 
         for cap, color in [("Large", "#d4af37"), ("Mid", "#b87333"), ("Small", "#708090")]:
             subset = active_df[active_df['cap'] == cap]
             if subset.empty: continue
             
-            # Layer 1: Static Glowing Underlay (Simulates beacon pulse)
-            fig.add_trace(go.Scattermapbox(
-                lat=subset['lat'], lon=subset['lon'], mode='markers',
-                marker=dict(size=35, color=color, opacity=0.25),
-                hoverinfo='skip', showlegend=False
-            ))
-            
-            # Layer 2: Solid Core Node
-            fig.add_trace(go.Scattermapbox(
-                lat=subset['lat'], lon=subset['lon'], mode='markers',
-                marker=dict(size=10, color=color, opacity=1),
-                customdata=subset[['name', 'region', 'cap', 'terrain', 'sti']], 
-                hovertemplate="<b style='font-family:Rajdhani; font-size:14px;'>%{customdata[0]}</b><br>" +
-                              "<b>Capacity:</b> %{customdata[2]}<br>" +
-                              "<b>Terrain:</b> %{customdata[3]}<br>" +
-                              "<b>S.T.I.:</b> %{customdata[4]}%<extra></extra>",
-                name=cap
-            ))
+            for _, row in subset.iterrows():
+                # Pure CSS Heartbeat Animation injected into the map marker
+                pulse_html = f"""
+                <div style="
+                    width: 14px; height: 14px; 
+                    background-color: {color};
+                    border-radius: 50%; 
+                    border: 2px solid #fff;
+                    box-shadow: 0 0 10px {color};
+                    animation: map-ping 1.5s infinite ease-in-out alternate;
+                "></div>
+                <style>
+                    @keyframes map-ping {{
+                        0% {{ transform: scale(0.8); opacity: 0.8; box-shadow: 0 0 5px {color}; }}
+                        100% {{ transform: scale(1.6); opacity: 1; box-shadow: 0 0 25px {color}; }}
+                    }}
+                </style>
+                """
+                
+                folium.Marker(
+                    location=[row['lat'], row['lon']],
+                    tooltip=row['name'], # Tooltip acts as our clickable ID
+                    icon=folium.DivIcon(html=pulse_html, icon_size=(14, 14), icon_anchor=(7, 7))
+                ).add_to(m)
 
-        fig.update_layout(
-            mapbox_style="carto-darkmatter",
-            mapbox=dict(center=dict(lat=22.0, lon=79.0), zoom=3.8, pitch=0),
-            margin={"r":0, "t":0, "l":0, "b":0},
-            paper_bgcolor="#111111", plot_bgcolor="#111111", height=500,
-            legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01, bgcolor="rgba(17,17,17,0.8)", font=dict(color="#d4af37", family="Rajdhani"))
-        )
-
-        map_event = st.plotly_chart(fig, use_container_width=True, on_select="rerun", selection_mode="points")
+        # Render the map and capture the tooltip of the clicked node
+        map_data = st_folium(m, width=650, height=500, returned_objects=["last_object_clicked_tooltip"])
         
-        # Trigger Dialog
-        if map_event and map_event.selection and map_event.selection["points"]:
-            clicked_data = map_event.selection["points"][0].get("customdata", [None])
-            if clicked_data and len(clicked_data) > 0:
-                show_technical_dossier(clicked_data[0])
+        # Trigger the Dossier Dialog on click
+        if map_data and map_data.get("last_object_clicked_tooltip"):
+            clicked_name = map_data["last_object_clicked_tooltip"]
+            show_technical_dossier(clicked_name)
 
     # --- LIVE STRATEGIC INTELLIGENCE FEED ---
     with col_feed:
@@ -683,39 +684,42 @@ a { text-decoration: none; }
 
 
 # --- REPLACE TAB 2 (GLOBAL MACRO MAP) ---
+# --- TAB 2: GLOBAL ECOSYSTEM ---
 with tab2:
     st.markdown("<h3 style='font-size:18px; color:#d4af37; font-family:Rajdhani;'>GLOBAL MACRO MAP</h3>", unsafe_allow_html=True)
     global_df = df.copy()
     
-    fig_global = go.Figure()
+    # Initialize high-res global map
+    m_global = folium.Map(location=[30.0, 20.0], zoom_start=2, tiles="CartoDB dark_matter", zoom_control=False, scrollWheelZoom=False)
+
     for cap, color in [("Large", "#d4af37"), ("Mid", "#b87333"), ("Small", "#708090")]:
         subset = global_df[global_df['cap'] == cap]
         if subset.empty: continue
         
-        # Layer 1: Glowing Underlay
-        fig_global.add_trace(go.Scattermapbox(
-            lat=subset['lat'], lon=subset['lon'], mode='markers',
-            marker=dict(size=25, color=color, opacity=0.25),
-            hoverinfo='skip', showlegend=False
-        ))
-        
-        # Layer 2: Solid Core Node
-        fig_global.add_trace(go.Scattermapbox(
-            lat=subset['lat'], lon=subset['lon'], mode='markers',
-            marker=dict(size=8, color=color, opacity=1),
-            customdata=subset[['name', 'region', 'cap']], 
-            hovertemplate="<b style='font-family:Rajdhani;'>%{customdata[0]}</b><br><b>Region:</b> %{customdata[1]}<br><b>Capacity:</b> %{customdata[2]}<extra></extra>",
-            name=cap
-        ))
+        for _, row in subset.iterrows():
+            pulse_html = f"""
+            <div style="
+                width: 10px; height: 10px; 
+                background-color: {color};
+                border-radius: 50%; 
+                border: 1px solid #fff;
+                animation: map-ping-global 2s infinite ease-in-out alternate;
+            "></div>
+            <style>
+                @keyframes map-ping-global {{
+                    0% {{ transform: scale(0.8); opacity: 0.6; box-shadow: 0 0 2px {color}; }}
+                    100% {{ transform: scale(1.4); opacity: 1; box-shadow: 0 0 15px {color}; }}
+                }}
+            </style>
+            """
+            
+            folium.Marker(
+                location=[row['lat'], row['lon']],
+                tooltip=f"<b>{row['name']}</b><br>Region: {row['region']}<br>Cap: {row['cap']}",
+                icon=folium.DivIcon(html=pulse_html, icon_size=(10, 10), icon_anchor=(5, 5))
+            ).add_to(m_global)
 
-    fig_global.update_layout(
-        mapbox_style="carto-darkmatter",
-        mapbox=dict(center=dict(lat=30.0, lon=20.0), zoom=1.5, pitch=0),
-        margin={"r":0, "t":0, "l":0, "b":0},
-        paper_bgcolor="#111111", plot_bgcolor="#111111", height=600,
-        legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01, bgcolor="rgba(17,17,17,0.8)", font=dict(color="#d4af37", family="Rajdhani"))
-    )
-    st.plotly_chart(fig_global, use_container_width=True)
+    st_folium(m_global, width=1200, height=600, returned_objects=[])
 
 # --- TAB 3: S.T.I. STATISTICAL DISTRIBUTION & INFERENCE ---
 with tab3:
