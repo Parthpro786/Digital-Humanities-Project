@@ -813,72 +813,205 @@ with tab3:
     """)
 
 
-# --- ADD THIS TO THE BOTTOM OF TAB 3 ---
+# --- ADD THIS TO THE VERY BOTTOM OF TAB 3 ---
     st.markdown("<hr style='border-color: #333; margin-top: 40px;'>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color:#d4af37; font-family:Rajdhani;'>DIGITAL HUMANITIES PERSPECTIVE</h3>", unsafe_allow_html=True)
     
-    # Custom CSS for the Classified DH Manifesto Terminal
-    dh_css = """
+    # Import the components library to allow full HTML/JS interactivity
+    import streamlit.components.v1 as components
+    
+    dh_chip_html = """
+    <!DOCTYPE html>
+    <html>
+    <head>
     <style>
-    .classified-terminal {
-        background-color: #0a0a0a;
-        border: 1px solid #333;
-        border-left: 4px solid #d4af37;
-        padding: 25px;
-        border-radius: 4px;
-        font-family: 'Courier New', Courier, monospace;
-        position: relative;
-        overflow: hidden;
-        box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
-    }
-    .classified-terminal::before {
-        content: 'TOP SECRET // EYES ONLY';
-        position: absolute;
-        top: 10px;
-        right: 15px;
-        color: rgba(212, 175, 55, 0.3);
-        font-weight: bold;
-        letter-spacing: 2px;
-        font-size: 12px;
-    }
-    .terminal-header {
-        color: #d4af37;
-        font-family: 'Rajdhani', sans-serif;
-        font-size: 24px;
-        font-weight: 700;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        margin-bottom: 15px;
-        border-bottom: 1px dashed #333;
-        padding-bottom: 10px;
-    }
-    .terminal-text {
-        color: #a0aec0;
-        font-size: 14px;
-        line-height: 1.7;
-        margin-bottom: 15px;
-    }
-    .highlight-gold {
-        color: #d4af37;
-        font-weight: 600;
-    }
-    </style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;600&family=Share+Tech+Mono&display=swap');
 
-    <div class="classified-terminal">
-        <div class="terminal-header">FILE: INFRASTRUCTURE AS DESTINY // DECRYPTED</div>
-        <p class="terminal-text">
-            For policymakers and historians, the data variances visualized above transcend mere logistics—they are the <span class="highlight-gold">physical blueprints of a new geopolitical cold war.</span>
-        </p>
-        <p class="terminal-text">
-            <span class="highlight-gold">[SUBJECT 01: Architecture of Paranoia vs. Profit]</span><br>
-            The spatial clustering reveals human motive. Mega-Fabs on flat coastal plains (High STI) signify absolute economic efficiency—demanding topographical perfection for zero failure rates. Conversely, the scattered Small/Mid Cap nodes in high-friction valleys represent pure survival mechanics. By burying defense foundries inland, the state consciously sacrifices profit to forge geographic immunity against naval blockades and climate disasters.
-        </p>
-        <p class="terminal-text">
-            <span class="highlight-gold">[SUBJECT 02: Spatialization of Power]</span><br>
-            Semiconductors do not just process data; they rewrite the earth. These Mega-Fabs function as gravitational anomalies. They literally reroute rivers via desalination pipelines and trigger mass intellectual migration, erecting hyper-localized 'techno-enclaves' that permanently rewrite indigenous cultural economies.
-        </p>
-        <p class="terminal-text" style="border-top: 1px dashed #333; padding-top: 15px; margin-top: 15px;">
-            <b>CONCLUSION:</b> To the civilian, a microchip is invisible. This GIS framework proves the "Cyber Frontline" is deeply terrestrial. Every shifting STI variance maps billions poured into concrete and water routing. In the 21st century, <span class="highlight-gold">geographical infrastructure is destiny.</span>
-        </p>
+    body {
+        margin: 0; padding: 10px;
+        background-color: #0a0a0a;
+        color: #e2e8f0;
+        font-family: 'Inter', sans-serif;
+        display: flex; gap: 40px;
+    }
+    
+    /* LEFT: The Physical Chip Interface */
+    .chip-container {
+        flex: 0.7;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .motherboard {
+        width: 240px; height: 240px;
+        background: radial-gradient(circle, #1a1a1a 0%, #0a0a0a 100%);
+        border: 1px solid #222; border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+        position: relative;
+    }
+    /* Gold Circuit Traces */
+    .trace { position: absolute; background: #333; z-index: 1; transition: background 0.3s, box-shadow 0.3s; }
+    .trace.active { background: #d4af37; box-shadow: 0 0 10px #d4af37; }
+    .t1 { width: 2px; height: 60px; top: 0; left: 50%; transform: translateX(-50%); }
+    .t2 { width: 60px; height: 2px; right: 0; top: 50%; transform: translateY(-50%); }
+    .t3 { width: 2px; height: 60px; bottom: 0; left: 50%; transform: translateX(-50%); }
+
+    /* The Main Processor */
+    .chip {
+        width: 140px; height: 140px;
+        background: #0f0f0f;
+        border: 2px solid #444; border-radius: 8px;
+        position: relative; z-index: 2;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.9);
+    }
+    .chip-core {
+        width: 80px; height: 80px;
+        background: linear-gradient(135deg, #111, #000);
+        border: 2px solid #d4af37; color: #d4af37;
+        font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 700;
+        text-align: center; letter-spacing: 1px;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: inset 0 0 15px rgba(212,175,55,0.1), 0 0 15px rgba(212,175,55,0.2);
+    }
+    /* Processing Nodes */
+    .node {
+        position: absolute; width: 12px; height: 12px;
+        background: #444; border-radius: 50%; border: 2px solid #222;
+        transition: all 0.3s;
+    }
+    .node.active { background: #d4af37; box-shadow: 0 0 15px #d4af37, 0 0 5px #fff; border-color: #fff; }
+    #node1 { top: -7px; left: 50%; transform: translateX(-50%); }
+    #node2 { right: -7px; top: 50%; transform: translateY(-50%); }
+    #node3 { bottom: -7px; left: 50%; transform: translateX(-50%); }
+
+    /* RIGHT: The Digital Readout & Controls */
+    .interface-container {
+        flex: 1.5; display: flex; flex-direction: column;
+    }
+    .controls { display: flex; gap: 10px; margin-bottom: 20px; }
+    
+    .sector-btn {
+        flex: 1; background: #111; border: 1px solid #333; color: #888;
+        padding: 12px 10px; font-family: 'Rajdhani', sans-serif; font-size: 14px; font-weight: 600;
+        text-transform: uppercase; cursor: pointer; transition: all 0.3s;
+        border-radius: 4px; border-bottom: 3px solid #333;
+    }
+    .sector-btn:hover { background: #1a1a1a; color: #b87333; border-bottom-color: #b87333; }
+    .sector-btn.active { 
+        background: rgba(212,175,55,0.1); color: #d4af37; border-color: #d4af37; 
+        border-bottom: 3px solid #d4af37; box-shadow: 0 5px 15px rgba(212,175,55,0.1); 
+    }
+    
+    /* Decrypted Data Terminal */
+    .readout-panel {
+        flex: 1; background: #111; border: 1px solid #333; border-left: 4px solid #d4af37;
+        padding: 25px; border-radius: 4px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+    }
+    .readout-title {
+        color: #d4af37; font-family: 'Share Tech Mono', monospace; font-size: 18px;
+        border-bottom: 1px dashed #444; padding-bottom: 10px; margin-bottom: 15px; margin-top: 0;
+    }
+    .readout-body {
+        color: #a0aec0; font-family: 'Share Tech Mono', monospace; font-size: 14px; line-height: 1.6;
+    }
+    .cursor { 
+        display: inline-block; width: 8px; height: 15px; background: #d4af37; 
+        animation: blink 1s infinite; vertical-align: middle; margin-left: 4px; 
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+    </style>
+    </head>
+    <body>
+
+    <!-- VISUAL CHIP -->
+    <div class="chip-container">
+        <div class="motherboard">
+            <div class="trace t1" id="trace1"></div>
+            <div class="trace t2" id="trace2"></div>
+            <div class="trace t3" id="trace3"></div>
+            <div class="chip">
+                <div class="node" id="node1"></div>
+                <div class="node" id="node2"></div>
+                <div class="node" id="node3"></div>
+                <div class="chip-core">DH<br>CORE<br>v1.0</div>
+            </div>
+        </div>
     </div>
+
+    <!-- DATA INTERFACE -->
+    <div class="interface-container">
+        <div class="controls">
+            <button class="sector-btn" id="btn1" onclick="loadSector(1)">Sector 01: Motive</button>
+            <button class="sector-btn" id="btn2" onclick="loadSector(2)">Sector 02: Power</button>
+            <button class="sector-btn" id="btn3" onclick="loadSector(3)">Sector 03: Destiny</button>
+        </div>
+        <div class="readout-panel">
+            <h4 class="readout-title" id="readout-title">AWAITING SECTOR UPLINK...</h4>
+            <div class="readout-body">
+                <span id="readout-text">Select a memory sector above to decrypt DH-CORE-v1 payload.</span><span class="cursor"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // The Digital Humanities text mapped to the chip sectors
+    const data = {
+        1: { 
+            title: "SECTOR 01 // ARCHITECTURE OF PARANOIA", 
+            text: "The spatial clustering reveals human motive. Mega-Fabs on flat coastal plains (High STI) signify absolute economic efficiency—demanding topographical perfection for zero failure rates.\\n\\nConversely, the scattered Small/Mid Cap nodes in high-friction valleys represent pure survival mechanics. By burying defense foundries inland, the state consciously sacrifices profit to forge geographic immunity against naval blockades and climate disasters." 
+        },
+        2: { 
+            title: "SECTOR 02 // SPATIALIZATION OF POWER", 
+            text: "Semiconductors do not just process data; they rewrite the earth.\\n\\nThese Mega-Fabs function as gravitational anomalies. They literally reroute rivers via desalination pipelines and trigger mass intellectual migration, erecting hyper-localized 'techno-enclaves' that permanently rewrite indigenous cultural economies." 
+        },
+        3: { 
+            title: "SECTOR 03 // INFRASTRUCTURE AS DESTINY", 
+            text: "To the civilian, a microchip is invisible. This GIS framework proves the 'Cyber Frontline' is deeply terrestrial.\\n\\nEvery shifting STI variance maps billions poured into concrete and water routing. In the 21st century, geographical infrastructure is destiny." 
+        }
+    };
+
+    let typingTimer;
+
+    function loadSector(id) {
+        // Reset all styles
+        for(let i=1; i<=3; i++) {
+            document.getElementById('btn'+i).classList.remove('active');
+            document.getElementById('node'+i).classList.remove('active');
+            document.getElementById('trace'+i).classList.remove('active');
+        }
+        
+        // Illuminate selected sector, trace, and node
+        document.getElementById('btn'+id).classList.add('active');
+        document.getElementById('node'+id).classList.add('active');
+        document.getElementById('trace'+id).classList.add('active');
+
+        // Typewriter Effect Logic
+        document.getElementById('readout-title').innerHTML = data[id].title;
+        const textContainer = document.getElementById('readout-text');
+        textContainer.innerHTML = "";
+        
+        clearInterval(typingTimer);
+        let txt = data[id].text;
+        let i = 0;
+        
+        typingTimer = setInterval(() => {
+            if(i < txt.length) {
+                // Handle newlines formatting for HTML
+                if(txt.charAt(i) === '\\n') {
+                    textContainer.innerHTML += "<br>";
+                } else {
+                    textContainer.innerHTML += txt.charAt(i);
+                }
+                i++;
+            } else {
+                clearInterval(typingTimer);
+            }
+        }, 15); // Adjust typing speed here
+    }
+    </script>
+    </body>
+    </html>
     """
-    st.markdown(dh_css, unsafe_allow_html=True)
+    
+    # Render the interactive HTML component inside Streamlit
+    components.html(dh_chip_html, height=350)
