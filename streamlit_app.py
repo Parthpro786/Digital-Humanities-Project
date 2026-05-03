@@ -238,11 +238,11 @@ data = [
         "l_name": "Ahmedabad Urban Center", "l_lat": 23.02, "l_lon": 72.57, "l_dist": 85,
         "bt": "India's First Commercial 28nm Mega-Fab.", 
         "imgs": [
-            "https://www.instagram.com/p/DN98esSk-AU/",
-            "https://www.instagram.com/p/DRd_6ANDJ5Y/",
-            "https://mirrikh.com/tata-semiconductor-plant-in-dholera-investment-jobs/",
-            "https://www.outlookbusiness.com/corporate/tata-electronics-sends-200-personnel-to-taiwan-for-psmc-training-as-91000cr-dholera-fab-advances",
-            "https://www.facebook.com/dholeraawareness/posts/tata-is-king-%EF%B8%8Findias-biggest-semiconductor-plant-is-coming-to-dholera-gujarat-ta/835250015926192/"
+            f'<iframe src="https://www.instagram.com/p/DN98esSk-AU/" width="870" height="390" style="border:none;"></iframe>',
+            f'<iframe src="https://www.instagram.com/p/DRd_6ANDJ5Y/" width="870" height="390" style="border:none;"></iframe>',
+            f'<iframe src="https://mirrikh.com/tata-semiconductor-plant-in-dholera-investment-jobs/" width="870" height="390" style="border:none;"></iframe>',
+            f'<iframe src="https://www.outlookbusiness.com/corporate/tata-electronics-sends-200-personnel-to-taiwan-for-psmc-training-as-91000cr-dholera-fab-advances" width="870" height="390" style="border:none;"></iframe>',
+            f'<iframe src="https://www.facebook.com/dholeraawareness/posts/tata-is-king-%EF%B8%8Findias-biggest-semiconductor-plant-is-coming-to-dholera-gujarat-ta/835250015926192/" width="870" height="390" style="border:none;"></iframe>'
         ],
         "profile": [0, 8, 3, 14, 15, 15, 15, 15, 11, 4, 5], 
         "sti": 99.5, "lcp": 0.97,
