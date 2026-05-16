@@ -258,7 +258,7 @@ data = [
         "l_name": "Guwahati Metropolis", "l_lat": 26.14, "l_lon": 91.73, "l_dist": 65,
         "bt": "Sovereign Advanced Packaging Hub.", 
         "imgs": [
-            "https://www.facebook.com/NeGDofficial/posts/tata-electronics-private-limited-tepl-is-establishing-a-large-scale-semiconducto/1186350346863687/",
+            "https://www.tataelectronics.com/documents/60635/2181331/osat-gd-karnataka.webp/de5fa50a-01bb-59d8-9cc5-6c8bc40b7389?t=1749455231235",
             "https://www.natstrat.org/articledetail/publications/india-s-quest-for-a-semiconductor-ecosystem-234.html",
             "https://x.com/aidc_ltd/status/1893261957219680421",
             "https://www.tataelectronics.com/semiconductor-assembly-and-test",
